@@ -59,7 +59,7 @@ class wcefrCall {
 
 
 		// if ( $endpoint == 'products' ) {
-			if ( $method == 'delete' ) {
+			if ( $method == 'post' ) {
 				error_log( 'Response: ' . print_r( $response['body'], true ) );
 				// error_log( 'Response: ' . print_r( $response, true ) );
 			}

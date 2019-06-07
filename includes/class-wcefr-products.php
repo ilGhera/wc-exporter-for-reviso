@@ -57,6 +57,27 @@ class wcefrProducts {
 
 
 	/**
+	 * Restituisce il testo dato con lunghezza massima 500 caratteri, come previsto da Reviso
+	 * nela campo di descizione prodotto
+	 * @param  string $text la descrizione completa del prodotto WooCommerce
+	 * @return string
+	 */
+	public function prepare_product_desciption( $text ) {
+
+		$output = $text;
+
+		if( strlen( $text ) > 500 ) {
+			
+			$output = substr( $text, 0, 496 ) . ' ...';
+
+		}
+
+		return $output;
+
+	}
+
+
+	/**
 	 * Prepara i dati del singolo prodotto da esporare verso Reviso
 	 * @param  object $product il prodotto WooCommerce
 	 * @return array
@@ -69,7 +90,7 @@ class wcefrProducts {
 			// 'barCode'  	    => $product->get_sku(),
 			'barred' 	    => false,
 			//'costPrice'   => xxxxxxx,
-			'description'   => $product->get_description(),
+			'description'   => $this->prepare_product_desciption( $product->get_description() ),
 			'inventory'     => array(
 				'available' 		   => ( float ) $product->get_stock_quantity(),
 		        'inStock'  			   => ( float ) $product->get_stock_quantity(),
@@ -94,7 +115,7 @@ class wcefrProducts {
 		);
 
 		// error_log('Product data: ' . print_r( $output, true ) );
-		error_log('Product data: ' . json_encode( $output ) );
+		// error_log('Product data: ' . json_encode( $output ) );
 		return $output;
 
 	}
@@ -157,7 +178,7 @@ class wcefrProducts {
 
 		$products = json_decode( $this->get_remote_products() );
 
-		error_log( 'Products: ' . print_r( $products, true ) );
+		// error_log( 'Products: ' . print_r( $products, true ) );
 		
 		if ( isset( $products->collection ) ) {
 			$n = 0;
@@ -165,7 +186,7 @@ class wcefrProducts {
 
 				$n++;
 				
-				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber );
+				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber . '?pagesize=1000' );
 
 				error_log( 'Delete: ' . print_r( $output, true ) );
 

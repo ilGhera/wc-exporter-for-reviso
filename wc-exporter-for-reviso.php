@@ -28,6 +28,7 @@ function load_wc_exporter_for_reviso() {
 	define( 'WCEFR_URI', plugin_dir_url( __FILE__ ) );
 	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );
 	define( 'WCEFR_ADMIN', WCEFR_DIR . 'admin/' );
+	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
 
 	/*Richiamo file necessari*/
 	require( WCEFR_ADMIN . 'wcefr-admin.php' );

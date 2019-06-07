@@ -14,7 +14,7 @@
 			<th scope="row"><?php _e( 'Connetti Reviso', 'wcefr' ); ?></th>
 			<td>
 				<div class="bootstrap-iso">
-					<a class="btn btn-primary" href="https://app.reviso.com/api1/requestaccess.aspx?appPublicToken=iRxYo7PUDBHSsw6Kd63uLRM86FDx1O0HERqbknB2hhg1&locale=it-IT&redirectUrl=http://localhost/wp-dev/wp-admin/admin.php?page=wc-exporter-for-reviso">Connetti Reviso</a>
+					<a class="btn btn-primary" href="https://app.reviso.com/api1/requestaccess.aspx?appPublicToken=iRxYo7PUDBHSsw6Kd63uLRM86FDx1O0HERqbknB2hhg1&locale=it-IT&redirectUrl=<?php echo WCEFR_SETTINGS; ?>">Connetti Reviso</a>
 				</div>
 				<p class="description"><?php _e( 'Connect with your Reviso credentials', 'wcefr' ); ?></p>				
 			</td>

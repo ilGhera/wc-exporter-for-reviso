@@ -262,7 +262,7 @@ class wcefrUsers {
 		/*Gruppo Reviso selezionato dall'admnin*/
 		$group = isset( $_POST['wcefr-' . $type . '-groups'] ) ? intval( $_POST['wcefr-' . $type . '-groups'] ) : ''; 
 
-		error_log( 'Group2: ' . $_POST['wcefr-' . $type . '-groups'] );
+		// error_log( 'Group2: ' . $_POST['wcefr-' . $type . '-groups'] );
 
 		/*Salvo le impostazioni nel database*/
 		update_option( 'wcefr-' . $type . '-group', $group ); 
@@ -398,13 +398,10 @@ class wcefrUsers {
 			if ( isset( $users->collection ) ) {
 				$n = 0;
 				foreach ( $users->collection as $user ) {
+					
 					$n++;
 
-					error_log( 'Cust.:' . $user->$field_name );
-
 					$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
-
-					error_log( 'Delete: ' . print_r( $output, true ) );
 
 				}
 

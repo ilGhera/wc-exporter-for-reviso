@@ -187,15 +187,25 @@ select.wcefr {
 	width: 180px;
 }
 
-.wcefr.red {
+.wcefr.red,
+.wcefr-disconnect.red {
     background: #d9534f;
     border: 1px solid #d9534f;
     color: white;
     text-shadow: none;
 }
 
-.wcefr.red:hover {
+.wcefr.red:hover,
+.wcefr-disconnect.red:hover {
     background: red;
     box-shadow: 0 1px 0 red;
 	opacity: 0.8;
+}
+
+h4.wcefr-connection-status {
+	margin-top: 0 !important;
+}
+
+.button-primary.wcefr-disconnect {
+	display: none;
 }

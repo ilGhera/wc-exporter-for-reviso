@@ -40,7 +40,7 @@ class wcefrCall {
 	 * @param string $endpoint il nome dell'endpoint
 	 * @param array  $args     i dati da inviare
 	 */
-	public function call( $method, $endpoint, $args = null ) {
+	public function call( $method, $endpoint = '', $args = null ) {
 
 		$body = $args ? json_encode( $args ) : '';
 
@@ -55,17 +55,22 @@ class wcefrCall {
 
 		);
 
-		// error_log( $endpoint );
+		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
 
-		// if ( $endpoint == 'products' ) {
-			if ( $method == 'post' ) {
-				error_log( 'Response: ' . print_r( $response['body'], true ) );
+			/*TEMP*/
+			if ( $method == 'get' ) {
+				// error_log( 'Response: ' . print_r( $response['body'], true ) );
 				// error_log( 'Response: ' . print_r( $response, true ) );
 			}
-		// }
 
-		return $response['body'];
+			return $response['body'];
+
+		} else {
+
+			error_log( 'ERROR: ' . print_r( $response, true ) );
+
+		}
 
 	}
 

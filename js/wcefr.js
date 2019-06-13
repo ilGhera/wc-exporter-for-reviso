@@ -6,183 +6,256 @@
  */
 
 
-/**
- * Gestisce la navigazione tra i tab della pagina opzioni
- */
-var wcefr_pagination = function() {
+var wcefrController = function() {
 
-	jQuery(function($){
+	var self = this;
 
-		var $contents = $('.wcefr-admin')
-		var url = window.location.href.split("#")[0];
-		var hash = window.location.href.split("#")[1];
+	self.onLoad = function() {
+	    self.wcefr_pagination();
+	    self.wcefr_delete_remote_users();
+		self.get_user_groups('customer');
+		self.get_user_groups('supplier');
+		self.wcefr_delete_remote_products();
+		self.wcefr_disconnect();
+	}
 
-		if(hash) {
-	        $contents.hide();		    
-		    $('#' + hash).fadeIn(200);		
-	        $('h2#wcefr-admin-menu a.nav-tab-active').removeClass("nav-tab-active");
-	        $('h2#wcefr-admin-menu a').each(function(){
-	        	if($(this).data('link') == hash) {
-	        		$(this).addClass('nav-tab-active');
-	        	}
-	        })
-	        
-	        $('html, body').animate({
-	        	scrollTop: 0
-	        }, 'slow');
-		}
+	/**
+	 * Gestisce la navigazione tra i tab della pagina opzioni
+	 */
+	self.wcefr_pagination = function() {
 
-		$("h2#wcefr-admin-menu a").click(function () {
-	        var $this = $(this);
-	        
-	        $contents.hide();
-	        $("#" + $this.data("link")).fadeIn(200);
-	        $('h2#wcefr-admin-menu a.nav-tab-active').removeClass("nav-tab-active");
-	        $this.addClass('nav-tab-active');
+		jQuery(function($){
 
-	        window.location = url + '#' + $this.data('link');
+			var contents = $('.wcefr-admin')
+			var url = window.location.href.split("#")[0];
+			var hash = window.location.href.split("#")[1];
 
-	        $('html, body').scrollTop(0);
+			if(hash) {
+		        contents.hide();		    
+			    $('#' + hash).fadeIn(200);		
+		        $('h2#wcefr-admin-menu a.nav-tab-active').removeClass("nav-tab-active");
+		        $('h2#wcefr-admin-menu a').each(function(){
+		        	if($(this).data('link') == hash) {
+		        		$(this).addClass('nav-tab-active');
+		        	}
+		        })
+		        
+		        $('html, body').animate({
+		        	scrollTop: 0
+		        }, 'slow');
+			}
 
-	    })
+			$("h2#wcefr-admin-menu a").click(function () {
+		        var $this = $(this);
+		        
+		        contents.hide();
+		        $("#" + $this.data("link")).fadeIn(200);
+		        $('h2#wcefr-admin-menu a.nav-tab-active').removeClass("nav-tab-active");
+		        $this.addClass('nav-tab-active');
 
-	})
-        	
-}
+		        window.location = url + '#' + $this.data('link');
+
+		        $('html, body').scrollTop(0);
+
+		    })
+
+		})
+	        	
+	}
 
 
-/**
- * Cancellazione di tutti gli utenti da Reviso
- */
-var wcefr_delete_remote_users = function() {
+	/**
+	 * Verifica connessione Reviso
+	 */
+	self.wcefr_check_connection = function() {
 
-	jQuery(function($){
+		jQuery(function($){
 
-		$('.button-primary.wcefr.red.users').on('click', function(e){
+			var data = {
+				'action': 'check-connection'
+			}
 
-			e.preventDefault();
+			$.post(ajaxurl, data, function(response){
+				console.log(response);
 
-			var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
+				if(response) {
 			
-			console.log('Type: ' + type);
-			
-			var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
-
-			if ( answer ) {
-
-				var data = {
-					'action': 'delete-remote-users',
-					'type': type
+					$('.check-connection').html(response);
+					$('.wcefr-connect').hide();
+					$('.wcefr-disconnect').show('slow');
 				}
 
-				console.log('Data: ' + JSON.stringify(data));
-				$.post(ajaxurl, data, function(response){
-					console.log(response);
-				})
-
-			}
+			})
 
 		})
 
-	})
-
-}
+	}
 
 
-/**
- * Cancellazione di tutti i prodotti da Reviso
- */
-var wcefr_delete_remote_products = function() {
+	/**
+	 * Disconnette il plugin dalla piattaforma Reviso, 
+	 * cancellando l'Agreement Grant Tocken dal db
+	 */
+	self.wcefr_disconnect = function() {
 
-	jQuery(function($){
+		jQuery(function($){
 
-		$('.button-primary.wcefr.red.products').on('click', function(e){
+			$(document).on('click', '.wcefr-disconnect', function(){
 
-			e.preventDefault();
-						
-			var answer = confirm( 'Vuoi cancellare tutti i prodotti da Reviso?' );
-
-			if ( answer ) {
+				console.log('Vai!');
 
 				var data = {
-					'action': 'delete-remote-products',
+					'action': 'wcefr-disconnect'
 				}
 
-				console.log('Data: ' + JSON.stringify(data));
 				$.post(ajaxurl, data, function(response){
-					console.log(response);
+					location.reload();
 				})
 
-			}
+			})
 
 		})
 
-	})
-
-}
+	}
 
 
-/**
- * Mostra i gruppi di clienti presenti nella pagina opzioni del plugin
- */
-var get_customer_groups = function() {
+	/**
+	 * Cancellazione di tutti gli utenti da Reviso
+	 */
+	self.wcefr_delete_remote_users = function() {
 
-	jQuery(function($){
+		jQuery(function($){
 
-		var groups;
-		var data = {
-			'action': 'get-customer-groups',
-			'confirm': 'yes' 
-		}
+			$('.button-primary.wcefr.red.users').on('click', function(e){
 
-		$.post(ajaxurl, data, function(response){
-			groups = JSON.parse(response);
-			for (key in groups) {
-				$('.wcefr-customer-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
-			}
+				e.preventDefault();
+
+				var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
+				
+				console.log('Type: ' + type);
+				
+				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
+
+				if ( answer ) {
+
+					var data = {
+						'action': 'delete-remote-users',
+						'type': type
+					}
+
+					console.log('Data: ' + JSON.stringify(data));
+					$.post(ajaxurl, data, function(response){
+						console.log(response);
+					})
+
+				}
+
+			})
+
 		})
 
-	})
-
-}
+	}
 
 
-/**
- * Mostra i gruppi di fornitori presenti nella pagina opzioni del plugin
- */
-var get_supplier_groups = function() {
+	/**
+	 * Cancellazione di tutti i prodotti da Reviso
+	 */
+	self.wcefr_delete_remote_products = function() {
 
-	jQuery(function($){
+		jQuery(function($){
 
-		var groups;
-		var data = {
-			'action': 'get-supplier-groups',
-			'confirm': 'yes' 
-		}
+			$('.button-primary.wcefr.red.products').on('click', function(e){
 
-		$.post(ajaxurl, data, function(response){
-			groups = JSON.parse(response);
-			for (key in groups) {
-				$('.wcefr-supplier-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
-			}
+				e.preventDefault();
+							
+				var answer = confirm( 'Vuoi cancellare tutti i prodotti da Reviso?' );
+
+				if ( answer ) {
+
+					var data = {
+						'action': 'delete-remote-products',
+					}
+
+					console.log('Data: ' + JSON.stringify(data));
+					$.post(ajaxurl, data, function(response){
+						console.log(response);
+					})
+
+				}
+
+			})
+
 		})
 
-	})
+	}
+
+
+	/**
+	 * Mostra i gruppi di clienti e fornitori nella pagina opzioni del plugin
+	 * @param {string} type cliente o fornitore
+	 */
+	self.get_user_groups = function(type) {
+
+		jQuery(function($){
+
+			var groups;
+			var data = {
+				'action': 'get-' + type + '-groups',
+				'confirm': 'yes' 
+			}
+
+			$.post(ajaxurl, data, function(response){
+				groups = JSON.parse(response);
+
+				if (typeof groups === 'object') {
+
+					for (key in groups) {
+						$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
+					}
+
+				} else {
+
+					$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
+
+				}
+			})
+
+		})
+
+	}
+
+
+	/**
+	 * Mostra i gruppi di fornitori presenti nella pagina opzioni del plugin
+	 */
+	self.get_supplier_groups = function() {
+
+		jQuery(function($){
+
+			var groups;
+			var data = {
+				'action': 'get-supplier-groups',
+				'confirm': 'yes' 
+			}
+
+			$.post(ajaxurl, data, function(response){
+				groups = JSON.parse(response);
+				for (key in groups) {
+					$('.wcefr-supplier-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
+				}
+			})
+
+		})
+
+	}
+
 
 }
 
 
 jQuery(document).ready(function ($) {
 	
-    /*Navigazione tabs*/
-    wcefr_pagination();
-
-    wcefr_delete_remote_users();
-
-	get_customer_groups();
-
-	get_supplier_groups();
-
-	wcefr_delete_remote_products();
+	var Controller = new wcefrController;
+	Controller.onLoad();
 
 });

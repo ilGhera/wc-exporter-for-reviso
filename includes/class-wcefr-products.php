@@ -26,7 +26,7 @@ class wcefrProducts {
 	 */
 	private function get_remote_products() {
 
-		$output = $this->wcefrCall->call( 'get', 'products'  );
+		$output = $this->wcefrCall->call( 'get', 'products?pagesize=10000'  );
 		// error_log( 'Prodotti: ' . print_r( $output, true  ) );
 
 		return $output;
@@ -186,7 +186,7 @@ class wcefrProducts {
 
 				$n++;
 				
-				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber . '?pagesize=1000' );
+				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber );
 
 				error_log( 'Delete: ' . print_r( $output, true ) );
 

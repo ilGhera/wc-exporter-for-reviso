@@ -11,9 +11,21 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e( 'xxxxxx', 'wcefr' ); ?></th>
+			<th scope="row"><?php _e( 'Products categories', 'wcefr' ); ?></th>
 			<td>
-				<p class="description"><?php _e( 'xxxxxxxxxxxxxxxxxxxxxx', 'wcefr' ); ?></p>
+				<select class="wcefr-product-cats" name="wcefr-product-cats" multiple>
+					
+					<?php
+					$terms = get_terms( 'product_cat' );
+					if ( $terms ) {
+						foreach ( $terms as $term ) {
+							echo '<option value="' . $term->term_id . '">' . $term->name . '</option>';
+						}
+					}
+					?>
+
+				</select>
+				<p class="description"><?php _e( 'Select which categories to send to Reviso', 'wcefr' ); ?></p>
 			</td>
 		</tr>
 	</table>

@@ -12,7 +12,6 @@ class wcefrUsers {
 
 		add_action( 'admin_init', array( $this, 'export_customers' ) );
 		add_action( 'admin_init', array( $this, 'export_suppliers' ) );
-		add_action( 'admin_footer', array( $this, 'save_agt' ) );
 		add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
 		add_action( 'wp_ajax_get-customer-groups', array( $this, 'get_customer_groups' ) );
 		add_action( 'wp_ajax_get-supplier-groups', array( $this, 'get_supplier_groups' ) );
@@ -33,33 +32,6 @@ class wcefrUsers {
 
 	}
 
-	/**
-	 * Verifica che la pagina corrente sia quella delle opzioni del plugin
-	 * @return boolean
-	 */
-	public function is_wcefr_admin() {
-
-		$screen = get_current_screen();
-
-		if ( $screen->id === 'woocommerce_page_wc-exporter-for-reviso' ) {
-			return true;
-		}
-
-	}
-
-
-	/**
-	 * Salva l'Agreement Grant Tocken dell'admin nel db
-	 */
-	public function save_agt() {
-
-		if ( $this->is_wcefr_admin() && isset( $_GET['token'] ) ) {
-			$token = sanitize_text_field( $_GET['token'] );
-
-			update_option( 'wcefr-agt', $token );
-		}
-
-	}
 
 	/**
 	 * Resituisce il provinceNumer, necessario all'aggiunta della provincia in Reviso
@@ -202,6 +174,10 @@ class wcefrUsers {
 
 			 } 
 			
+		} else {
+
+			$output = __( 'No groups available', 'wcefr' );
+		
 		}
 
 		return $output;

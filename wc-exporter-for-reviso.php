@@ -36,6 +36,7 @@ function load_wc_exporter_for_reviso() {
 	require( WCEFR_INCLUDES . 'class-wcefr-call.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-users.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-products.php' );
+	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
 
 }
 add_action( 'plugins_loaded', 'load_wc_exporter_for_reviso', 10 );

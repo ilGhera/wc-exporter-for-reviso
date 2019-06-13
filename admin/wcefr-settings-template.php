@@ -11,26 +11,19 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e( 'Connetti Reviso', 'wcefr' ); ?></th>
+			<th scope="row"><?php _e( 'Connection status', 'wcefr' ); ?></th>
 			<td>
 				<div class="bootstrap-iso">
-					<a class="btn btn-primary" href="https://app.reviso.com/api1/requestaccess.aspx?appPublicToken=iRxYo7PUDBHSsw6Kd63uLRM86FDx1O0HERqbknB2hhg1&locale=it-IT&redirectUrl=<?php echo WCEFR_SETTINGS; ?>">Connetti Reviso</a>
+					<div class="check-connection">
+						<h4 class="wcefr-connection-status"><span class="wcefr label label-danger"><?php _e( 'Not connected', 'wcefr' ); ?></span></h4>
+					</div>
 				</div>
 				<p class="description"><?php _e( 'Connect with your Reviso credentials', 'wcefr' ); ?></p>				
 			</td>
 		</tr>
-		<tr> 
-			<th scope="row"><?php _e( 'Test the API', 'wcefr' ); ?></th>
-			<td>
-				<form method="post" action="">
-					<input type="hidden" name="api">
-					<input type="submit" name="Via">
-				</form>
-				<p class="description"><?php _e( 'test', 'wcefr' ); ?></p>
-			</td>
-		</tr>
 	</table>
 
-	<input type="submit" class="button-primary" value="<?php _e( 'Save', 'wcifd' ); ?>">
-
+	<!-- <input type="submit" class="button-primary" value="<?php _e( 'Save', 'wcifd' ); ?>"> -->
+	<a class="button-primary wcefr-connect" href="https://app.reviso.com/api1/requestaccess.aspx?appPublicToken=iRxYo7PUDBHSsw6Kd63uLRM86FDx1O0HERqbknB2hhg1&locale=it-IT&redirectUrl=<?php echo WCEFR_SETTINGS; ?>"><?php _e( 'Connect to Reviso', 'wcefr' ); ?></a>
+	<a class="button-primary wcefr-disconnect red"><?php _e( 'Disconnect from Reviso', 'wcefr' ); ?></a>
 </form>

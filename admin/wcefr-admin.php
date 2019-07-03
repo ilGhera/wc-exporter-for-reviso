@@ -29,13 +29,13 @@ class wcefrAdmin {
 			/*js*/
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr.js', array( 'jquery' ), '1.0', true );
 		    wp_enqueue_script('bootstrap-js', plugin_dir_url(__DIR__) . 'js/bootstrap.min.js');
-			wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
-			wp_enqueue_script( 'tzcheckbox-script', WCEFR_URI . 'js/tzCheckbox/js/script.js', array( 'jquery' ) );
+			// wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
+			// wp_enqueue_script( 'tzcheckbox-script', WCEFR_URI . 'js/tzCheckbox/js/script.js', array( 'jquery' ) );
 		
 			/*css*/
 			wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css' );
 		    wp_enqueue_style('bootstrap-iso', plugin_dir_url(__DIR__) . 'css/bootstrap-iso.css');
-			wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
+			// wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
 
 		}
 
@@ -131,6 +131,9 @@ class wcefrAdmin {
 						echo '</div>';
 
 				echo '</div>';
+
+				/*Utilizzato per mostrare messaggio all'admin*/
+				echo '<div class="wcefr-message"></div>';
 
 			echo '</div>';
 		

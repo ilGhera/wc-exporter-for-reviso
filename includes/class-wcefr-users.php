@@ -371,7 +371,8 @@ class wcefrUsers {
 
 			$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
 
-			if ( isset( $users->collection ) ) {
+			if ( isset( $users->collection ) && count( $users->collection ) > 0 ) {
+				
 				$n = 0;
 				foreach ( $users->collection as $user ) {
 					
@@ -381,11 +382,21 @@ class wcefrUsers {
 
 				}
 
-				echo 'Eliminati ' . $n . ' ' .  $type; //TEMP
+				$response = array(
+					'ok',
+					__( 'The delete process is started', 'wcefr' ),
+				);
+
+				echo json_encode( $response );
 
 			} else {
 				
-				echo 'Error'; //TEMP
+				$response = array(
+					'error',
+					__( 'ERROR! There are not ' . $type . ' to delete', 'wcefr' ),
+				);
+
+				echo json_encode( $response );
 			
 			}
 

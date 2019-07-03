@@ -10,12 +10,27 @@ class wcefrSettings {
 
 	public function __construct() {
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback') );
 		add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback') );
 		add_action( 'admin_footer', array( $this, 'check_connection') );
 		add_action( 'admin_footer', array( $this, 'save_agt' ) );
 
 		$this->wcefrCall = new wcefrCall();
+
+	}
+
+	/**
+	 * Script e fogli di stile
+	 */
+	public function enqueue() {
+
+		wp_enqueue_script( 'chosen', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js' );
+		wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
+
+		wp_enqueue_style( 'chosen-style', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
+	    wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
+		wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
 
 	}
 

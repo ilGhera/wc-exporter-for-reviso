@@ -59,8 +59,8 @@ class wcefrCall {
 
 
 			/*TEMP*/
-			if ( $method == 'get' ) {
-				// error_log( 'Response: ' . print_r( $response['body'], true ) );
+			if ( $method == 'delete' ) {
+				error_log( 'Response: ' . print_r( $response['body'], true ) );
 				// error_log( 'Response: ' . print_r( $response, true ) );
 			}
 

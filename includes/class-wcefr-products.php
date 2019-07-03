@@ -127,6 +127,7 @@ class wcefrProducts {
 	public function export_products() {
 
 		if ( isset( $_POST['wcefr-products-export'] ) ) {
+
 			$args = array(
 				'post_type' => array(
 					'product', 
@@ -135,6 +136,24 @@ class wcefrProducts {
 				'post_status'=>'publish',
 				'posts_per_page' => -1
 			);
+
+			/*Modifico la query con  le categorie prodotto selezionate dall'admin*/
+			if ( isset( $_POST['wcefr-products-categories'] ) ) {
+				
+				$terms = $_POST['wcefr-products-categories'];
+
+				$args['tax_query'] = array(
+					array(
+						'taxonomy' => 'product_cat',
+						'field'    => 'termi_id',
+						'terms'    => $terms,
+					),
+				);
+
+				/*Aggiorno il dato nel db*/
+				update_option( 'wcefr-products-categories', $terms );
+
+			}
 
 			$posts = get_posts( $args );
 			
@@ -177,27 +196,54 @@ class wcefrProducts {
 	public function delete_remote_products() {
 
 		$products = json_decode( $this->get_remote_products() );
-
-		// error_log( 'Products: ' . print_r( $products, true ) );
 		
-		if ( isset( $products->collection ) ) {
+		if ( isset( $products->collection ) && count( $products->collection ) > 0 ) {
+
 			$n = 0;
 			foreach ( $products->collection as $product ) {
 
 				$n++;
 				
 				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber );
+			
+				error_log( '$output: ' . print_r( $output, true ) );
 
-				error_log( 'Delete: ' . print_r( $output, true ) );
+				if ( '' === $output ) {
+					
+					$response = array(
+						'ok',
+						__( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+					);
+
+				} else {
+
+					$response = array(
+						'error',
+						__( 'ERROR! An error accour with the product #' . $product->productNumber . '<br>', 'wcefr' ),
+					);
+
+				}
+
+				// echo json_encode( $response );
 
 			}
 
-			echo 'Eliminati ' . $n . ' prodotti'; //TEMP
+			$response = array(
+				'ok',
+				__( 'The delete process is started', 'wcefr' ),
+			);
+
+			echo json_encode( $response );
 
 		} else {
 			
-			echo 'Error'; //TEMP
-		
+			$response = array(
+				'error',
+				__( 'ERROR! There are not products to delete', 'wcefr' ),
+			);
+
+			echo json_encode( $response );
+
 		}
 
 		exit;

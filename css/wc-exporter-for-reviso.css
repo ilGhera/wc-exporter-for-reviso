@@ -187,6 +187,12 @@ select.wcefr {
 	width: 180px;
 }
 
+.button-primary.wcefr-connect,
+.button-primary.wcefr-disconnect {
+	display: inline-block;
+	margin-top: 2rem;
+}
+
 .wcefr.red,
 .wcefr-disconnect.red {
     background: #d9534f;
@@ -198,6 +204,7 @@ select.wcefr {
 .wcefr.red:hover,
 .wcefr-disconnect.red:hover {
     background: red;
+    border: 1px solid red;
     box-shadow: 0 1px 0 red;
 	opacity: 0.8;
 }
@@ -207,5 +214,14 @@ h4.wcefr-connection-status {
 }
 
 .button-primary.wcefr-disconnect {
-	display: none;
+	opacity: 0;
+}
+
+.wcefr-message {
+	margin-top: 3rem;
+	width: 600px;
+}
+
+.wcefr-message .alert i {
+	padding-right: 1rem;
 }

@@ -12,6 +12,7 @@ var wcefrController = function() {
 
 	self.onLoad = function() {
 	    self.wcefr_pagination();
+		self.tzCheckbox();
 	    self.wcefr_delete_remote_users();
 		self.get_user_groups('customer');
 		self.get_user_groups('supplier');
@@ -50,6 +51,10 @@ var wcefrController = function() {
 		        
 		        contents.hide();
 		        $("#" + $this.data("link")).fadeIn(200);
+
+		        self.chosen(true);
+		        self.chosen();
+
 		        $('h2#wcefr-admin-menu a.nav-tab-active').removeClass("nav-tab-active");
 		        $this.addClass('nav-tab-active');
 
@@ -57,12 +62,27 @@ var wcefrController = function() {
 
 		        $('html, body').scrollTop(0);
 
+		        /*Cancella messaggio admin*/
+		        $('.wcefr-message').html('');
+
 		    })
 
 		})
 	        	
 	}
 
+
+	/**
+	 * Checkboxes
+	 */
+	self.tzCheckbox = function() {
+
+		jQuery(function($){
+			$('input[type=checkbox]').tzCheckbox({labels:['On','Off']});
+		});
+
+	}
+		
 
 	/**
 	 * Verifica connessione Reviso
@@ -76,13 +96,15 @@ var wcefrController = function() {
 			}
 
 			$.post(ajaxurl, data, function(response){
-				console.log(response);
+				// console.log(response);
 
 				if(response) {
 			
 					$('.check-connection').html(response);
 					$('.wcefr-connect').hide();
-					$('.wcefr-disconnect').show('slow');
+					$('.wcefr-disconnect').animate({
+						opacity: 1
+					}, 500);
 				}
 
 			})
@@ -120,6 +142,25 @@ var wcefrController = function() {
 
 
 	/**
+	 * Mostra un messaggio all'admin
+	 * @param  {string} message il testo del messaggio
+	 * @param  {bool}   error   in caso di errore stile differente 
+	 */
+	self.wcefr_response_message = function(message, error = false) {
+
+		jQuery(function($){
+
+			var message_class = error ? 'alert-danger' : 'alert-info';
+			var icon		  = error ? 'fa-exclamation-triangle' : 'fa-info-circle';
+			
+			$('.wcefr-message').html( '<div class="bootstrap-iso"><div class="alert ' + message_class + '"><b><i class="fas ' + icon + '"></i>WC Exporter for Reviso </b> - ' + message + '</div>' );
+
+		})
+
+	}
+
+
+	/**
 	 * Cancellazione di tutti gli utenti da Reviso
 	 */
 	self.wcefr_delete_remote_users = function() {
@@ -143,9 +184,15 @@ var wcefrController = function() {
 						'type': type
 					}
 
-					console.log('Data: ' + JSON.stringify(data));
 					$.post(ajaxurl, data, function(response){
-						console.log(response);
+
+						console.table(response);
+
+						var result = JSON.parse(response);
+						var error = 'error' === result[0] ? true : false;
+
+						self.wcefr_response_message( result[1], error );
+
 					})
 
 				}
@@ -176,9 +223,13 @@ var wcefrController = function() {
 						'action': 'delete-remote-products',
 					}
 
-					console.log('Data: ' + JSON.stringify(data));
 					$.post(ajaxurl, data, function(response){
-						console.log(response);
+
+						var result = JSON.parse(response);
+						var error = 'error' === result[0] ? true : false;
+
+						self.wcefr_response_message( result[1], error );
+
 					})
 
 				}
@@ -218,6 +269,10 @@ var wcefrController = function() {
 					$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
 
 				}
+
+				$('.wcefr-' + type + '-groups').addClass('wcefr-select');
+		        self.chosen(true);
+
 			})
 
 		})
@@ -244,6 +299,26 @@ var wcefrController = function() {
 					$('.wcefr-supplier-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
 				}
 			})
+
+		})
+
+	}
+
+
+	/**
+	 * Invoca chosen con tutte le opzioni definite	
+	 * @param  {bool} destroy metodo distroy
+	 */
+	self.chosen = function(destroy = false) {
+
+		jQuery(function($){
+
+			$('.wcefr-select').chosen({
+		
+				disable_search_threshold: 10,
+				width: '200px'
+			
+			});
 
 		})
 

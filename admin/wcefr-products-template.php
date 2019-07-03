@@ -13,13 +13,19 @@
 		<tr>
 			<th scope="row"><?php _e( 'Products categories', 'wcefr' ); ?></th>
 			<td>
-				<select class="wcefr-product-cats" name="wcefr-product-cats" multiple>
-					
+				<select class="wcefr-products-categories wcefr-select" name="wcefr-products-categories[]" multiple data-placeholder="<?php _e( 'All categories', 'wcefr' ); ?>">
 					<?php
 					$terms = get_terms( 'product_cat' );
+					
+					/*Leggo il dato se già esistente nel database*/
+					$products_categories = get_option( 'wcefr-products-categories' );
+
 					if ( $terms ) {
 						foreach ( $terms as $term ) {
-							echo '<option value="' . $term->term_id . '">' . $term->name . '</option>';
+
+							$selected = is_array( $products_categories ) && in_array( $term->term_id, $products_categories ) ? ' selected="selected"' : '';
+							
+							echo '<option value="' . $term->term_id . '"' . $selected . '>' . $term->name . '</option>';
 						}
 					}
 					?>
@@ -41,7 +47,7 @@
 		<tr>
 			<th scope="row"><?php _e( 'Delete products', 'wcefr' ); ?></th>
 			<td>
-				<p class="description"><?php _e( 'Delete all products on Reviso.', 'wcefr' ); ?></p>
+				<p class="description"><?php _e( 'Delete all products on Reviso.<br>Note that you cannot delete a product that has been used on an Invoice.', 'wcefr' ); ?></p>
 			</td>
 		</tr>
 	</table>

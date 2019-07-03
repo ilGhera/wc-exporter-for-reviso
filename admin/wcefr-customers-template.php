@@ -13,7 +13,7 @@
 		<tr>
 			<th scope="row"><?php _e( 'User role', 'wcefr' ); ?></th>
 			<td>
-				<select class="wcefr-customers-role" name="wcefr-customers-role">
+				<select class="wcefr-customers-role wcefr-select" name="wcefr-customers-role">
 					<?php
 					global $wp_roles;
 					$roles = $wp_roles->get_names();

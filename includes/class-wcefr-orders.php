@@ -10,18 +10,474 @@ class wcefrOrders {
 
 	public function __construct() {
 
-		add_action( 'woocommerce_new_order', array( $this, 'new_order' ) );
+		// add_action( 'woocommerce_new_order', array( $this, 'export_single_order' ) );
+		add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
+
+		add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) );
+
+		add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
+		add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
+
+		// add_action( 'admin_footer', array( $this, 'export_single_order' ) );
+		// add_action( 'admin_footer', array( $this, 'add_remote_payment_method' ) );
+		// add_action( 'admin_footer', array( $this, 'get_remote_invoices' ) );
+
+		$this->wcefrCall = new wcefrCall();
 
 	}
 
 
-	public function new_order( $order_id ) {
+	/**
+	 * Get all the orders from Reviso
+	 * @return [type] [description]
+	 */
+	public function get_remote_orders() {
+
+		$output = $this->wcefrCall->call( 'get', 'orders?pagesize=10000'  );
+		// $output = $this->wcefrCall->call( 'get', 'orders/5' );
+		// error_log( 'ORDINI: ' . print_r( $output, true ) );
+		return $output;
+
+	}
+
+
+	/**
+	 * Check if a wc order is already on Reviso
+	 * @param  int  $order_id the wc order id
+	 * @param  bool $invoice  search in invoices instead of orders
+	 * @return bool
+	 */
+	public function document_exists( $order_id, $invoice = false )  {
+
+		$output = null;
+		$endpoint = $invoice ? '/v2/invoices/drafts' : 'orders';
+
+		$response = $this->wcefrCall->call( 'get', $endpoint . '?filter=notes.text1$eq:WC-Order-' . $order_id );
+
+		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+			
+			error_log( 'EXISTS: ' . $response->collection[0]->id );
+			$output = $response->collection[0]->id;
+			
+		}
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Get all invoices from Reviso
+	 * @return [type] [description]
+	 */
+	public function get_remote_invoices() {
+
+		$output = $this->wcefrCall->call( 'get', 'v2/invoices/drafts?pagesize=10000'  );
+		error_log( 'FATTURE: ' . print_r( $output, true ) );
+		return $output;
+
+	}
+
+
+	/**
+	 * TEMP
+	 * Get the wc payment gatewauys available
+	 * @return array
+	 */
+	public function get_available_methods() {
+
+		$gateways = WC()->payment_gateways->get_available_payment_gateways();
+
+		$enabled_gateways = [];
+
+		if( $gateways ) {
+		    foreach( $gateways as $gateway ) {
+
+		        if( $gateway->enabled == 'yes' ) {
+
+		            $enabled_gateways[] = $gateway;
+
+		        }
+		    }
+		}
+
+		error_log( 'PAGAMENTI: ' . print_r( $enabled_gateways, true ) );
+
+	}
+
+
+	/**
+	 * Check if a specific payment method exists in Reviso
+	 * @param string $payment_gateway the wc payment gateway
+	 * @return int   the Reviso payment method number              
+	 */
+	private function payment_metod_exists( $payment_gateway ) {
+
+		$response = $this->wcefrCall->call( 'get', 'payment-terms?filter=name$eq:' . $payment_gateway );
+
+		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+			error_log( 'PAGAMENTO: ' . print_r( $response->collection, true ) );
+
+			return $response->collection[0];
+		
+		}
+
+	}
+
+
+	/**
+	 * Add a specific payment method in reviso
+	 * @param string $payment_gateway the wc payment gateway
+	 */
+	public function add_remote_payment_method( $payment_gateway ) {
+
+		$output = $this->payment_metod_exists( $payment_gateway ); 
+
+		if ( ! $output ) {
+
+			$args = array(
+				'name' 			   => $payment_gateway,
+				'paymentTermsType' => 'net', //temp
+				'daysOfCredit' 	   => 0,
+			);
+
+			$response = $this->wcefrCall->call( 'post', 'payment-terms', $args );
+
+			if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+				$output = $response->collection[0];
+			
+			}
+
+		}
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Prepare the data of all the items of the order
+	 * @param  object $order the wc order
+	 * @return array
+	 */
+	private function order_items_data( $order ) {
+
+		$output = array();
+
+		if ( $order->get_items() ) {
+	
+			$n = 0;
+			foreach ( $order->get_items() as $item_id => $item ) {
+				
+				$n++;
+				$product = $item->get_product();
+
+				if ( $product ) {
+	
+					$output[] = array(
+
+						'lineNumber' => $n,
+						'quantity' => wc_stock_amount( $item['qty'] ),
+						'product' => array(
+							'id' => $product->get_sku(),
+							'name' => $item['name'],
+						),
+						
+						'description' => $item['name'],
+						'discountPercentage' => 0.00, //temp
+						'lineNumber' => $n,
+						// 'marginInBaseCurrency' => 6.00,
+						// 'marginPercentage' => 100.00,
+						'product' => array(
+							// 'recommendedCostPrice' => 0.0,
+							'productNumber' => $product->get_sku(),
+						),
+						'quantity' => wc_stock_amount( $item['qty'] ),
+						// 'sortKey' => 1,
+						'totalNetAmount' => floatval( wc_format_decimal( $order->get_line_subtotal($item, false, false), 2 ) ),
+						'totalGrossAmount' => floatval( wc_format_decimal( $order->get_line_total($item, false, false ), 2 ) ),
+						'totalVatAmount' => floatval( wc_format_decimal( $item['line_tax'], 2 ) ),
+						'unit' => array(
+							'name' => 'Pezzi',
+							'unitNumber' => 1,
+						),
+						// 'unitCostPrice' => 0.0000000000,
+						'unitNetPrice' => floatval( wc_format_decimal( $order->get_item_total($item, false, false), 2 ) ),
+						// 'deliveredQuantity' => 0.0000000000,
+						// 'manuallyEditedSalesPrice' => false,
+						'vatInfo' => array(
+							'vatAccount' => array(
+							  'vatCode' => 'V22', //temp
+							),
+							'vatRate' => 22 //temp
+						)
+
+					);
+
+				}
+
+			}
+		}
+
+		error_log( 'LINES: ' . print_r( $output, true ) );
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Prepara i dati del singolo ordine da esportare verso Reviso
+	 * @param  object $order l'ordine WooCommerce
+	 * @return array
+	 */
+	private function prepare_order_data( $order ) {
+
+		$company_name  = $order->get_billing_company();
+		$customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+		$client_name   = $company_name ? $company_name : $customer_name;
+		$pa_code	   = get_post_meta( $order->get_id(), '_billing_wcefr_pa_code', true );
+
+		// Add the payment method if not already on Reviso
+		$payment_method = $this->add_remote_payment_method( $order->get_payment_method_title() );
+
+		error_log( '$payment_method: ' . print_r( $payment_method, true ) );
+
+		$output = array(
+			'currency' => $order->get_currency(),
+			'customer'  => array(
+				'splitPayment'	 => false,
+				'customerNumber' => 1, //temp
+			),
+			'date' => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
+			'delivery' => array(
+				'address' => $order->get_shipping_address_1(),
+				'city' => $order->get_shipping_city(),
+				'country' => $order->get_shipping_country(),
+				// 'deliveryDate' => xxxxxx,
+				'zip' => $order->get_shipping_postcode(),
+			),
+			// 'deliveryLocation' => array(
+			// 	'deliveryLocationNumber' => 1,
+			// ),
+			'dueDate' => $order->get_date_created()->date( 'Y-m-d H:i:s' ), //temp
+			'exchangeRate' => 100.00,
+			'grossAmount' => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
+			// 'id' => $order->get_id(),
+			'isArchived' => false,
+			'isSent' => false,
+			'layout' => array( //temp
+				'isDefault' => false,
+				'layoutNumber' => 9,
+			),
+			// 'marginInBaseCurrency' => '',
+			// 'netAmountInBaseCurrency' => '',
+			'paymentTerms' => $payment_method,
+			'recipient' => array(
+				'address' => $order->get_billing_address_1(),
+				'city' => $order->get_billing_city(),
+				'country' => $order->get_billing_country(),
+				'name' =>  $client_name,
+				'publicEntryNumber' => $pa_code,
+				'vatZone' => array(
+					'vatZoneNumber' => 1, //temp
+				),
+				'zip' => $order->get_billing_postcode(),
+				// 'attention' => array(
+				// 	'name' => $customer_name,
+				// 	// 'emailNotifications' => $order->get_billing_email(),
+				// ),
+			),
+			'roundingAmount' => 0.00,
+			'vatAmount' => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
+			'vatIncluded' => true, //temp
+ 			// 'number' => $order->get_id(),
+ 			'notes' => array(
+ 				'text1' => 'WC-Order-' . $order->get_id(),
+ 			),
+ 			'lines' => $this->order_items_data( $order ),
+
+			// 'xxxxxx' => xxxxxxx,
+			// 'xxxxxx' => xxxxxxx,
+
+			// 'xxxxxxxxxx' => array(
+			// 	'xxxxxx' => xxxxxxx,
+			// 	'xxxxxx' => xxxxxxx,
+			// ),
+
+		);
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Export the single WC order to Reviso
+	 * @param  int  $order_id the order id
+	 * @param  bool $invoice export to Reviso as an invoice
+	 */
+	public function export_single_order( $order_id, $invoice = false ) {
 
 		$order = new WC_Order( $order_id );
+		// error_log( 'Order: ' . print_r( $order, true ) );
+					
+		$args = $this->prepare_order_data( $order );
 
-		error_log( 'Order: ' . print_r( $order, true ) );
+		error_log( 'ARGS: ' . json_encode( $args ) );
+
+		if ( $args ) {
+
+			$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
+
+			$output = $this->wcefrCall->call( 'post', $endpoint, $args );
+
+			error_log( 'OUTPUT: ' . print_r( $output, true ) );
+
+		}
+
+	}
+
+
+	/**
+	 * Export WC orders to Reviso
+	 */
+	public function export_orders() {
+
+		$statuses = isset( $_POST['statuses'] ) ? $_POST['statuses'] : array( 'any' );
+		
+		$args = array(
+			'post_type' => 'shop_order',  
+			'posts_per_page' => -1
+		);
+
+		/*Modifico la query con  le categorie prodotto selezionate dall'admin*/
+		if ( is_array( $statuses ) && ! empty( $statuses ) ) {
+			
+			$args['post_status'] = $statuses;
+
+			/*Aggiorno il dato nel db*/
+			// update_option( 'wcefr-products-categories', $statuses );
+
+		}
+
+		$posts = get_posts( $args );
+		
+		if( $posts ) {
+	
+			foreach ( $posts as $post ) {
+
+				if ( ! $this->document_exists( $post->ID ) && ! $this->document_exists( $post->ID, true ) ) {
+	
+					$this->export_single_order( $post->ID );
+	
+				}
+				
+			}
+	
+		}
+
+	}
+
+
+	public function delete_remote_orders( $id = null ) {
+
+		if ( $id ) {
+
+			$this->wcefrCall->call( 'delete', 'orders/' . $id );
+
+		} else {
+
+			$orders = $this->get_remote_orders();
+
+			if ( isset( $orders->collection ) && count( $orders->collection ) > 0 ) {
+
+				$n = 0;
+				$response = array();
+
+				foreach ( $orders->collection as $order ) {
+
+					$n++;
+					
+
+					// error_log( 'ORDINE ' . $n . ': ' . print_r( $order ,true ) );
+
+
+					
+					$output = $this->wcefrCall->call( 'delete', 'orders/' . $order->id );
+
+					error_log( 'OUTPUT: ' . print_r( $output, true ) );
+				
+					if ( 1 === $output->deletedCount ) {
+						
+						$response[] = array(
+							'ok',
+							// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+							__( 'Deleted order: <span>' . $n . '</span>', 'wcefr' ),			
+						);
+
+					} else {
+
+						error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+
+						$response[] = array(
+							'error',
+							__( 'ERROR! An error occurred with the order #' . $product->order->id . '<br>', 'wcefr' ),
+						);
+
+					}
+
+					echo json_encode( $response );
+
+				}
+
+				// $response = array(
+				// 	'ok',
+				// 	__( 'The delete process is started', 'wcefr' ),
+				// );
+
+				echo json_encode( $response );
+
+			} else {
+				
+				$response[] = array(
+					'error',
+					__( 'ERROR! There are not orders to delete', 'wcefr' ),
+				);
+
+				echo json_encode( $response );
+
+			}
+
+			exit;
+
+
+
+		}
 
 	} 
+
+
+	/**
+	 * Create a new Reviso invoice and delate the relative remote order if exists
+	 * @param  int $order_id the wc order id
+	 */
+	public function create_single_invoice( $order_id ) {
+
+		// Delete order
+		if ( $id = $this->document_exists( $order_id ) ) {
+			
+			$this->delete_remote_orders( $id );
+			
+		}
+
+		// Create invoice
+		$this->export_single_order( $order_id, true );
+		
+
+	}
 
 }
 new wcefrOrders;

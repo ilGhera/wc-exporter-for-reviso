@@ -13,12 +13,31 @@ var wcefrController = function() {
 	self.onLoad = function() {
 	    self.wcefr_pagination();
 		self.tzCheckbox();
+	    self.wcefr_export_users();
 	    self.wcefr_delete_remote_users();
-		self.get_user_groups('customer');
-		self.get_user_groups('supplier');
+		self.get_user_groups('customers');
+		self.get_user_groups('suppliers');
+		self.wcefr_export_products();
+		self.wcefr_export_orders();
 		self.wcefr_delete_remote_products();
+		self.wcefr_delete_remote_orders();
 		self.wcefr_disconnect();
 	}
+
+
+	/**
+	 * Cancella i messaggi dell'admin
+	 */
+	self.delete_messages = function() {
+
+		jQuery(function($){
+
+			$('.yes, .not', '.wcefr-message ').html('');
+
+		})
+
+	}
+
 
 	/**
 	 * Gestisce la navigazione tra i tab della pagina opzioni
@@ -63,7 +82,7 @@ var wcefrController = function() {
 		        $('html, body').scrollTop(0);
 
 		        /*Cancella messaggio admin*/
-		        $('.wcefr-message').html('');
+		        self.delete_messages();
 
 		    })
 
@@ -146,14 +165,66 @@ var wcefrController = function() {
 	 * @param  {string} message il testo del messaggio
 	 * @param  {bool}   error   in caso di errore stile differente 
 	 */
-	self.wcefr_response_message = function(message, error = false) {
+	self.wcefr_response_message = function(message, error = false, update = false) {
 
 		jQuery(function($){
 
+			var container	  = error ? $('.wcefr-message .not') : $('.wcefr-message .yes');
 			var message_class = error ? 'alert-danger' : 'alert-info';
 			var icon		  = error ? 'fa-exclamation-triangle' : 'fa-info-circle';
 			
-			$('.wcefr-message').html( '<div class="bootstrap-iso"><div class="alert ' + message_class + '"><b><i class="fas ' + icon + '"></i>WC Exporter for Reviso </b> - ' + message + '</div>' );
+			if ( update ) {
+
+				$(container).append( '<div class="bootstrap-iso"><div class="alert ' + message_class + '"><b><i class="fas ' + icon + '"></i>WC Exporter for Reviso </b> - ' + message + '</div>' );
+
+			} else {
+
+				$(container).html( '<div class="bootstrap-iso"><div class="alert ' + message_class + '"><b><i class="fas ' + icon + '"></i>WC Exporter for Reviso </b> - ' + message + '</div>' );
+
+			}
+
+		})
+
+	}
+
+
+	self.wcefr_export_users = function() {
+
+		jQuery(function($){
+
+			$('.button-primary.wcefr.export-users').on('click', function(e){
+
+				e.preventDefault();
+
+				var type  = $(this).hasClass('customers') ? 'customers' : 'suppliers';
+				var role  = $('.wcefr-' + type + '-role').val();
+				var group = $('.wcefr-' + type + '-groups').val();
+
+				var data = {
+					'action': 'export-users',
+					'type': type,
+					'role': role,
+					'group': group
+				}
+
+				$.post(ajaxurl, data, function(response){
+
+					console.log(response);
+					
+					var result = JSON.parse(response);
+
+					for (var i = 0; i < result.length; i++) {
+
+						var error = 'error' === result[i][0] ? true : false;
+						var update = 0 !== i ? true : false; 
+
+						self.wcefr_response_message( result[i][1], error, false );
+
+					}
+
+				})
+			
+			})
 
 		})
 
@@ -186,16 +257,66 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
-						console.table(response);
-
 						var result = JSON.parse(response);
-						var error = 'error' === result[0] ? true : false;
 
-						self.wcefr_response_message( result[1], error );
+						console.log(result);
+
+						for (var i = 0; i < result.length; i++) {
+
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, true );
+	
+						}
 
 					})
 
 				}
+
+			})
+
+		})
+
+	}
+
+
+	/**
+	 * Export products to Reviso
+	 */
+	self.wcefr_export_products = function() {
+
+		jQuery(function($){
+
+			$('.button-primary.wcefr.export.products').on('click', function(e){
+
+				e.preventDefault();
+
+				self.delete_messages();
+
+				var terms = $('.wcefr-products-categories').val();
+
+				var data = {
+					'action': 'export-products',
+					'terms': terms
+				}
+
+				$.post(ajaxurl, data, function(response){
+					
+					console.log(response);
+					
+					var result = JSON.parse(response);
+
+					for (var i = 0; i < result.length; i++) {
+
+						var error = 'error' === result[i][0] ? true : false;
+						var update = 0 !== i ? true : false; 
+
+						self.wcefr_response_message( result[i][1], error, false );
+
+					}
+
+				})
 
 			})
 
@@ -214,6 +335,8 @@ var wcefrController = function() {
 			$('.button-primary.wcefr.red.products').on('click', function(e){
 
 				e.preventDefault();
+
+				self.delete_messages();
 							
 				var answer = confirm( 'Vuoi cancellare tutti i prodotti da Reviso?' );
 
@@ -226,9 +349,17 @@ var wcefrController = function() {
 					$.post(ajaxurl, data, function(response){
 
 						var result = JSON.parse(response);
-						var error = 'error' === result[0] ? true : false;
 
-						self.wcefr_response_message( result[1], error );
+						console.log(result);
+
+						for (var i = 0; i < result.length; i++) {
+
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, true );
+	
+						}
 
 					})
 
@@ -256,7 +387,10 @@ var wcefrController = function() {
 			}
 
 			$.post(ajaxurl, data, function(response){
+
 				groups = JSON.parse(response);
+
+				console.log(groups);
 
 				if (typeof groups === 'object') {
 
@@ -298,6 +432,84 @@ var wcefrController = function() {
 				for (key in groups) {
 					$('.wcefr-supplier-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
 				}
+			})
+
+		})
+
+	}
+
+
+	/**
+	 * Export orders to Reviso
+	 */
+	self.wcefr_export_orders = function() {
+
+		jQuery(function($){
+
+			$('.button-primary.wcefr.export.orders').on('click', function(e){
+
+				e.preventDefault();
+
+				var statuses = $('.wcefr-orders-statuses').val();
+
+				console.log(statuses);
+
+				var data = {
+					'action': 'export-orders',
+					'statuses': statuses
+				}
+
+				$.post(ajaxurl, data, function(response){
+					
+					console.log(response);
+					
+					// var result = JSON.parse(response);
+
+					// for (var i = 0; i < result.length; i++) {
+
+					// 	var error = 'error' === result[i][0] ? true : false;
+					// 	var update = 0 !== i ? true : false; 
+
+					// 	self.wcefr_response_message( result[i][1], error, false );
+
+					// }
+
+				})
+
+			})
+
+		})
+
+	}
+
+
+	/**
+	 * Cancella tutti gli ordini ra Reviso
+	 */
+	self.wcefr_delete_remote_orders = function() {
+
+		jQuery(function($){
+
+			$('.button-primary.wcefr.red.orders').on('click', function(e){
+
+				e.preventDefault();
+								
+				var answer = confirm( 'Vuoi cancellare tutti gli ordini da Reviso?' );
+
+				if ( answer ) {
+
+					var data = {
+						'action': 'delete-remote-orders',
+					}
+
+					$.post(ajaxurl, data, function(response){
+
+						console.log(response);
+
+					})
+
+				}
+
 			})
 
 		})

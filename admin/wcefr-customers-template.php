@@ -33,15 +33,15 @@
 		<tr>
 			<th scope="row"><?php _e( 'Group', 'wcefr' ); ?></th>
 			<td>
-				<select class="wcefr-customer-groups" name="wcefr-customer-groups"></select>
-				<p class="description"><?php _e( 'Select a Reviso customer group or create a new one.', 'wcefr' ); ?></p>
+				<select class="wcefr-customers-groups" name="wcefr-customers-groups"></select>
+				<p class="description"><?php _e( 'Select a Reviso customer group.', 'wcefr' ); ?></p>
 			</td>
 		</tr>
 	</table>
 
 	<?php wp_nonce_field( 'wcefr-export-customers-submit', 'wcefr-export-customers-nonce' ); ?>
 	<p class="submit">
-		<input type="submit" name="download_csv" class="button-primary" value="<?php _e( 'Export to Reviso', 'wcefr' ); ?>" />
+		<input type="submit" name="download_csv" class="button-primary wcefr export-users customers" value="<?php _e( 'Export to Reviso', 'wcefr' ); ?>" />
 	</p>
 
 </form>

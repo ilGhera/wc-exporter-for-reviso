@@ -10,7 +10,8 @@ class wcefrProducts {
 
 	public function __construct() {
 
-		add_action( 'admin_init', array( $this, 'export_products' ) );
+		// add_action( 'admin_init', array( $this, 'export_products' ) );
+		add_action( 'wp_ajax_export-products', array( $this, 'export_products' ) );
 		add_action( 'wp_ajax_delete-remote-products', array( $this, 'delete_remote_products' ) );
 
 		$this->wcefrCall = new wcefrCall();
@@ -42,12 +43,15 @@ class wcefrProducts {
 	private function product_exists( $sku ) {
 		
 		$output = true;
+		
+		// error_log( 'EXISTS: ' . print_r( $this->wcefrCall->call( 'get', 'products/' . $sku ), true ) );
 
-		$response = json_decode( $this->wcefrCall->call( 'get', 'products/' . $sku ), true );
+		$response = $this->wcefrCall->call( 'get', 'products/' . $sku );
+		// $result   = isset( $response['body'] ) ? $response['body'] : '';
 
 		// error_log( 'Errore: ' . print_r( $response, true ) );
 		// 
-		if ( isset( $response['errorCode'] ) ) {
+		if ( isset( $response->errorCode ) ) {
 			$output = false;
 		}
 
@@ -62,7 +66,7 @@ class wcefrProducts {
 	 * @param  string $text la descrizione completa del prodotto WooCommerce
 	 * @return string
 	 */
-	public function prepare_product_desciption( $text ) {
+	private function prepare_product_description( $text ) {
 
 		$output = $text;
 
@@ -90,14 +94,15 @@ class wcefrProducts {
 			// 'barCode'  	    => $product->get_sku(),
 			'barred' 	    => false,
 			//'costPrice'   => xxxxxxx,
-			'description'   => $this->prepare_product_desciption( $product->get_description() ),
-			'inventory'     => array(
-				'available' 		   => ( float ) $product->get_stock_quantity(),
-		        'inStock'  			   => ( float ) $product->get_stock_quantity(),
+			'description'   => $this->prepare_product_description( $product->get_description() ),
+			// Al momento non supportato dalle API
+			// 'inventory'     => array(
+			// 	'available' 		   => ( float ) $product->get_stock_quantity(),
+		        // 'inStock'  			   => ( float ) $product->get_stock_quantity(),
 		        // 'orderedByCustomers'   => xxxxxxx,
 		        // 'orderedFromSuppliers' => xxxxxxx,
 		        // 'packageVolume' 	   => xxxxxxx,
-			),
+			// ),
 	        'unit' 		   => array(
 		        'unitNumber' => 1,
 			),
@@ -122,70 +127,114 @@ class wcefrProducts {
 
 
 	/**
+	 * Prepare the sku for getting the right product endpoint
+	 * @param  string $sku the product sku
+	 * @return string
+	 */
+	private function format_sku( $sku ) {
+
+		$output = str_replace('/', '_6_', $sku );
+
+		return $output;
+
+	}
+
+
+	/**
 	 * Esporta prodotti WooCommerce verso Reviso
 	 */
 	public function export_products() {
 
-		if ( isset( $_POST['wcefr-products-export'] ) ) {
+		$terms = isset( $_POST['terms'] ) ? $_POST['terms'] : '';
+		
+		$args = array(
+			'post_type' => array(
+				'product', 
+				// 'product_variation',
+			), 
+			'post_status'=>'publish',
+			'posts_per_page' => -1
+		);
 
-			$args = array(
-				'post_type' => array(
-					'product', 
-					// 'product_variation',
-				), 
-				'post_status'=>'publish',
-				'posts_per_page' => -1
+		/*Modifico la query con  le categorie prodotto selezionate dall'admin*/
+		if ( is_array( $terms ) && ! empty( $terms ) ) {
+			
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'term_id',
+					'terms'    => $terms,
+				),
 			);
 
-			/*Modifico la query con  le categorie prodotto selezionate dall'admin*/
-			if ( isset( $_POST['wcefr-products-categories'] ) ) {
-				
-				$terms = $_POST['wcefr-products-categories'];
-
-				$args['tax_query'] = array(
-					array(
-						'taxonomy' => 'product_cat',
-						'field'    => 'termi_id',
-						'terms'    => $terms,
-					),
-				);
-
-				/*Aggiorno il dato nel db*/
-				update_option( 'wcefr-products-categories', $terms );
-
-			}
-
-			$posts = get_posts( $args );
-			
-			if( $posts ) {
-				foreach ( $posts as $post ) {
-					
-					$product = wc_get_product( $post->ID );
-					$sku = $product->get_sku();
-
-					// error_log('Prodotto: ' . print_r( $product, true ) );
-
-					$args = $this->prepare_product_data( $product );
-
-					if ( $args ) {
-
-						if ( $this->product_exists( $sku ) ) {
-
-							$this->wcefrCall->call( 'put', 'products/' . $sku, $args );
-
-						} else {
-
-							$this->wcefrCall->call( 'post', 'products', $args );
-
-						}
-						
-					
-					}
-
-				}
-			}
+			/*Aggiorno il dato nel db*/
+			update_option( 'wcefr-products-categories', $terms );
 
 		}
+
+		$posts = get_posts( $args );
+		
+		if( $posts ) {
+
+			$n = 0;
+			$response = array();
+
+			foreach ( $posts as $post ) {
+
+				$n++;
+				
+				$product = wc_get_product( $post->ID );
+				$sku = $product->get_sku();
+
+				// error_log('Prodotto: ' . print_r( $product, true ) );
+
+				$args = $this->prepare_product_data( $product );
+
+				// error_log('ARGS: ' . print_r( $args, true ) );
+
+
+				if ( $args ) {
+
+					$end = $this->format_sku( $sku );
+
+					if ( $this->product_exists( $end ) ) {
+
+						$output = $this->wcefrCall->call( 'put', 'products/' . $end, $args );
+
+					} else {
+
+						$output = $this->wcefrCall->call( 'post', 'products', $args );
+
+					}
+
+					if ( isset( $output->errorCode ) ) {
+					
+						error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+
+						$response[] = array(
+							'error',
+							__( 'ERROR! ' . $output->message . ' #' . $product->get_sku() . '<br>', 'wcefr' ),
+							// __( 'ERROR! An error occurred with the product #' . $product->get_sku() . '<br>', 'wcefr' ),
+						);
+
+					} else {
+
+						$response[] = array(
+							'ok',
+							// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+							__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
+						);
+
+					}
+					
+					echo json_encode( $response );
+
+				}
+
+			}
+		}
+
+		exit;
 
 	}
 
@@ -195,31 +244,37 @@ class wcefrProducts {
 	 */
 	public function delete_remote_products() {
 
-		$products = json_decode( $this->get_remote_products() );
-		
+		$products = $this->get_remote_products(); 	
 		if ( isset( $products->collection ) && count( $products->collection ) > 0 ) {
 
 			$n = 0;
+			$response = array();
+
 			foreach ( $products->collection as $product ) {
 
-				$n++;
+				$end = $this->format_sku( $product->productNumber );
 				
-				$output = $this->wcefrCall->call( 'delete', 'products/' . $product->productNumber );
+				$output = $this->wcefrCall->call( 'delete', 'products/' . $end );
 			
-				error_log( '$output: ' . print_r( $output, true ) );
-
-				if ( '' === $output ) {
+				if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 					
-					$response = array(
-						'ok',
-						__( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+					error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+
+					$response[] = array(
+						'error',
+						__( 'ERROR! ' . $output->message . ' #' . $product->productNumber . '<br>', 'wcefr' ),
+						// __( 'ERROR! An error occurred with the product #' . $product->productNumber . '<br>', 'wcefr' ),
 					);
+
 
 				} else {
 
-					$response = array(
-						'error',
-						__( 'ERROR! An error accour with the product #' . $product->productNumber . '<br>', 'wcefr' ),
+					$n++;
+
+					$response[] = array(
+						'ok',
+						// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+						__( 'Deleted products: <span>' . $n . '</span>', 'wcefr' ),			
 					);
 
 				}
@@ -228,16 +283,16 @@ class wcefrProducts {
 
 			}
 
-			$response = array(
-				'ok',
-				__( 'The delete process is started', 'wcefr' ),
-			);
+			// $response = array(
+			// 	'ok',
+			// 	__( 'The delete process is started', 'wcefr' ),
+			// );
 
 			echo json_encode( $response );
 
 		} else {
 			
-			$response = array(
+			$response[] = array(
 				'error',
 				__( 'ERROR! There are not products to delete', 'wcefr' ),
 			);

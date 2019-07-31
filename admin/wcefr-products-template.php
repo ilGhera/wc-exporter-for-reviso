@@ -36,7 +36,7 @@
 		</tr>
 	</table>
 
-	<input type="submit" name="wcefr-products-export" class="button-primary" value="<?php _e( 'Export to Reviso', 'wcefr' ); ?>">
+	<input type="submit" name="wcefr-products-export" class="button-primary wcefr export products" value="<?php _e( 'Export to Reviso', 'wcefr' ); ?>">
 
 </form>
 

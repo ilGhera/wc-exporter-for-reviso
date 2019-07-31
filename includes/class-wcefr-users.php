@@ -10,11 +10,12 @@ class wcefrUsers {
 
 	public function __construct() {
 
-		add_action( 'admin_init', array( $this, 'export_customers' ) );
-		add_action( 'admin_init', array( $this, 'export_suppliers' ) );
+		// add_action( 'admin_init', array( $this, 'export_customers' ) );
+		// add_action( 'admin_init', array( $this, 'export_suppliers' ) );
+		add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
 		add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
-		add_action( 'wp_ajax_get-customer-groups', array( $this, 'get_customer_groups' ) );
-		add_action( 'wp_ajax_get-supplier-groups', array( $this, 'get_supplier_groups' ) );
+		add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
+		add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
 
 		$this->wcefrCall = new wcefrCall();
 
@@ -40,7 +41,7 @@ class wcefrUsers {
 	 */
 	private function get_province_number( $code ) {
 
-		$provinces = json_decode( $this->wcefrCall->call( 'get', 'provinces/IT?pagesize=1000' ) );
+		$provinces = $this->wcefrCall->call( 'get', 'provinces/IT?pagesize=1000' );
 
 		if ( isset( $provinces->collection ) ) {
 
@@ -61,7 +62,7 @@ class wcefrUsers {
 	 */
 	private function get_delivery_locations( $customer_number ) {
 
-		$output = json_decode( $this->wcefrCall->call( 'get', 'customers/' . $customer_number . '/delivery-locations' ) );
+		$output = $this->wcefrCall->call( 'get', 'customers/' . $customer_number . '/delivery-locations' );
 
 		return $output;
 		
@@ -135,9 +136,9 @@ class wcefrUsers {
 		$output = false;
 		$mails = array();
 
-		$users = json_decode( $this->get_remote_users( $type ) );
+		$users = $this->get_remote_users( $type );
 
-		$field_name = 'customer' === $type ? 'customerNumber' : 'supplierNumber';
+		$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
 
 		if ( isset( $users->collection ) ) {
 			foreach ($users->collection as $customer) {
@@ -155,16 +156,19 @@ class wcefrUsers {
 
 	/**
 	 * Restituisce i gruppi presenti in Reviso per il tipo di utente dato
-	 * @param  string $type cliente o fornitore
+	 * @param  string $type clienti o fornitori
 	 * @return array
 	 */
 	public function get_user_groups( $type ) {
 
 		$output = array();
 
-		$groups = json_decode( $this->wcefrCall->call( 'get', $type . '-groups' ) );
+		// From plural to singular as required by the endpoint
+		$endpoint = substr( $type, 0, -1 );
 
-		$field_name = 'customer' === $type ? 'customerGroupNumber' : 'supplierGroupNumber';
+		$groups = $this->wcefrCall->call( 'get', $endpoint . '-groups' );
+
+		$field_name = 'customers' === $type ? 'customerGroupNumber' : 'supplierGroupNumber';
 
 		if ( isset( $groups->collection ) ) {
 			
@@ -189,9 +193,9 @@ class wcefrUsers {
 	 * Callback - Recupero gruppi fornitori
 	 * @return string json
 	 */
-	public function get_supplier_groups() {
+	public function get_suppliers_groups() {
 
-		$output = $this->get_user_groups( 'supplier' );
+		$output = $this->get_user_groups( 'suppliers' );
 		echo json_encode( $output );
 
 		exit;
@@ -203,9 +207,9 @@ class wcefrUsers {
 	 * Callback - Recupero gruppi clienti
 	 * @return string json
 	 */
-	public function get_customer_groups() {
+	public function get_customers_groups() {
 
-		$output = $this->get_user_groups( 'customer' );
+		$output = $this->get_user_groups( 'customers' );
 		echo json_encode( $output );
 
 		exit;
@@ -221,8 +225,7 @@ class wcefrUsers {
 	 */
 	public function prepare_user_data( $user, $type ) {
 
-		$type = 'customers' === $type ? 'customer' : 'supplier';
-
+		$type_singular = substr( $type , 0, -1 );
 
 		$user_details = get_userdata( $user->ID );
 					
@@ -236,7 +239,7 @@ class wcefrUsers {
 		$user_email = $user_data['billing_email'];
 
 		/*Gruppo Reviso selezionato dall'admnin*/
-		$group = isset( $_POST['wcefr-' . $type . '-groups'] ) ? intval( $_POST['wcefr-' . $type . '-groups'] ) : ''; 
+		$group = get_option( 'wcefr-' . $type . '-group' );
 
 		// error_log( 'Group2: ' . $_POST['wcefr-' . $type . '-groups'] );
 
@@ -251,8 +254,8 @@ class wcefrUsers {
 			$args = array(
 				'name' => $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'],
 				'email' => $user_email,
-				$type . 'Group' => array(
-					$type . 'GroupNumber' => $group,
+				$type_singular . 'Group' => array(
+					$type_singular . 'GroupNumber' => $group,
 				),
 				'currency' => 'EUR',
 				'country' => $user_data['billing_country'],
@@ -302,32 +305,62 @@ class wcefrUsers {
 	 */
 	public function export_users( $type ) {
 
-		/*Ruolo utente da esportare*/
-		$users_role = sanitize_text_field( $_POST['wcefr-' . $type . '-role'] );
+		$type  = isset( $_POST['type'] ) ? sanitize_text_field( $_POST['type'] ) : '';
+		$role  = isset( $_POST['role'] ) ? sanitize_text_field( $_POST['role'] ) : '';
+		$group = isset( $_POST['group'] ) ? sanitize_text_field( $_POST['group'] ) : '';
 
 		/*Salvo le impostazioni nel database*/
-		update_option( 'wcefr-' . $type . '-role', $users_role ); 
+		update_option( 'wcefr-' . $type . '-role', $role ); 
+		update_option( 'wcefr-' . $type . '-group', $group ); 
 		  
-		$args = array( 'role' => $users_role );
+		$args = array( 'role' => $role );
 
 		$users = get_users($args);
 
+		$response = array();
+
 		if ( $users ) {
+
+			$n = 0;
+
 			foreach ($users as $user) {	
 				
 				$args = $this->prepare_user_data( $user, $type );
 
 				if ( $args and ! $this->user_exists( $type, $args['email'] ) ) {
 
-					$this->wcefrCall->call( 'post', $type . '/', $args );
-					// $this->add_delivery_location( 1, $user_data );
-			
+					$output = $this->wcefrCall->call( 'post', $type . '/', $args );
+					
+					if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
+					
+						error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+
+						$response[] = array(
+							'error',
+							__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
+						);
+
+					} else {
+
+						$n++;
+
+						$response[] = array(
+							'ok',
+							// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+							__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+						);
+
+					}
+								
 				}
 					
 			}
 
 		}
 
+		echo json_encode( $response );
+
+		exit;
 	}
 
 
@@ -367,25 +400,38 @@ class wcefrUsers {
 		if ( isset( $_POST['type'] ) ) {
 
 			$type = sanitize_text_field( $_POST['type'] );
-			$users = json_decode( $this->get_remote_users( $type ) );
+			$users = $this->get_remote_users( $type );
 
 			$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
 
 			if ( isset( $users->collection ) && count( $users->collection ) > 0 ) {
 				
 				$n = 0;
+				$response = array();
+
 				foreach ( $users->collection as $user ) {
 					
 					$n++;
 
 					$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
+					error_log( 'CANCELLAZIONE UTENTI: ' . print_r( $output, true ) );
+					if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 
+						$response[] = array(
+							'error',
+							__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
+						);
+
+					} else {
+		
+						$response = array(
+							'ok',
+							__( 'Deleted ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+						);
+
+					}
+ 
 				}
-
-				$response = array(
-					'ok',
-					__( 'The delete process is started', 'wcefr' ),
-				);
 
 				echo json_encode( $response );
 

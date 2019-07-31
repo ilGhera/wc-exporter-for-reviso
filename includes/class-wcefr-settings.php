@@ -91,7 +91,7 @@ class wcefrSettings {
 
 	public function check_connection_callback() {
 			
-		$response = json_decode( $this->wcefrCall->call( 'get', 'self' ) );
+		$response = $this->wcefrCall->call( 'get', 'self' );
 		
 		if ( isset( $response->application->appNumber ) && 2891 ===  $response->application->appNumber ) {
 

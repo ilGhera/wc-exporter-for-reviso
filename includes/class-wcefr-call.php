@@ -55,16 +55,23 @@ class wcefrCall {
 
 		);
 
+		// error_log( 'Generic response: ' . print_r( $response['body'], true ) );
+
+
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
 
 			/*TEMP*/
 			if ( $method == 'delete' ) {
-				error_log( 'Response: ' . print_r( $response['body'], true ) );
+				// error_log( 'Response: ' . print_r( $response['body'], true ) );
 				// error_log( 'Response: ' . print_r( $response, true ) );
 			}
 
-			return $response['body'];
+			if ( 'products' == $endpoint ) {
+				error_log( 'Response: ' . print_r( $response['body'], true ) );
+			}
+
+			return json_decode( $response['body'] );
 
 		} else {
 

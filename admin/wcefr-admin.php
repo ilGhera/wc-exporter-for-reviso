@@ -133,7 +133,10 @@ class wcefrAdmin {
 				echo '</div>';
 
 				/*Utilizzato per mostrare messaggio all'admin*/
-				echo '<div class="wcefr-message"></div>';
+				echo '<div class="wcefr-message">';
+					echo '<div class="yes"></div>';
+					echo '<div class="not"></div>';
+				echo '</div>';
 
 			echo '</div>';
 		

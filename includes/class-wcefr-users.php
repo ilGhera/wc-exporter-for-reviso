@@ -16,6 +16,8 @@ class wcefrUsers {
 		add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
 		add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
 		add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+		add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
+		add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 
 		$this->wcefrCall = new wcefrCall();
 
@@ -255,7 +257,7 @@ class wcefrUsers {
 				'name' => $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'],
 				'email' => $user_email,
 				$type_singular . 'Group' => array(
-					$type_singular . 'GroupNumber' => $group,
+					$type_singular . 'GroupNumber' => intval( $group ),
 				),
 				'currency' => 'EUR',
 				'country' => $user_data['billing_country'],
@@ -271,16 +273,16 @@ class wcefrUsers {
 				),
 				'address' => $user_data['billing_address_1'],
 				'zip' => $user_data['billing_postcode'],
-				'vatNumber' => $user_data['billing_wcexd_piva'], //TEMP
+				// 'vatNumber' => $user_data['billing_wcexd_piva'], //TEMP
 				'vatZone' => array(
 					'vatZoneNumber' => 1,
 				),
 				'paymentTerms' => array(
 					'paymentTermsNumber' => 6,
 				),
-				'italianCertifiedEmail' => $user_data['billing_wcexd_pec'],
-				'corporateIdentificationNumber' => $user_data['billing_wcexd_cf'],
-				'publicEntryNumber' => $user_data['billing_wcexd_pa_code'],
+				// 'italianCertifiedEmail' => $user_data['billing_wcexd_pec'],
+				// 'corporateIdentificationNumber' => $user_data['billing_wcexd_cf'],
+				// 'publicEntryNumber' => $user_data['billing_wcexd_pa_code'],
 
 				'telephoneAndFaxNumber' => $user_data['billing_phone'],
 				'website' => $user_details->user_url,
@@ -292,9 +294,59 @@ class wcefrUsers {
 
 			);
 
+			if ( isset( $user_data['billing_wcexd_piva'] ) ) {
+				$args['vatNumber'] = $user_data['billing_wcexd_piva'];
+			}
+
+			if ( isset( $user_data['billing_wcexd_cf'] ) ) {
+				$args['corporateIdentificationNumber'] = $user_data['billing_wcexd_cf'];
+			}
+
+			if ( isset( $user_data['billing_wcexd_pec'] ) ) {
+				$args['italianCertifiedEmail'] = $user_data['billing_wcexd_pec'];
+			}
+
+			if ( isset( $user_data['billing_wcexd_pa_code'] ) ) {
+				$args['publicEntryNumber'] = $user_data['billing_wcexd_pa_code'];
+			}
+
 		}
 
 		return $args;
+
+	}
+
+
+	public function export_single_user( $n, $user, $type ) {
+
+		$args = $this->prepare_user_data( $user, $type );
+
+		if ( $args and ! $this->user_exists( $type, $args['email'] ) ) {
+
+			$output = $this->wcefrCall->call( 'post', $type . '/', $args );
+			
+			if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
+			
+				error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+
+				$response[] = array(
+					'error',
+					__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
+				);
+
+			} else {
+
+				$n++;
+
+				$response[] = array(
+					'ok',
+					// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+					__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+				);
+
+			}
+						
+		}
 
 	}
 
@@ -324,39 +376,32 @@ class wcefrUsers {
 			$n = 0;
 
 			foreach ($users as $user) {	
-				
-				$args = $this->prepare_user_data( $user, $type );
 
-				if ( $args and ! $this->user_exists( $type, $args['email'] ) ) {
+				$n++;
 
-					$output = $this->wcefrCall->call( 'post', $type . '/', $args );
+				/*Cron event*/
+				wp_schedule_single_event(
+
+					time() + 1,
+					'wcefr_export_single_user_event',
+					array(
+						$n,
+						$user,
+						$type,
+					)
 					
-					if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
-					
-						error_log( 'ATTENZIONE:' . print_r( $output, true ) );
+				);								
 
-						$response[] = array(
-							'error',
-							__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
-						);
-
-					} else {
-
-						$n++;
-
-						$response[] = array(
-							'ok',
-							// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
-							__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
-						);
-
-					}
-								
-				}
-					
 			}
 
 		}
+
+		$response[] = array(
+			'ok',
+			// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
+			__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+		);
+
 
 		echo json_encode( $response );
 
@@ -392,6 +437,29 @@ class wcefrUsers {
 	}
 
 
+	public function delete_remote_single_user( $n, $user, $type, $field_name ) {
+
+		$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
+		error_log( 'CANCELLAZIONE UTENTI: ' . print_r( $output, true ) );
+		if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
+
+			$response = array(
+				'error',
+				__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
+			);
+
+		} else {
+
+			$response = array(
+				'ok',
+				__( 'Deleted ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+			);
+
+		}
+
+	}
+
+
 	/**
 	 * Cancella tutti i clienti presenti in Reviso
 	 */
@@ -413,23 +481,19 @@ class wcefrUsers {
 					
 					$n++;
 
-					$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
-					error_log( 'CANCELLAZIONE UTENTI: ' . print_r( $output, true ) );
-					if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
+					/*Cron event*/
+					wp_schedule_single_event(
 
-						$response[] = array(
-							'error',
-							__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
-						);
-
-					} else {
-		
-						$response = array(
-							'ok',
-							__( 'Deleted ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
-						);
-
-					}
+						time() + 1,
+						'wcefr_delete_remote_single_user_event',
+						array(
+							$n,
+							$user,
+							$type,
+							$field_name,
+						)
+						
+					);													
  
 				}
 

@@ -44,12 +44,15 @@ class wcefrCall {
 
 		$body = $args ? json_encode( $args ) : '';
 
+		error_log( 'ARGS: ' .  print_r( $body, true ) );
+
 		$response = wp_remote_request(
 
 			$this->base_url . $endpoint, 
 			array( 
 				'method' => $method,
 				'headers' => $this->headers(),
+				'timeout' => 20,
 				'body'    => $body,
 			)
 

@@ -22,6 +22,7 @@ var wcefrController = function() {
 		self.wcefr_delete_remote_products();
 		self.wcefr_delete_remote_orders();
 		self.wcefr_disconnect();
+		self.test_message();
 	}
 
 
@@ -185,6 +186,25 @@ var wcefrController = function() {
 
 		})
 
+	}
+
+
+	self.test_message = function(message) {
+		jQuery(function($){
+
+			var data = {
+				'action': 'admin-message',
+				'message': message
+			}
+
+			$.post(ajaxurl, data, function(response){
+				if ( response ) {
+					console.log(response);
+					self.wcefr_response_message(response);
+				}
+			})
+
+		})
 	}
 
 
@@ -463,16 +483,16 @@ var wcefrController = function() {
 					
 					console.log(response);
 					
-					// var result = JSON.parse(response);
+					var result = JSON.parse(response);
 
-					// for (var i = 0; i < result.length; i++) {
+					for (var i = 0; i < result.length; i++) {
 
-					// 	var error = 'error' === result[i][0] ? true : false;
-					// 	var update = 0 !== i ? true : false; 
+						var error = 'error' === result[i][0] ? true : false;
+						var update = 0 !== i ? true : false; 
 
-					// 	self.wcefr_response_message( result[i][1], error, false );
+						self.wcefr_response_message( result[i][1], error, true );
 
-					// }
+					}
 
 				})
 
@@ -505,6 +525,17 @@ var wcefrController = function() {
 					$.post(ajaxurl, data, function(response){
 
 						console.log(response);
+
+						var result = JSON.parse(response);
+
+						for (var i = 0; i < result.length; i++) {
+
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, true );
+
+						}
 
 					})
 

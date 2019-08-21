@@ -360,18 +360,20 @@ class wcefrProducts {
 	 */
 	private function prepare_product_data( $product ) {
 
-		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_price();
+		error_log( 'PRODOTTO: '  . print_r( $product, true ) );
+
+		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
 		$output = array(
-			'productNumber' => $product->get_sku(),
-			'barred' 	    => false,
-			'name' 		   => $product->get_title(),
-			'description'   => $this->prepare_product_description( $product->get_description() ),
-			'salesPrice' 		   => ( float ) number_format( $sale_price, 2 ),
-			'productGroup' => array(
+			'productNumber'    => $product->get_sku(),
+			'barred' 	       => false,
+			'name' 		       => $product->get_name(),
+			'description'      => $this->prepare_product_description( $product->get_description() ),
+			'salesPrice'       => ( float ) number_format( $sale_price, 2 ),
+			'productGroup'     => array(
 				'productGroupNumber' => $this->get_product_group( $product->is_taxable(), $product->get_tax_class() ),
 			),
-			'recommendedPrice' 	   => ( float ) number_format( $product->get_price(), 2 ),
-	        'unit' 		   => array(
+			'recommendedPrice' => ( float ) number_format( $product->get_regular_price(), 2 ),
+	        'unit' 		   	   => array(
 		        'unitNumber' => 1,
 			),
 
@@ -421,41 +423,45 @@ class wcefrProducts {
 		$product = wc_get_product( $post_id );
 		$sku = $product->get_sku();
 
+		/*Avoid parent product export*/
+		if ( ! $product->is_type( 'variable' ) ) {
 
-		$args = $this->prepare_product_data( $product );
+			$args = $this->prepare_product_data( $product );
 
+			if ( $args ) {
 
-		if ( $args ) {
+				$end = $this->format_sku( $sku );
 
-			$end = $this->format_sku( $sku );
+				if ( $this->product_exists( $end ) ) {
 
-			if ( $this->product_exists( $end ) ) {
+					$output = $this->wcefrCall->call( 'put', 'products/' . $end, $args );
 
-				$output = $this->wcefrCall->call( 'put', 'products/' . $end, $args );
+				} else {
 
-			} else {
+					$output = $this->wcefrCall->call( 'post', 'products', $args );
 
-				$output = $this->wcefrCall->call( 'post', 'products', $args );
+				}
+
+				if ( isset( $output->errorCode ) ) {		
+
+					$response[] = array(
+						'error',
+						__( 'ERROR! ' . $output->message . ' #' . $product->get_sku() . '<br>', 'wcefr' ),
+					);
+
+				} else {
+
+					$response[] = array(
+						'ok',
+						__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
+					);
+
+				}
+				
+				echo json_encode( $response );
 
 			}
 
-			if ( isset( $output->errorCode ) ) {		
-
-				$response[] = array(
-					'error',
-					__( 'ERROR! ' . $output->message . ' #' . $product->get_sku() . '<br>', 'wcefr' ),
-				);
-
-			} else {
-
-				$response[] = array(
-					'ok',
-					__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
-				);
-
-			}
-			
-			echo json_encode( $response );
 
 		}
 

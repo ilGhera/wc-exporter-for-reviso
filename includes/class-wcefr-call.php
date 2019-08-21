@@ -66,6 +66,7 @@ class wcefrCall {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
+			// error_log( 'WCEFR | RESPONSE: ' . print_r( $response['body'], true ) );
 			return json_decode( $response['body'] );
 
 		} else {

@@ -475,7 +475,7 @@ class wcefrProducts {
 		$args = array(
 			'post_type' => array(
 				'product', 
-				// 'product_variation',
+				'product_variation',
 			), 
 			'post_status'=>'publish',
 			'posts_per_page' => -1
@@ -492,10 +492,11 @@ class wcefrProducts {
 				),
 			);
 
-			/*Update the db*/
-			update_option( 'wcefr-products-categories', $terms );
-
 		}
+
+		/*Update the db*/
+		update_option( 'wcefr-products-categories', $terms );
+
 
 		$posts = get_posts( $args );
 		

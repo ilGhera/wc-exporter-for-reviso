@@ -1,12 +1,13 @@
 <?php
 /**
- * Prodotti
+ * Products options
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
  * @since 0.9.0
  */
 ?>
 
+<!-- Export form -->
 <form name="wcefr-export-products" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -17,7 +18,7 @@
 					<?php
 					$terms = get_terms( 'product_cat' );
 					
-					/*Leggo il dato se già esistente nel database*/
+					/*Get the value from the db*/
 					$products_categories = get_option( 'wcefr-products-categories' );
 
 					if ( $terms ) {
@@ -41,6 +42,7 @@
 </form>
 
 
+<!-- Delete form -->
 <form name="wcefr-delete-products" id="wcefr-delete-products" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -53,6 +55,7 @@
 	</table>
 
 	<?php //wp_nonce_field( 'wcefr-export-products-submit', 'wcefr-export-products-nonce' ); ?>
+	
 	<p class="submit">
 		<input type="submit" class="button-primary wcefr red products" value="<?php _e( 'Delete from Reviso', 'wcefr' ); ?>" />
 	</p>

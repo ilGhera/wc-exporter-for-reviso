@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: WooCommerce Exporter for Reviso
- * Plugin URI: https://www.ilghera.com/product/woocommerce-exporter-for-reviso
- * Description: xxxxxxxx
+ * Plugin Name: WooCommerce Exporter for Reviso - Premium
+ * Plugin URI: https://www.ilghera.com/product/woocommerce-exporter-for-reviso-premium
+ * Description: Connect your store to Reviso and export orders, products, customers and suppliers.
  * Author: ilGhera
- * Version: 0.0.9
+ * Version: 0.9.0
  * Author URI: https://ilghera.com
  * Requires at least: 4.0
  * Tested up to: 5
@@ -13,6 +13,10 @@
  */
 
 
+/**
+ * Handles the plugin activation
+ * @return void
+ */
 function load_wc_exporter_for_reviso() {
 
 	/*Function check */
@@ -23,14 +27,14 @@ function load_wc_exporter_for_reviso() {
 	/*Internationalization*/
 	load_plugin_textdomain( 'wcefr', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
-	/*Dichiarazioni costanti*/
+	/*Constants declaration*/
 	define( 'WCEFR_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WCEFR_URI', plugin_dir_url( __FILE__ ) );
 	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );
 	define( 'WCEFR_ADMIN', WCEFR_DIR . 'admin/' );
 	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
 
-	/*Richiamo file necessari*/
+	/*Files required*/
 	require( WCEFR_ADMIN . 'wcefr-admin.php' );
 	require( WCEFR_INCLUDES . 'wcefr-functions.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-call.php' );

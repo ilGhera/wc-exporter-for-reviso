@@ -1,9 +1,10 @@
 /**
- * Gestisce la visualizzazione dei campi fiscali in base al tipo di fattura selezionato
+ * Handles the visualizations of the fiscal fields based on the documents types activated by the admin
  * @author ilGhera
  * @package wc-exporter-for-danea-reviso/js
  * @since 0.9.0
  */
+
 jQuery(document).ready(function($){
 
 	var invoice_type  = $('#billing_wcefr_invoice_type');
@@ -44,4 +45,5 @@ jQuery(document).ready(function($){
 		
 		}
 	})
+
 })

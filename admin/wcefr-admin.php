@@ -13,13 +13,12 @@ class wcefrAdmin {
 		add_action( 'admin_menu', array( $this, 'wcefr_add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this , 'wcefr_register_scripts' ) );
 
-		// $connect = $this->connect();
-		// add_action( 'admin_init', array( $this, 'connect' ) );
 	}
 
 
 	/**
-	 * Registrazione script necessario al menu di navigazione
+	 * Scripts and style sheets
+	 * @return void
 	 */
 	function wcefr_register_scripts() {
 
@@ -28,14 +27,11 @@ class wcefrAdmin {
 
 			/*js*/
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr.js', array( 'jquery' ), '1.0', true );
-		    wp_enqueue_script('bootstrap-js', plugin_dir_url(__DIR__) . 'js/bootstrap.min.js');
-			// wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
-			// wp_enqueue_script( 'tzcheckbox-script', WCEFR_URI . 'js/tzCheckbox/js/script.js', array( 'jquery' ) );
+		    wp_enqueue_script( 'bootstrap-js', plugin_dir_url(__DIR__) . 'js/bootstrap.min.js' );
 		
 			/*css*/
 			wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css' );
-		    wp_enqueue_style('bootstrap-iso', plugin_dir_url(__DIR__) . 'css/bootstrap-iso.css');
-			// wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
+		    wp_enqueue_style( 'bootstrap-iso', plugin_dir_url(__DIR__) . 'css/bootstrap-iso.css' );
 
 		}
 
@@ -43,7 +39,8 @@ class wcefrAdmin {
 
 
 	/**
-	 * Voce di menu
+	 * Menu page
+	 * @return string
 	 */
 	public function wcefr_add_menu() {
 		$wcefr_page = add_submenu_page( 'woocommerce', 'WCEFR Options', 'WC Exporter for Reviso', 'manage_woocommerce', 'wc-exporter-for-reviso', array( $this, 'wcefr_options' ) );
@@ -53,21 +50,22 @@ class wcefrAdmin {
 
 
 	/**
-	 * Pagina opzioni
+	 * Options page
+	 * @return mixed
 	 */
 	public function wcefr_options() {
 
-		/*Controllo se l'utente ha i diritti d'accessso necessari*/
+		/*Right of access*/
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( __( 'It seems like you don\'t have permission to see this page', 'wcefr' ) );
 		}
 
 
-		/*Inizio template di pagina*/
+		/*Page template start*/
 		echo '<div class="wrap">';
 			echo '<div class="wrap-left">';
 
-				/*Controllo se woocommerce e' installato*/
+				/*Check if WooCommerce is installed ancd activated*/
 				if ( ! class_exists( 'WooCommerce' ) ) {
 					echo '<div id="message" class="error">';
 						echo '<p>';
@@ -100,7 +98,7 @@ class wcefrAdmin {
 						echo '</div>';
 
 
-						/*Cusomers*/
+						/*Suppliers*/
 						echo '<div id="wcefr-suppliers" class="wcefr-admin">';
 
 							include( WCEFR_ADMIN . 'wcefr-suppliers-template.php' );
@@ -108,7 +106,7 @@ class wcefrAdmin {
 						echo '</div>';
 
 
-						/*Cusomers*/
+						/*Products*/
 						echo '<div id="wcefr-products" class="wcefr-admin">';
 
 							include( WCEFR_ADMIN . 'wcefr-products-template.php' );
@@ -116,14 +114,14 @@ class wcefrAdmin {
 						echo '</div>';
 
 
-						/*Cusomers*/
+						/*Customers*/
 						echo '<div id="wcefr-customers" class="wcefr-admin">';
 
 							include( WCEFR_ADMIN . 'wcefr-customers-template.php' );
 
 						echo '</div>';
 
-						/*Cusomers*/
+						/*Orders*/
 						echo '<div id="wcefr-orders" class="wcefr-admin">';
 
 							include( WCEFR_ADMIN . 'wcefr-orders-template.php' );
@@ -132,7 +130,7 @@ class wcefrAdmin {
 
 				echo '</div>';
 
-				/*Utilizzato per mostrare messaggio all'admin*/
+				/*Admin message*/
 				echo '<div class="wcefr-message">';
 					echo '<div class="yes"></div>';
 					echo '<div class="not"></div>';
@@ -147,72 +145,6 @@ class wcefrAdmin {
 			echo '<div class="clear"></div>';
 
 		echo '</div>';
-
-	}
-
-
-	public function connect() {
-
-		if ( isset( $_POST['api'] ) ) {
-
-			$add_customer = array(
-				'name' => 'Franco Bianchi',
-				// 'italianCustomerType' => 'Consumer',
-				'email' => 'franco@bianchi.it',
-				'customerGroup' => array(
-					'customerGroupNumber' => 1,
-				),
-				'currency' => 'EUR',
-				'country' => 'Italia',
-				'City' => 'Varese',
-				'address' => 'via Rossi, 33',
-				'zip' => '21100',
-				'vatNumber' => '02847000128',
-				'vatZone' => array(
-					'vatZoneNumber' => 1,
-				),
-				'paymentTerms' => array(
-					'paymentTermsNumber' => 6,
-				),
-				// 'xxxxx' => 'xxxxxxx',
-			);
-
-			$delete_customer = array(
-				'customerNumber' => 2,
-			);
-
-			$redirect = admin_url( 'page=reviso-for-wc' );
-
-			// $test = wp_remote_get( 'https://rest.reviso.com/customers', array( 'headers' => $headers ) );
-			// $test = wp_remote_get( 'https://rest.reviso.com/v2/invoices/', array( 'headers' => $headers ) );
-			// $test = wp_remote_get( 'https://rest.reviso.com/orders/', array( 'headers' => $headers ) );
-			// $test = wp_remote_post( 
-			
-			// 	'https://rest.reviso.com/orders/', 
-			// 	array( 
-			// 		'headers' => $headers ,
-			// 		'body'    => array(
-
-			// 		),
-			// 	),
-
-			// );
-			// 
-		
-
-
-			$test = new wcefrCall( 
-				
-				'post',
-				'customers', 
-				$add_customer
-
-			);
-
-			// error_log( 'Response: ' . print_r( $test['body'], true ) );
-		
-		}
-
 
 	}
 

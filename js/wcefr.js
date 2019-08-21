@@ -5,7 +5,6 @@
  * @since 0.9.0
  */
 
-
 var wcefrController = function() {
 
 	var self = this;
@@ -22,12 +21,11 @@ var wcefrController = function() {
 		self.wcefr_delete_remote_products();
 		self.wcefr_delete_remote_orders();
 		self.wcefr_disconnect();
-		self.test_message();
 	}
 
 
 	/**
-	 * Cancella i messaggi dell'admin
+	 * Delete the admin messages
 	 */
 	self.delete_messages = function() {
 
@@ -41,7 +39,7 @@ var wcefrController = function() {
 
 
 	/**
-	 * Gestisce la navigazione tra i tab della pagina opzioni
+	 * Tab navigation
 	 */
 	self.wcefr_pagination = function() {
 
@@ -82,7 +80,7 @@ var wcefrController = function() {
 
 		        $('html, body').scrollTop(0);
 
-		        /*Cancella messaggio admin*/
+		        /*Delete the admin messages*/
 		        self.delete_messages();
 
 		    })
@@ -105,7 +103,7 @@ var wcefrController = function() {
 		
 
 	/**
-	 * Verifica connessione Reviso
+	 * Check the connection to Reviso
 	 */
 	self.wcefr_check_connection = function() {
 
@@ -116,7 +114,6 @@ var wcefrController = function() {
 			}
 
 			$.post(ajaxurl, data, function(response){
-				// console.log(response);
 
 				if(response) {
 			
@@ -135,16 +132,13 @@ var wcefrController = function() {
 
 
 	/**
-	 * Disconnette il plugin dalla piattaforma Reviso, 
-	 * cancellando l'Agreement Grant Tocken dal db
+	 * Disconnect from Reviso deleting the Agreement Grant Tocken from the db
 	 */
 	self.wcefr_disconnect = function() {
 
 		jQuery(function($){
 
 			$(document).on('click', '.wcefr-disconnect', function(){
-
-				console.log('Vai!');
 
 				var data = {
 					'action': 'wcefr-disconnect'
@@ -162,9 +156,9 @@ var wcefrController = function() {
 
 
 	/**
-	 * Mostra un messaggio all'admin
-	 * @param  {string} message il testo del messaggio
-	 * @param  {bool}   error   in caso di errore stile differente 
+	 * Show a message to the admin
+	 * @param  {string} message the text
+	 * @param  {bool}   error   different style with true
 	 */
 	self.wcefr_response_message = function(message, error = false, update = false) {
 
@@ -189,25 +183,9 @@ var wcefrController = function() {
 	}
 
 
-	self.test_message = function(message) {
-		jQuery(function($){
-
-			var data = {
-				'action': 'admin-message',
-				'message': message
-			}
-
-			$.post(ajaxurl, data, function(response){
-				if ( response ) {
-					console.log(response);
-					self.wcefr_response_message(response);
-				}
-			})
-
-		})
-	}
-
-
+	/**
+	 * Export WP users to Reviso
+	 */
 	self.wcefr_export_users = function() {
 
 		jQuery(function($){
@@ -228,8 +206,6 @@ var wcefrController = function() {
 				}
 
 				$.post(ajaxurl, data, function(response){
-
-					console.log(response);
 					
 					var result = JSON.parse(response);
 
@@ -252,7 +228,7 @@ var wcefrController = function() {
 
 
 	/**
-	 * Cancellazione di tutti gli utenti da Reviso
+	 * Delete all the users from Reviso
 	 */
 	self.wcefr_delete_remote_users = function() {
 
@@ -263,9 +239,7 @@ var wcefrController = function() {
 				e.preventDefault();
 
 				var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
-				
-				console.log('Type: ' + type);
-				
+								
 				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
 
 				if ( answer ) {
@@ -278,8 +252,6 @@ var wcefrController = function() {
 					$.post(ajaxurl, data, function(response){
 
 						var result = JSON.parse(response);
-
-						console.log(result);
 
 						for (var i = 0; i < result.length; i++) {
 
@@ -322,9 +294,7 @@ var wcefrController = function() {
 				}
 
 				$.post(ajaxurl, data, function(response){
-					
-					console.log(response);
-					
+										
 					var result = JSON.parse(response);
 
 					for (var i = 0; i < result.length; i++) {
@@ -346,7 +316,7 @@ var wcefrController = function() {
 
 
 	/**
-	 * Cancellazione di tutti i prodotti da Reviso
+	 * Delete all the products from Reviso
 	 */
 	self.wcefr_delete_remote_products = function() {
 
@@ -370,8 +340,6 @@ var wcefrController = function() {
 
 						var result = JSON.parse(response);
 
-						console.log(result);
-
 						for (var i = 0; i < result.length; i++) {
 
 							var error = 'error' === result[i][0] ? true : false;
@@ -393,8 +361,8 @@ var wcefrController = function() {
 
 
 	/**
-	 * Mostra i gruppi di clienti e fornitori nella pagina opzioni del plugin
-	 * @param {string} type cliente o fornitore
+	 * Show customers and suppliers groups in the plugin options page
+	 * @param {string} type customer or supplier
 	 */
 	self.get_user_groups = function(type) {
 
@@ -409,8 +377,6 @@ var wcefrController = function() {
 			$.post(ajaxurl, data, function(response){
 
 				groups = JSON.parse(response);
-
-				console.log(groups);
 
 				if (typeof groups === 'object') {
 
@@ -435,31 +401,6 @@ var wcefrController = function() {
 
 
 	/**
-	 * Mostra i gruppi di fornitori presenti nella pagina opzioni del plugin
-	 */
-	self.get_supplier_groups = function() {
-
-		jQuery(function($){
-
-			var groups;
-			var data = {
-				'action': 'get-supplier-groups',
-				'confirm': 'yes' 
-			}
-
-			$.post(ajaxurl, data, function(response){
-				groups = JSON.parse(response);
-				for (key in groups) {
-					$('.wcefr-supplier-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
-				}
-			})
-
-		})
-
-	}
-
-
-	/**
 	 * Export orders to Reviso
 	 */
 	self.wcefr_export_orders = function() {
@@ -472,17 +413,13 @@ var wcefrController = function() {
 
 				var statuses = $('.wcefr-orders-statuses').val();
 
-				console.log(statuses);
-
 				var data = {
 					'action': 'export-orders',
 					'statuses': statuses
 				}
 
 				$.post(ajaxurl, data, function(response){
-					
-					console.log(response);
-					
+										
 					var result = JSON.parse(response);
 
 					for (var i = 0; i < result.length; i++) {
@@ -504,7 +441,7 @@ var wcefrController = function() {
 
 
 	/**
-	 * Cancella tutti gli ordini ra Reviso
+	 * Delete all orders from Reviso
 	 */
 	self.wcefr_delete_remote_orders = function() {
 
@@ -523,8 +460,6 @@ var wcefrController = function() {
 					}
 
 					$.post(ajaxurl, data, function(response){
-
-						console.log(response);
 
 						var result = JSON.parse(response);
 
@@ -549,7 +484,7 @@ var wcefrController = function() {
 
 
 	/**
-	 * Invoca chosen con tutte le opzioni definite	
+	 * Fires Chosen
 	 * @param  {bool} destroy metodo distroy
 	 */
 	self.chosen = function(destroy = false) {
@@ -571,6 +506,9 @@ var wcefrController = function() {
 }
 
 
+/**
+ * Class starter with onLoad method
+ */
 jQuery(document).ready(function ($) {
 	
 	var Controller = new wcefrController;

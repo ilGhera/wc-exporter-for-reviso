@@ -1,6 +1,6 @@
 <?php
 /**
- * Impostazioni generali
+ * General settings
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
@@ -21,7 +21,8 @@ class wcefrSettings {
 	}
 
 	/**
-	 * Script e fogli di stile
+	 * Scripts and style sheets
+	 * @return void
 	 */
 	public function enqueue() {
 
@@ -36,7 +37,7 @@ class wcefrSettings {
 
 
 	/**
-	 * Verifica che la pagina corrente sia quella delle opzioni del plugin
+	 * Check if the current page is the plugin options page
 	 * @return boolean
 	 */
 	public function is_wcefr_admin() {
@@ -51,7 +52,8 @@ class wcefrSettings {
 
 
 	/**
-	 * Salva l'Agreement Grant Tocken dell'admin nel db
+	 * Save the Agreement Grant Token in the db
+	 * @return void
 	 */
 	public function save_agt() {
 
@@ -64,6 +66,10 @@ class wcefrSettings {
 	}
 
 
+	/**
+	 * Check the connection to Reviso
+	 * @return void
+	 */
 	public function check_connection() {
 
 		if ( $this->is_wcefr_admin() ) {
@@ -72,7 +78,6 @@ class wcefrSettings {
 				jQuery(document).ready(function($){
 					var Controller = new wcefrController;
 					Controller.wcefr_check_connection();
-					// wcefr_check_connection();
 				})
 			</script>
 			<?php
@@ -80,6 +85,10 @@ class wcefrSettings {
 	}
 
 
+	/**
+	 * Deletes the Agreement Grant Token from the db
+	 * @return void
+	 */
 	public function disconnect_callback() {
 
 		delete_option( 'wcefr-agt', $token );
@@ -89,6 +98,10 @@ class wcefrSettings {
 	}
 
 
+	/**
+	 * Display the status of the connection to Reviso
+	 * @return mixed
+	 */
 	public function check_connection_callback() {
 			
 		$response = $this->wcefrCall->call( 'get', 'self' );

@@ -1,12 +1,13 @@
 <?php
 /**
- * Ordini
+ * Orders options
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
  * @since 0.9.0
  */
 ?>
 
+<!-- Export form -->
 <form name="wcefr-orders" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -34,6 +35,7 @@
 </form>
 
 
+<!-- Delete form -->
 <form name="wcefr-delete-orders" id="wcefr-delete-orders" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -46,6 +48,7 @@
 	</table>
 
 	<?php //wp_nonce_field( 'wcefr-export-products-submit', 'wcefr-export-products-nonce' ); ?>
+	
 	<p class="submit">
 		<input type="submit" class="button-primary wcefr red orders" value="<?php _e( 'Delete from Reviso', 'wcefr' ); ?>" />
 	</p>

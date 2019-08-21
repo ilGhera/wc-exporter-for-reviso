@@ -1,6 +1,6 @@
 <?php
 /**
- * Impostazioni generali
+ * General settings
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
  * @since 0.9.0
@@ -24,7 +24,6 @@
 		</tr>
 	</table>
 
-	<!-- <input type="submit" class="button-primary" value="<?php _e( 'Save', 'wcifd' ); ?>"> -->
 	<a class="button-primary wcefr-connect" href="https://app.reviso.com/api1/requestaccess.aspx?appPublicToken=iRxYo7PUDBHSsw6Kd63uLRM86FDx1O0HERqbknB2hhg1&locale=it-IT&redirectUrl=<?php echo WCEFR_SETTINGS; ?>"><?php _e( 'Connect to Reviso', 'wcefr' ); ?></a>
 	<a class="button-primary wcefr-disconnect red"><?php _e( 'Disconnect from Reviso', 'wcefr' ); ?></a>
 
@@ -52,7 +51,7 @@ if ( isset( $_POST['wcefr-options-sent'] ) ) {
 	update_option( 'wcefr_private', $wcefr_private );
 }
 
-/*Aggiorno cf nel db in base alle opzioni precedenti*/
+/*Update the CF filed value based on the previous selected options*/
 if ( isset( $_POST['wcefr-options-sent'] ) ) {
 	if ( $wcefr_company_invoice === 0 && $wcefr_private_invoice === 0 && $wcefr_private === 0 ) {
 		update_option( 'billing_wcefr_cf_active', 0 );
@@ -90,7 +89,7 @@ if ( isset( $_POST['wcefr-options-sent'] ) ) {
 
 	<h3 class="wcefr"><?php echo __( 'Checkout page', 'wcefr' ); ?></h3>
 
-	<!--Form Fornitori-->
+	<!--Start form-->
 	<form name="wcefr-options-submit" id="wcefr-options-submit"  method="post" action="">
 		<table class="form-table">
 			<tr>

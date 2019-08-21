@@ -1,6 +1,6 @@
 <?php
 /**
- * Esportazione di clienti e fornitori verso Reviso
+ * Export customer and suppliers to Reviso
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
@@ -10,8 +10,6 @@ class wcefrUsers {
 
 	public function __construct() {
 
-		// add_action( 'admin_init', array( $this, 'export_customers' ) );
-		// add_action( 'admin_init', array( $this, 'export_suppliers' ) );
 		add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
 		add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
 		add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
@@ -25,20 +23,8 @@ class wcefrUsers {
 
 
 	/**
-	 * TEMP
-	 */
-	public function test_call() {
-
-		$output = $this->wcefrCall->call( 'get', 'provinces/IT' );
-		
-		return $output;
-
-	}
-
-
-	/**
-	 * Resituisce il provinceNumer, necessario all'aggiunta della provincia in Reviso
-	 * @param  string $code la sigla della provincia proveniente da WooCommerce
+	 * Return the provinceNumer, required by Reviso for adding the province
+	 * @param  string $code the two letters province code coming from WC
 	 * @return int
 	 */
 	private function get_province_number( $code ) {
@@ -58,9 +44,9 @@ class wcefrUsers {
 
 
 	/**
-	 * Restituisce gli indirizzi di spedizione legati all'utente
-	 * @param  int $customer_number il numero utente Reviso
-	 * @return [type] 				TEMP
+	 * Get the delivery locations of a specific user in Reviso
+	 * @param  int $customer_number the customer number in Reviso
+	 * @return array
 	 */
 	private function get_delivery_locations( $customer_number ) {
 
@@ -72,9 +58,10 @@ class wcefrUsers {
 
 
 	/**
-	 * Aggiunge un indirizzo di spedizione all'utente dato
-	 * @param int $customer_number il numero utente Reviso
-	 * @param array $userdata 	   wp user data
+	 * Add a delivery location to the specified user
+	 * @param int 	$customer_number the customer number in Reviso
+	 * @param array $userdata 	     wp user data
+	 * @return void
 	 */
 	private function add_delivery_location( $customer_number, $userdata ) {
 
@@ -116,8 +103,8 @@ class wcefrUsers {
 
 
 	/**
-	 * Restituisce i clienti/ fornitori presenti in Reviso
-	 * @return string risposta in json della chiamata all'endpoint
+	 * Get customers and suppliers from Reviso
+	 * @return array
 	 */
 	private function get_remote_users( $type, $customer_number = null ) {
 
@@ -129,8 +116,8 @@ class wcefrUsers {
 
 
 	/**
-	 * Verifica la presenza di un cliente/ fornitore in Reviso
-	 * @param  string $email la mail del cliente
+	 * Check if a customer/ supplier exists in Reviso
+	 * @param  string $email the user email
 	 * @return bool
 	 */
 	private function user_exists( $type, $email ) {
@@ -157,8 +144,8 @@ class wcefrUsers {
 
 
 	/**
-	 * Restituisce i gruppi presenti in Reviso per il tipo di utente dato
-	 * @param  string $type clienti o fornitori
+	 * Get the customers/ suppliers groups from Reviso
+	 * @param  string $type customer or supplier
 	 * @return array
 	 */
 	public function get_user_groups( $type ) {
@@ -192,7 +179,7 @@ class wcefrUsers {
 
 
 	/**
-	 * Callback - Recupero gruppi fornitori
+	 * Callback - Get suppliers groups
 	 * @return string json
 	 */
 	public function get_suppliers_groups() {
@@ -206,7 +193,7 @@ class wcefrUsers {
 
 
 	/**
-	 * Callback - Recupero gruppi clienti
+	 * Callback - Get customers groups
 	 * @return string json
 	 */
 	public function get_customers_groups() {
@@ -220,9 +207,9 @@ class wcefrUsers {
 
 
 	/**
-	 * Prepara i dati del singolo utente da esporare verso Reviso
-	 * @param  int $user il numero utente Reviso
-	 * @param  string $type cliente o fornitore
+	 * Prepare the single user data to export to Reviso
+	 * @param  int $user the user number in Reviso
+	 * @param  string $type customer or supplier
 	 * @return array
 	 */
 	public function prepare_user_data( $user, $type ) {
@@ -240,12 +227,10 @@ class wcefrUsers {
 		
 		$user_email = $user_data['billing_email'];
 
-		/*Gruppo Reviso selezionato dall'admnin*/
+		/*Reviso's group selected by the admin*/
 		$group = get_option( 'wcefr-' . $type . '-group' );
 
-		// error_log( 'Group2: ' . $_POST['wcefr-' . $type . '-groups'] );
-
-		/*Salvo le impostazioni nel database*/
+		/*Save the option to the db*/
 		update_option( 'wcefr-' . $type . '-group', $group ); 
 
 		$args = null;
@@ -280,9 +265,6 @@ class wcefrUsers {
 				'paymentTerms' => array(
 					'paymentTermsNumber' => 6,
 				),
-				// 'italianCertifiedEmail' => $user_data['billing_wcexd_pec'],
-				// 'corporateIdentificationNumber' => $user_data['billing_wcexd_cf'],
-				// 'publicEntryNumber' => $user_data['billing_wcexd_pa_code'],
 
 				'telephoneAndFaxNumber' => $user_data['billing_phone'],
 				'website' => $user_details->user_url,
@@ -290,8 +272,6 @@ class wcefrUsers {
 				// 	'deliveryLocationNumber' => 1	
 				// )
 				// 'italianCustomerType' => 'Consumer',
-				// 'xxxxxxxx' => $user_data['xxxxxxxxxxxxxxxx'],
-
 			);
 
 			if ( isset( $user_data['billing_wcexd_piva'] ) ) {
@@ -317,6 +297,13 @@ class wcefrUsers {
 	}
 
 
+	/**
+	 * Export single WP user to Reviso
+	 * @param  int $n    the count number
+	 * @param  int $user the user number in Reviso
+	 * @param  string $type customer or supplier
+	 * @return string admin message for Ajax response //temp
+	 */
 	public function export_single_user( $n, $user, $type ) {
 
 		$args = $this->prepare_user_data( $user, $type );
@@ -327,8 +314,6 @@ class wcefrUsers {
 			
 			if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 			
-				error_log( 'ATTENZIONE:' . print_r( $output, true ) );
-
 				$response[] = array(
 					'error',
 					__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
@@ -340,7 +325,6 @@ class wcefrUsers {
 
 				$response[] = array(
 					'ok',
-					// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
 					__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
 				);
 
@@ -352,8 +336,9 @@ class wcefrUsers {
 
 
 	/**
-	 * Esporta utenti WordPress come clienti in Reviso
-	 * @param string $type cliente o fornitore
+	 * Export WP users as customers/ suppliers in Reviso
+	 * @param  string $type customers or suppliers
+	 * @return string admin message for Ajax response
 	 */
 	public function export_users( $type ) {
 
@@ -398,7 +383,6 @@ class wcefrUsers {
 
 		$response[] = array(
 			'ok',
-			// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
 			__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
 		);
 
@@ -410,7 +394,7 @@ class wcefrUsers {
 
 
 	/**
-	 * Esporta utenti WordPress come fornitori in Reviso
+	 * Export WP users as suppliers in Reviso
 	 */
 	public function export_suppliers() {
 
@@ -424,7 +408,7 @@ class wcefrUsers {
 
 
 	/**
-	 * Esporta utenti WordPress come clienti in Reviso
+	 * Export WP users as customers in Reviso
 	 */
 	public function export_customers() {
 
@@ -437,10 +421,18 @@ class wcefrUsers {
 	}
 
 
+	/**
+	 * Delete a single customer/ supplier in Reviso
+	 * @param  int $n          the count number
+	 * @param  object $user       the user from reviso
+	 * @param  string $type       customer or supplier
+	 * @param  string $field_name based on the type and useful to compose the endpoint
+	 * @return string admin message for Ajax response //temp
+	 */
 	public function delete_remote_single_user( $n, $user, $type, $field_name ) {
 
 		$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
-		error_log( 'CANCELLAZIONE UTENTI: ' . print_r( $output, true ) );
+
 		if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 
 			$response = array(
@@ -461,7 +453,7 @@ class wcefrUsers {
 
 
 	/**
-	 * Cancella tutti i clienti presenti in Reviso
+	 * Delete all customers/ suppliers in Reviso
 	 */
 	public function delete_remote_users() {
 

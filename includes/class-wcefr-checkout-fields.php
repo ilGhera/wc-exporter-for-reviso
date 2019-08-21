@@ -1,6 +1,6 @@
 <?php
 /**
- * Modifica la pagina di checkout con i campi relativi alla fatturazione
+ * Add the new fields to the checkout form
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
@@ -26,7 +26,8 @@ class wcefrCheckoutFields {
 	}
 
 	/**
-	 * Caricamento script
+	 * Loading scripts
+	 * @return void
 	 */
 	public function add_checkout_script() {
 		wp_enqueue_script( 'wcefr-checkout-script', WCEFR_URI . 'js/wcefr-checkout.js' );
@@ -42,7 +43,8 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Campi da aggiungere alla pagina di checkout in base alle opzioni scelte dall'utente
+	 * Checkout fields based on the options selected by the admin
+	 * @return array
 	 */
 	public function get_active_custom_fields() {
 
@@ -66,8 +68,9 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Aggiunge i field customizzati all'elenco fields di WC
+	 * Add the custom fields to the WC index
 	 * @param object $fields
+	 * @return object
 	 */
 	public function set_custom_fields( $fields ) {
 
@@ -86,7 +89,7 @@ class wcefrCheckoutFields {
 			),
 		);
 
-		/*La somma dei tipi di documenti abilitati dall'admin*/
+		/*The sum of documents activated by the admin*/
 		$sum = ( $select['private']['active'] + $select['private_invoice']['active'] + $select['company_invoice']['active'] );
 		
 		if ( $sum > 1 ) {
@@ -116,8 +119,6 @@ class wcefrCheckoutFields {
 					'class' => array(
 						'field-name form-row-wide',
 					),
-					// 'placeholder' => __('xxxxx', 'wcefr'),
-					// 'required' 	  => true
 				);
 			}
 
@@ -125,7 +126,7 @@ class wcefrCheckoutFields {
 				$fields['billing']['billing_wcefr_piva']['required'] = true;
 			}
 
-			/*Obbligatorietà cf al caricamento di pagina*/
+			/*CF mandatory on page loading*/
 			if ( isset( $this->custom_fields['billing_wcefr_cf'] ) ) {
 				if ( ( $sum === 1 && ! isset( $select['private']['active'] ) || $sum > 1 ) ) {
 
@@ -140,7 +141,7 @@ class wcefrCheckoutFields {
 				}
 			}
 
-			/*Rendo obbligatorio cf e p. iva quando richiesto*/
+			/*CF and P.IVA mandatory if required*/
 			if ( isset( $_POST['billing_wcefr_invoice_type'] ) ) {
 
 				if ( $_POST['billing_wcefr_invoice_type'] === 'private-invoice' ) {
@@ -160,9 +161,13 @@ class wcefrCheckoutFields {
 			}
 
 			if ( ! isset( $this->custom_fields['billing_wcefr_pec'] ) && isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
+
 				$fields['billing']['billing_wcefr_pa_code']['required'] = true;
+
 			} elseif ( isset( $this->custom_fields['billing_wcefr_pec'] ) && ! isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
+
 				$fields['billing']['billing_wcefr_pec']['required'] = true;
+
 			}
 		}
 
@@ -171,8 +176,8 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Verifica la correttezza del dato fiscale inserito
-	 * @param  string $valore P.IVA o Codice Fiscale
+	 * Check if the CF/ P.Iva is valid or not
+	 * @param  string $valore P.IVA or CF
 	 * @return bool
 	 */
 	public function fiscal_field_checker( $valore ) {
@@ -188,11 +193,12 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Verifica i campi di checkout al click per la creazione dell'ordine
+	 * Check the fields values creating the order
+	 * @return mixed WC notices in case of errors
 	 */
 	public function checkout_fields_check() {
 
-		/*PEC e Codice ricevente*/
+		/*PEC or PA Code*/
 		if ( isset( $_POST['billing_wcefr_invoice_type'] ) && $_POST['billing_wcefr_invoice_type'] !== 'private' ) {
 			if ( isset( $this->custom_fields['billing_wcefr_pec'] ) && isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
 				$pec = isset( $_POST['billing_wcefr_pec'] ) ? sanitize_text_field( $_POST['billing_wcefr_pec'] ) : '';
@@ -204,15 +210,15 @@ class wcefrCheckoutFields {
 			}
 		}
 
-		/*Controllo campi fiscali*/
+		/*Fiscal fields check*/
 		if ( get_option( 'wcefr_fields_check' ) ) {
 
-			/*Codice fiscale*/
+			/*CF*/
 			if ( isset( $_POST['billing_wcefr_cf'] ) && $_POST['billing_wcefr_cf'] !== '' && $this->fiscal_field_checker( $_POST['billing_wcefr_cf'] ) === false ) {
 				wc_add_notice( 'WARNING! The <strong> Tax Code </strong> entered is incorrect.', 'error' );
 			}
 
-			/*Partita IVA*/
+			/*P.IVA*/
 			if ( isset( $_POST['billing_wcefr_invoice_type'] ) && $_POST['billing_wcefr_invoice_type'] === 'company-invoice' ) {
 				if ( isset( $_POST['billing_wcefr_piva'] ) && $_POST['billing_wcefr_piva'] !== '' && $this->fiscal_field_checker( $_POST['billing_wcefr_piva'] ) === false ) {
 					wc_add_notice( 'WARNING! The <strong> VAT number </strong> entered is incorrect.', 'error' );
@@ -223,7 +229,8 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Inserisci i campi personalizzati nella pagina di checkout
+	 * TEMP
+	 * Add the custom fileds to the checkout page
 	 * @param object $checkout
 	 */
 	public function display_fields( $checkout ) {
@@ -239,9 +246,9 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Salva i campi personalizzati
-	 * @param  object $order l'ordine in questione
-	 * @param  array $data  i dati dell'ordine
+	 * Save the custom fields values
+	 * @param  object $order the current WC order
+	 * @param  array  $data  the WC order data
 	 */
 	public function save_fields( $order, $data ) {
 
@@ -257,8 +264,9 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Visualizza le informazioni personalizzate nella pagina di checkout e in front-end, nell'area profilo dell'utente.
-	 * @param  int $order_id   l'id dell'ordine
+	 * Show the custom fields values in the WC thank you page and in the profile user page
+	 * @param  int $order_id   the WC order id
+	 * @return mixed
 	 */
 	public function display_custom_data( $order_id ) {
 
@@ -284,8 +292,8 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Visualizza le informazioni personalizzate nel back-end dell'ordine
-	 * @param  object $order l'ordine
+	 * Show the custom fields values in the back-end WC order
+	 * @param  object $order the WC order
 	 */
 	function display_custom_data_in_admin( $order ) {
 
@@ -300,11 +308,11 @@ class wcefrCheckoutFields {
 
 
 	/**
-	 * Mostra le informaizoni personalizzate nella email di conferma ordine
-	 * @param  array $fields        i campi da restituire
-	 * @param  bool  $sent_to_admin da includere anche nella mail per l'admin, default true
-	 * @param  object $order        l'woocommerce_admin_order_data_after_shipping_address
-	 * @return array                Per motivi di formattazione, restituisco un array vuoto e stampo direttamente i campi con css in linea
+	 * Show the custom fields values in the confirmation email
+	 * @param  object $order         the WC order
+	 * @param  bool   $sent_to_admin to be included also in the admin email, default is true
+	 * @param  string $email        
+	 * @return mixed
 	 */
 	function display_custom_data_in_email( $order, $sent_to_admin, $plain_text, $email ) {
 

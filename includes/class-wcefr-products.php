@@ -1,6 +1,6 @@
 <?php
 /**
- * Esportazione prodotti verso Reviso
+ * Export products to Reviso
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
@@ -21,9 +21,8 @@ class wcefrProducts {
 
 	
 	/**
-	 * TEMP
 	 * Restituisce i prodotti presenti in Reviso
-	 * @return string risposta in json della chiamata all'endpoint
+	 * @return array
 	 */
 	private function get_remote_products() {
 
@@ -35,8 +34,8 @@ class wcefrProducts {
 
 
 	/**
-	 * Verifica la presenza di un prodotto in Reviso
-	 * @param  string $sku lo sku del prodotto WooCommerce
+	 * Check if a specific product exists in Reviso
+	 * @param  string $sku the WC product sku
 	 * @return bool
 	 */
 	private function product_exists( $sku ) {
@@ -55,9 +54,8 @@ class wcefrProducts {
 
 
 	/**
-	 * Restituisce il testo dato con lunghezza massima 500 caratteri, come previsto da Reviso
-	 * nela campo di descizione prodotto
-	 * @param  string $text la descrizione completa del prodotto WooCommerce
+	 * Returns the product description less than 500 characters long
+	 * @param  string $text the full WC product description
 	 * @return string
 	 */
 	private function prepare_product_description( $text ) {
@@ -136,7 +134,7 @@ class wcefrProducts {
 	/**
 	 * Get a specific vat account from Reviso or create it necessary
 	 * @param  int    $vat_rate the vat rate
-	 * @return array            vat accounts available in Reviso
+	 * @return array  vat accounts available in Reviso
 	 */
 	private function get_remote_vat_code( $vat_rate ) {
 
@@ -145,9 +143,6 @@ class wcefrProducts {
 		$end = '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:' . $vat_rate;
 		
 		$response = $this->wcefrCall->call( 'get', 'vat-accounts' . $end );
-
-		error_log( 'REMOTE VAT CODE: ' . print_r( $response, true ) );
-
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 			
@@ -166,13 +161,12 @@ class wcefrProducts {
 	/**
 	 * Add an account in Reviso
 	 * @param  int $var_rate used for create the account number
+	 * @return void
 	 */
 	private function add_remote_account( $vat_rate ) {
 
 		/*Get the remote vat code*/
 		$vat_code = $this->get_remote_vat_code( $vat_rate ); //temp
-
-		error_log( 'VAT CODE: ' . $vat_code );
 
 		$account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
 
@@ -192,8 +186,6 @@ class wcefrProducts {
 		);
 
 		$account = $this->wcefrCall->call( 'post', 'accounts/', $args );
-
-		error_log( 'NEW REMOTE ACCOUNT: ' . print_r( $account, true ) );
 
 		if ( isset( $account->accountNumber ) && $account_number === $account->accountNumber ) {
 
@@ -215,8 +207,6 @@ class wcefrProducts {
 
 		$account = $this->wcefrCall->call( 'get', 'accounts/' . $account_number );
 
-		error_log( 'RICERCA: ' . print_r( $account, true ) );
-
 		if ( ! isset( $account->accountNumber ) || $account_number != $account->accountNumber ) {
 			
 			$this->add_remote_account( $vat_rate );
@@ -232,12 +222,11 @@ class wcefrProducts {
 	 * Add a product group in Reviso
 	 * @param int $product_group_number the remote product goup
 	 * @param string $product_group_name   the remote product group name
+	 * @return void
 	 */
 	private function add_remote_product_group( $product_group_number, $product_group_name ) {
 
 		$account_number = $this->get_remote_account_number( $product_group_number );
-
-		error_log( 'ACCOUNT NUMBER: ' . $account_number );
 
 		$name = $product_group_number === $product_group_name ? 'IVA al ' . $product_group_number . '%' : $product_group_name;
 
@@ -305,10 +294,6 @@ class wcefrProducts {
 	 * @return int
 	 */
 	private function get_remote_product_group( $product_group_number ) {
-
-		/*temp*/
-		$number = $this->get_remote_account_number( $product_group_number );
-
 
 		$output = null;
 
@@ -393,7 +378,7 @@ class wcefrProducts {
 			//'costPrice'   => xxxxxxx,
 			// 'barCode'  	    => $product->get_sku(),
 
-			/*Al momento non supportato dalle API*/
+			/*Not supported by the API*/
 			// 'inventory'     => array(
 			// 	'available' 		   => ( float ) $product->get_stock_quantity(),
 		        // 'inStock'  			   => ( float ) $product->get_stock_quantity(),
@@ -429,6 +414,7 @@ class wcefrProducts {
 	 * Export single product to Reviso
 	 * @param  int $n       the count of products exported
 	 * @param  int $post_id the product id
+	 * @return string admin message for Ajax response //temp
 	 */
 	public function export_single_product( $n, $post_id ) {
 
@@ -458,14 +444,12 @@ class wcefrProducts {
 				$response[] = array(
 					'error',
 					__( 'ERROR! ' . $output->message . ' #' . $product->get_sku() . '<br>', 'wcefr' ),
-					// __( 'ERROR! An error occurred with the product #' . $product->get_sku() . '<br>', 'wcefr' ),
 				);
 
 			} else {
 
 				$response[] = array(
 					'ok',
-					// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
 					__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
 				);
 
@@ -480,10 +464,13 @@ class wcefrProducts {
 
 	/**
 	 * Export WC product to Reviso
+	 * @return string admin message for Ajax response
 	 */
 	public function export_products() {
 
 		$terms = isset( $_POST['terms'] ) ? $_POST['terms'] : '';
+
+		$response = array();
 		
 		$args = array(
 			'post_type' => array(
@@ -535,11 +522,8 @@ class wcefrProducts {
 
 			}
 
-			error_log( 'CRON: ' . print_r( get_option( 'cron' ), true ) );
-
 			$response[] = array(
 				'ok',
-				// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
 				__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
 			);
 
@@ -556,6 +540,7 @@ class wcefrProducts {
 	 * Delete a single product on Reviso
 	 * @param  int $n       	   the count of products exported
 	 * @param  int $product_number the product number in Reviso
+	 * @return string admin message for Ajax response
 	 */
 	public function delete_remote_single_product( $n, $product_number ) {
 
@@ -571,7 +556,6 @@ class wcefrProducts {
 			$response[] = array(
 				'error',
 				__( 'ERROR! ' . $output->message . ' #' . $product_number . '<br>', 'wcefr' ),
-				// __( 'ERROR! An error occurred with the product #' . $product->productNumber . '<br>', 'wcefr' ),
 			);
 
 
@@ -581,7 +565,6 @@ class wcefrProducts {
 
 			$response[] = array(
 				'ok',
-				// __( 'The product #' . $product->productNumber . ' was deleted', 'wcefr' ),			
 				__( 'Deleted products: <span>' . $n . '</span>', 'wcefr' ),			
 			);
 
@@ -593,7 +576,8 @@ class wcefrProducts {
 
 
 	/**
-	 * Cancella tutti i prodotti presenti in Reviso
+	 * Delete all the products in Reviso
+	 * @return string admin message for Ajax response
 	 */
 	public function delete_remote_products() {
 

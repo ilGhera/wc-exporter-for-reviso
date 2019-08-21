@@ -1,6 +1,6 @@
 <?php
 /**
- * Gestisce le chiamate alle API Revisio
+ * Handles the API calls
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
@@ -12,7 +12,8 @@ class wcefrCall {
 
 
 	/**
-	 * Recupera il tocket dal db
+	 * Get the Agreement Token from the db
+	 * @return string
 	 */
 	private function get_agreement_grant_token() {
 
@@ -22,6 +23,10 @@ class wcefrCall {
 	}
 
 
+	/**
+	 * Define the headers to use in every API call
+	 * @return array
+	 */
 	public function headers() {
 
 		$output = array(
@@ -35,10 +40,11 @@ class wcefrCall {
 
 
 	/**
-	 * Esegue la chiamata all'endpoint dato
-	 * @param string $method   il tipo di chiamata
-	 * @param string $endpoint il nome dell'endpoint
-	 * @param array  $args     i dati da inviare
+	 * The call
+	 * @param  string $method   could be GET, POST, DELETE or PUT
+	 * @param  string $endpoint the endpoint's name
+	 * @param  array  $args     the data
+	 * @return mixed  the response
 	 */
 	public function call( $method, $endpoint = '', $args = null ) {
 
@@ -58,27 +64,14 @@ class wcefrCall {
 
 		);
 
-		// error_log( 'Generic response: ' . print_r( $response['body'], true ) );
-
-
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
-
-
-			/*TEMP*/
-			if ( $method == 'delete' ) {
-				// error_log( 'Response: ' . print_r( $response['body'], true ) );
-				// error_log( 'Response: ' . print_r( $response, true ) );
-			}
-
-			if ( 'products' == $endpoint ) {
-				error_log( 'Response: ' . print_r( $response['body'], true ) );
-			}
 
 			return json_decode( $response['body'] );
 
 		} else {
 
-			error_log( 'ERROR: ' . print_r( $response, true ) );
+			/*Print the error to the log*/
+			error_log( 'WCEFR | ERROR: ' . print_r( $response, true ) );
 
 		}
 

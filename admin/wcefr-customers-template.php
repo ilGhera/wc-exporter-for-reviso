@@ -1,12 +1,13 @@
 <?php
 /**
- * Gestisce clienti
+ * Customers options
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
  * @since 0.9.0
  */
 ?>
 
+<!-- Export form -->
 <form name="wcefr-export-customers" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -18,7 +19,7 @@
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
 
-					/*Leggo il dato se già esistente nel database*/
+					/*Get value from the db*/
 					$customers_role = get_option( 'wcefr-customers-role' );
 
 					foreach ( $roles as $key => $value ) {
@@ -39,7 +40,8 @@
 		</tr>
 	</table>
 
-	<?php wp_nonce_field( 'wcefr-export-customers-submit', 'wcefr-export-customers-nonce' ); ?>
+	<?php //wp_nonce_field( 'wcefr-export-customers-submit', 'wcefr-export-customers-nonce' ); ?>
+
 	<p class="submit">
 		<input type="submit" name="download_csv" class="button-primary wcefr export-users customers" value="<?php _e( 'Export to Reviso', 'wcefr' ); ?>" />
 	</p>
@@ -47,6 +49,7 @@
 </form>
 
 
+<!-- Delete form -->
 <form name="wcefr-delete-customers" class="wcefr-form"  method="post" action="">
 
 	<table class="form-table">
@@ -59,6 +62,7 @@
 	</table>
 
 	<?php //wp_nonce_field( 'wcefr-export-customers-submit', 'wcefr-export-customers-nonce' ); ?>
+
 	<p class="submit">
 		<input type="submit" class="button-primary wcefr red users customers" value="<?php _e( 'Delete from Reviso', 'wcefr' ); ?>" />
 	</p>

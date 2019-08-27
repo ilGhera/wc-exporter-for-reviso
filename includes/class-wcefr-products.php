@@ -21,7 +21,7 @@ class wcefrProducts {
 
 	
 	/**
-	 * Restituisce i prodotti presenti in Reviso
+	 * Get all the products from Reviso
 	 * @return array
 	 */
 	private function get_remote_products() {

@@ -153,7 +153,9 @@ if ( isset( $_POST['wcefr-options-sent'] ) ) {
 				</td>
 			</tr>
 		</table>
+
 		<?php wp_nonce_field( 'wcefr-options-submit', 'wcefr-options-nonce' ); ?>
+		
 		<p class="submit">
 			<input type="submit" name="wcefr-options-sent" class="button-primary" value="<?php esc_attr_e( 'Save', 'wcefr' ); ?>" />
 		</p>

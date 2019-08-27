@@ -10,11 +10,8 @@ class wcefrOrders {
 
 	public function __construct() {
 
-		// add_action( 'woocommerce_new_order', array( $this, 'export_single_order' ) );
-		add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
-
-		add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) );
-
+		$this->init();
+		
 		add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
 		add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
 
@@ -27,6 +24,33 @@ class wcefrOrders {
 	}
 
 
+    /**
+     * Check the administrator settings to automatically export orders to Reviso
+     * @return void
+     */
+    public function init() {
+
+    	/*Export orders automatically to Reviso*/
+    	$export_orders = get_option( 'wcefr-export-orders' );
+
+    	if ( $export_orders ) {
+    		
+			// add_action( 'woocommerce_new_order', array( $this, 'export_single_order' ) );
+			add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
+
+    	}
+
+    	/*Create invoices in Reviso with WC completed orders */
+    	$create_invoices = get_option( 'wcefr-create-invoices' );
+
+    	if ( $create_invoices ) {
+	
+			add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) );
+    	
+    	}
+    }
+
+	
 	/**
 	 * Get all the orders from Reviso
 	 * @return array

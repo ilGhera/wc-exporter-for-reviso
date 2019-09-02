@@ -8,14 +8,22 @@
 
 class wcefrUsers {
 
-	public function __construct() {
+	/**
+	 * Class constructor
+	 * @param boolean $init fire hooks if true
+	 */
+	public function __construct( $init = false ) {
 
-		add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
-		add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
-		add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
-		add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
-		add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
-		add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+		if ( $init ) {
+
+			add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
+			add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
+			add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
+			add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+			add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
+			add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+
+		}
 
 		$this->wcefrCall = new wcefrCall();
 
@@ -208,88 +216,117 @@ class wcefrUsers {
 
 	/**
 	 * Prepare the single user data to export to Reviso
-	 * @param  int $user the user number in Reviso
-	 * @param  string $type customer or supplier
+	 * @param  object $user  the WP user if exists
+	 * @param  string $type  customers or suppliers
+	 * @param  object $order the WC order to get the customer details
 	 * @return array
 	 */
-	public function prepare_user_data( $user, $type ) {
+	public function prepare_user_data( $user = null, $type, $order = null ) {
 
 		$type_singular = substr( $type , 0, -1 );
 
-		$user_details = get_userdata( $user->ID );
-					
-		$user_data = array_map( 
-			function( $a ) {
-				return $a[0];
-			},
-			get_user_meta( $user->ID )
-		);
-		
-		$user_email = $user_data['billing_email'];
+		if ( $user ) {
+
+			$user_details = get_userdata( $user->ID );
+
+			$user_data = array_map( 
+				function( $a ) {
+					return $a[0];
+				},
+				get_user_meta( $user->ID )
+			);
+			
+			$name 					 = $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'];
+			$user_email 			 = $user_data['billing_email'];
+			$country    			 = $user_data['billing_country'];
+			$city  					 = $user_data['billing_city'];
+			$state 					 = $user_data['billing_state'];
+			$address 				 = $user_data['billing_address_1'];
+			$postcode 				 = $user_data['billing_postcode'];
+			$phone 					 = $user_data['billing_phone'];
+			$website 				 = $user_details->user_url;
+			$vat_number 			 = isset( $user_data['billing_wcefr_piva'] ) ? $user_data['billing_wcefr_piva'] : null;
+			$identification_number 	 = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
+			$italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null; 
+			$public_entry_number 	 = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
+
+		} elseif ( $order ) {
+
+			// temp
+			$name 		= $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+			$user_email = $order->get_billing_email();
+			$country    = $order->get_billing_country();
+			$city  		= $order->get_billing_city();
+			$state 		= $order->get_billing_state();
+			$address 	= $order->get_billing_address_1();
+			$postcode 	= $order->get_billing_postcode();
+			$phone 		= $order->get_billing_phone();
+			$vat_number 			 = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
+			$identification_number 	 = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
+			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null; 
+			$public_entry_number 	 = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
+
+		} else {
+
+			return;
+
+		}
 
 		/*Reviso's group selected by the admin*/
 		$group = get_option( 'wcefr-' . $type . '-group' );
 
-		/*Save the option to the db*/
-		update_option( 'wcefr-' . $type . '-group', $group ); 
-
-		$args = null;
-
-		/*Verifico presenza campi ordine */
-		if ( isset( $user_data['billing_postcode'] ) ) {
-
-			$args = array(
-				'name' => $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'],
-				'email' => $user_email,
-				$type_singular . 'Group' => array(
-					$type_singular . 'GroupNumber' => intval( $group ),
+		$args = array(
+			'name' 		  			 => $name,
+			'email' 	  			 => $user_email,
+			'currency'    			 => 'EUR', //temp
+			'country' 	  			 => $country,
+			'city' 		  			 => $city,
+			'address' 	  			 => $address,
+			'zip' 		  			 => $postcode,
+			'telephoneAndFaxNumber'  => $phone,
+			'vatZone' => array(
+				'vatZoneNumber' => 1,
+			),
+			'paymentTerms' 			 => array(
+				'paymentTermsNumber' => 6,
+			),
+			'countryCode' 			 => array(
+				'code' => $country,
+			),
+			'province' 	  			 => array(
+				'countryCode'    => array(
+					'code' => $country,
 				),
-				'currency' => 'EUR',
-				'country' => $user_data['billing_country'],
-				'city' => $user_data['billing_city'],
-				'countryCode' => array(
-					'code' => $user_data['billing_country'],
-				),
-				'province' => array(
-					'countryCode' => array(
-						'code' => $user_data['billing_country'],
-					),
-					'ProvinceNumber' => $this->get_province_number( $user_data['billing_state'] ),
-				),
-				'address' => $user_data['billing_address_1'],
-				'zip' => $user_data['billing_postcode'],
-				// 'vatNumber' => $user_data['billing_wcexd_piva'], //TEMP
-				'vatZone' => array(
-					'vatZoneNumber' => 1,
-				),
-				'paymentTerms' => array(
-					'paymentTermsNumber' => 6,
-				),
+				'ProvinceNumber' => $this->get_province_number( $state ),
+			),
+			$type_singular . 'Group' => array(
+				$type_singular . 'GroupNumber' => intval( $group ),
+			),
+			// 'vatNumber' => $user_data['billing_wcefr_piva'], //TEMP
+			// 'defaultDeliveryLocation' => array(
+			// 	'deliveryLocationNumber' => 1	
+			// )
+			// 'italianCustomerType' => 'Consumer',
+		);
 
-				'telephoneAndFaxNumber' => $user_data['billing_phone'],
-				'website' => $user_details->user_url,
-				// 'defaultDeliveryLocation' => array(
-				// 	'deliveryLocationNumber' => 1	
-				// )
-				// 'italianCustomerType' => 'Consumer',
-			);
+		if ( isset( $website  )) {
+			$args['website'] = $website;
+		}
 
-			if ( isset( $user_data['billing_wcexd_piva'] ) ) {
-				$args['vatNumber'] = $user_data['billing_wcexd_piva'];
-			}
+		if ( $vat_number ) {
+			$args['vatNumber'] = $vat_number;
+		}
 
-			if ( isset( $user_data['billing_wcexd_cf'] ) ) {
-				$args['corporateIdentificationNumber'] = $user_data['billing_wcexd_cf'];
-			}
+		if ( $identification_number ) {
+			$args['corporateIdentificationNumber'] = $identification_number;
+		}
 
-			if ( isset( $user_data['billing_wcexd_pec'] ) ) {
-				$args['italianCertifiedEmail'] = $user_data['billing_wcexd_pec'];
-			}
+		if ( $italian_certified_email ) {
+			$args['italianCertifiedEmail'] = $italian_certified_email;
+		}
 
-			if ( isset( $user_data['billing_wcexd_pa_code'] ) ) {
-				$args['publicEntryNumber'] = $user_data['billing_wcexd_pa_code'];
-			}
-
+		if ( $public_entry_number ) {
+			$args['publicEntryNumber'] = $public_entry_number;
 		}
 
 		return $args;
@@ -300,18 +337,22 @@ class wcefrUsers {
 	/**
 	 * Export single WP user to Reviso
 	 * @param  int $n    the count number
-	 * @param  int $user the user number in Reviso
+	 * @param  object $user the WP user
 	 * @param  string $type customer or supplier
+	 * @param  object $order the WC order to get the customer details
 	 * @return string admin message for Ajax response //temp
 	 */
-	public function export_single_user( $n, $user, $type ) {
+	public function export_single_user( $n, $user = null, $type, $order = null ) {
 
-		$args = $this->prepare_user_data( $user, $type );
+		$args = $this->prepare_user_data( $user, $type, $order );
 
 		if ( $args and ! $this->user_exists( $type, $args['email'] ) ) {
 
 			$output = $this->wcefrCall->call( 'post', $type . '/', $args );
 			
+			return $output;
+			
+			// temp
 			if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 			
 				$response[] = array(
@@ -508,4 +549,4 @@ class wcefrUsers {
 
 	}
 }
-new wcefrUsers;
+new wcefrUsers( true );

@@ -248,11 +248,39 @@ class wcefrOrders {
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 			
 			$output = $response->collection[0];
-			error_log( 'additional-expenses: ' . print_r( $output, true ) );
 
 		}
 
 		return $output;
+
+	}
+
+
+	/**
+	 * Get the user from Reviso by email
+	 * @param  string $email the user email
+	 * @param  object $order the WC order to get the customer details
+	 * @return int the Reviso customer number
+	 */
+	private function  get_remote_customer( $email, $order ) {
+
+		$response = $this->wcefrCall->call( 'get', 'customers?filter=email$eq:' . $email );
+
+		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+			return $response->collection[0]->customerNumber;
+		
+		} else {
+
+			$user = get_user_by( 'email', $email );
+
+			/*Add the new user in Reviso*/
+			$wcefrUsers = new wcefrUsers;
+			$new_user = $wcefrUsers->export_single_user( 1, $user, 'customers', $order );
+
+			return $new_user->customerNumber;
+
+		}
 
 	}
 
@@ -269,14 +297,17 @@ class wcefrOrders {
 		$client_name   = $company_name ? $company_name : $customer_name;
 		$pa_code	   = get_post_meta( $order->get_id(), '_billing_wcefr_pa_code', true );
 
-		// Add the payment method if not already on Reviso
+		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+
+		/*Add the payment method if not already on Reviso*/
 		$payment_method = $this->add_remote_payment_method( $order->get_payment_method_title() );
 
 		$output = array(
 			'currency' => $order->get_currency(),
 			'customer'  => array(
 				'splitPayment'	 => false,
-				'customerNumber' => 1, //temp
+				'customerNumber' => $customer_number, //temp
+				// 'customerNumber' => 1, //temp
 			),
 			'date' => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'delivery' => array(
@@ -443,7 +474,7 @@ class wcefrOrders {
 
 		$output = $this->wcefrCall->call( 'delete', 'orders/' . $order_id );
 	
-		if ( 1 === $output->deletedCount ) {
+		if ( isset( $output->deletedCount ) && 1 === $output->deletedCount ) {
 			
 			$response = array(
 				'ok',

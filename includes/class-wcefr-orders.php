@@ -176,6 +176,33 @@ class wcefrOrders {
 
 
 	/**
+	 * Calculate the percentage between wo numbers
+	 * @param  float $value the result of the percentage
+	 * @param  float $total the total number
+	 * @return float        the percentage
+	 */
+	private function get_percentage( $value, $total ) {
+
+		return floatval( wc_format_decimal( ( $value / $total * 100 ), 0 ) );
+
+	}
+
+
+	/**
+	 * Get a specific vat account from Reviso or create it necessary
+	 * @param  int    $vat_rate the vat rate
+	 * @return array  vat accounts available in Reviso
+	 */
+	private function get_remote_vat_code( $vat_rate ) {
+
+		$class = new wcefrProducts();
+
+		return $class->get_remote_vat_code( $vat_rate );
+
+	}
+
+
+	/**
 	 * Prepare the data of all the items of the order
 	 * @param  object $order the wc order
 	 * @return array
@@ -194,31 +221,42 @@ class wcefrOrders {
 
 				if ( $product ) {
 
+					$qty 				= wc_stock_amount( $item['qty'] );
+					$total_net_amount   = floatval( wc_format_decimal( $order->get_line_subtotal($item, false, false), 10 ) );
+					$total_gross_amount = floatval( wc_format_decimal( $order->get_line_total($item, false, false ), 10 ) ) + floatval( wc_format_decimal( $item['line_tax'], 10 ) );
+					$total_vat_amount   = floatval( wc_format_decimal( $item['line_tax'], 10 ) );
+					$vat_rate 			= $this->get_percentage( $total_vat_amount, $total_net_amount );
+
 					$output[] = array(
 
-						'lineNumber' => $n,
-						'quantity' => wc_stock_amount( $item['qty'] ),
+						'lineNumber' 		 => $n,
+						'quantity' 			 => $qty,
+						'description' 		 => $item['name'],
+						'discountPercentage' => $this->get_percentage( $order->get_total_discount(), $total_net_amount ),
+						'quantity' 		   	 => wc_stock_amount( $item['qty'] ),
+						'totalNetAmount'   	 => $total_net_amount,
+						'totalGrossAmount' 	 => $total_gross_amount,
+						'unitNetPrice' 	   	 => floatval( wc_format_decimal( $total_net_amount / $qty, 10 ) ),
+						'totalVatAmount'   	 => $total_vat_amount,
+						'vatInfo' => array(
+							'vatAccount' => array(
+								'vatCode' => $this->get_remote_vat_code( $vat_rate ),
+							),
+						),
 						'product' => array(
 							'id' => $product->get_sku(),
 							'productNumber' => $product->get_sku(),
 							'name' => $item['name'],
 						),
-						
-						'description' => $item['name'],
-						'discountPercentage' => 0.00, //temp
-						// 'marginInBaseCurrency' => 6.00,
-						// 'marginPercentage' => 100.00,
-						'quantity' => wc_stock_amount( $item['qty'] ),
-						// 'sortKey' => 1,
-						'totalNetAmount' => floatval( wc_format_decimal( $order->get_line_subtotal($item, false, false), 2 ) ),
-						'totalGrossAmount' => floatval( wc_format_decimal( $order->get_line_total($item, false, false ), 2 ) ) + floatval( wc_format_decimal( $item['line_tax'], 2 ) ),
-						'totalVatAmount' => floatval( wc_format_decimal( $item['line_tax'], 2 ) ),
 						'unit' => array(
 							'name' => 'Pezzi',
 							'unitNumber' => 1,
 						),
+						
+						// 'marginInBaseCurrency' => 6.00,
+						// 'marginPercentage' => 100.00,
+						// 'sortKey' => 1,
 						// 'unitCostPrice' => 0.0000000000,
-						'unitNetPrice' => floatval( wc_format_decimal( $order->get_item_total($item, false, false), 2 ) ),
 						// 'deliveredQuantity' => 0.0000000000,
 						// 'manuallyEditedSalesPrice' => false,
 					);
@@ -292,10 +330,14 @@ class wcefrOrders {
 	 */
 	private function prepare_order_data( $order ) {
 
-		$company_name  = $order->get_billing_company();
-		$customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-		$client_name   = $company_name ? $company_name : $customer_name;
-		$pa_code	   = get_post_meta( $order->get_id(), '_billing_wcefr_pa_code', true );
+		$company_name   		= $order->get_billing_company();
+		$customer_name  		= $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+		$client_name    		= $company_name ? $company_name : $customer_name;
+		$pa_code	    		= get_post_meta( $order->get_id(), '_billing_wcefr_pa_code', true );
+		$transport_amount 	    = floatval( wc_format_decimal( $order->get_total_shipping(), 10 ) );
+		$transport_vat_amount   = floatval( wc_format_decimal( $order->get_shipping_tax(), 10 ) );
+		$transport_vat_rate 	= $this->get_percentage( $transport_vat_amount, $transport_amount );
+		$transport_gross_amount = $transport_amount + $transport_vat_amount;
 
 		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
 
@@ -303,64 +345,62 @@ class wcefrOrders {
 		$payment_method = $this->add_remote_payment_method( $order->get_payment_method_title() );
 
 		$output = array(
-			'currency' => $order->get_currency(),
-			'customer'  => array(
+			'currency' 				 => $order->get_currency(),
+			'date' 					 => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
+			'dueDate' 				 => $order->get_date_created()->date( 'Y-m-d H:i:s' ), //temp
+			'exchangeRate' 			 => 100.00,
+			'grossAmount' 			 => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
+			'isArchived' 			 => false,
+			'isSent' 				 => false,
+			'paymentTerms' 			 => $payment_method,
+			'roundingAmount' 		 => 0.00,
+			'vatAmount' 			 => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
+			'vatIncluded'			 => true, //temp
+ 			'lines' 				 => $this->order_items_data( $order ),
+			'customer'  			 => array(
 				'splitPayment'	 => false,
 				'customerNumber' => $customer_number, //temp
-				// 'customerNumber' => 1, //temp
 			),
-			'date' => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
-			'delivery' => array(
+			'delivery' 				 => array(
 				'address' => $order->get_shipping_address_1(),
-				'city' => $order->get_shipping_city(),
+				'city' 	  => $order->get_shipping_city(),
 				'country' => $order->get_shipping_country(),
-				'zip' => $order->get_shipping_postcode(),
+				'zip' 	  => $order->get_shipping_postcode(),
 			),
-			'dueDate' => $order->get_date_created()->date( 'Y-m-d H:i:s' ), //temp
-			'exchangeRate' => 100.00,
-			'grossAmount' => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
-			'isArchived' => false,
-			'isSent' => false,
-			'layout' => array( //temp
-				'isDefault' => false,
+			'layout' 				 => array( //temp
+				'isDefault'    => false,
 				'layoutNumber' => 9,
 			),
-			'paymentTerms' => $payment_method,
-			'recipient' => array(
-				'address' => $order->get_billing_address_1(),
-				'city' => $order->get_billing_city(),
-				'country' => $order->get_billing_country(),
-				'name' =>  $client_name,
+			'recipient' 			 => array(
+				'address' 			=> $order->get_billing_address_1(),
+				'city' 				=> $order->get_billing_city(),
+				'country' 			=> $order->get_billing_country(),
+				'name' 				=>  $client_name,
 				'publicEntryNumber' => $pa_code,
-				'vatZone' => array(
+				'vatZone' 			=> array(
 					'vatZoneNumber' => 1, //temp
 				),
-				'zip' => $order->get_billing_postcode(),
-				// 'attention' => array(
-				// 	'name' => $customer_name,
-				// 	// 'emailNotifications' => $order->get_billing_email(),
-				// ),
+				'zip' 				=> $order->get_billing_postcode(),
 			),
-			'roundingAmount' => 0.00,
-			'vatAmount' =>floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
-			'vatIncluded' => true, //temp
- 			'notes' => array(
+ 			'notes' 				 => array(
  				'text1' => 'WC-Order-' . $order->get_id(),
  			),
- 			'lines' => $this->order_items_data( $order ),
  			'additionalExpenseLines' => array( //temp
  				array(
 	 				// 'additionalExpense' => $this->get_additional_expenses(),
-	 				'additionalExpense' => array(
+	 				'additionalExpense'     => array(
 	 					'additionalExpenseNumber' => 1, //temp
 	 				),
- 					'lineNumber' => 1,
  					'additionalExpenseType' => 'Transport',
- 					'amount' => floatval( wc_format_decimal( $order->get_total_shipping(), 2 ) ),
- 					// 'grossAmount' => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
- 					'isExcluded' => false,
- 					'vatAmount' => floatval( wc_format_decimal( $order->get_shipping_tax(), 2 ) ),
- 					// 'vatRate' => xxx,
+ 					'lineNumber' 		    => 1,
+ 					'amount' 				=> $transport_amount,
+ 					'grossAmount' 			=> $transport_gross_amount,
+ 					'isExcluded' 			=> false,
+ 					'vatAmount' 			=> $transport_vat_amount,
+ 					'vatRate' 				=> $transport_vat_rate,
+ 					'vatAccount'			=> array(
+ 						'vatCode'	=> $this->get_remote_vat_code( $transport_vat_rate ),
+ 					),
  				),
  			),
 
@@ -418,9 +458,9 @@ class wcefrOrders {
 
 		$posts = get_posts( $args );
 		
-		if( $posts ) {
+		$n = 0;
 
-			$n = 0;
+		if( $posts ) {
 			
 			foreach ( $posts as $post ) {
 

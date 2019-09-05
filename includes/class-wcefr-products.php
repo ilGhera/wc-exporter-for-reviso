@@ -8,12 +8,20 @@
 
 class wcefrProducts {
 
-	public function __construct() {
+	/**
+	 * Class constructor
+	 * @param boolean $init fire hooks if true
+	 */
+	public function __construct( $init = false ) {
 
-		add_action( 'wp_ajax_export-products', array( $this, 'export_products' ) );
-		add_action( 'wp_ajax_delete-remote-products', array( $this, 'delete_remote_products' ) );
-		add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ), 10, 2 );
-		add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ), 10, 2 );
+		if ( $init ) {
+
+			add_action( 'wp_ajax_export-products', array( $this, 'export_products' ) );
+			add_action( 'wp_ajax_delete-remote-products', array( $this, 'delete_remote_products' ) );
+			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ), 10, 2 );
+			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ), 10, 2 );
+
+		}
 
 		$this->wcefrCall = new wcefrCall();
 
@@ -102,7 +110,7 @@ class wcefrProducts {
 	 * @param  int $vat_rate the vat rate
 	 * @return int 			the vatCode
 	 */
-	private function add_remote_vat_account( $vat_rate ) {
+	public function add_remote_vat_account( $vat_rate ) {
 
 		$args = array(
 			'account' => array(
@@ -136,7 +144,7 @@ class wcefrProducts {
 	 * @param  int    $vat_rate the vat rate
 	 * @return array  vat accounts available in Reviso
 	 */
-	private function get_remote_vat_code( $vat_rate ) {
+	public function get_remote_vat_code( $vat_rate ) {
 
 		$output = null;
 		
@@ -634,4 +642,4 @@ class wcefrProducts {
 	}
 
 }
-new wcefrProducts;
+new wcefrProducts( true );

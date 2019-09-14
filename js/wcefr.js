@@ -21,6 +21,7 @@ var wcefrController = function() {
 		self.wcefr_delete_remote_products();
 		self.wcefr_delete_remote_orders();
 		self.wcefr_disconnect();
+		self.book_invoice();
 	}
 
 
@@ -484,6 +485,41 @@ var wcefrController = function() {
 
 
 	/**
+	 * Show the book invoices option only with issue invoices option activated
+	 */
+	self.book_invoice = function() {
+
+		jQuery(function($){
+
+			var	issue_invoices 		 = $('.wcefr-issue-invoices');
+			var issue_invoice_button = $('.wcefr-issue-invoices-field span.tzCheckBox');
+			var	book_invoices_field  = $('.wcefr-book-invoices-field');
+			
+			if ( $(issue_invoices).attr('checked') == 'checked' ) {
+
+				book_invoices_field.show();
+
+			}
+
+			$(issue_invoice_button).on( 'click', function(){
+				
+				if ( $(this).hasClass('checked') ) {
+				
+					book_invoices_field.show();
+				
+				} else {
+				
+					book_invoices_field.hide('slow');			
+		
+				}
+
+			})
+		})
+
+	}
+
+
+	/**
 	 * Fires Chosen
 	 * @param  {bool} destroy metodo distroy
 	 */
@@ -495,6 +531,13 @@ var wcefrController = function() {
 		
 				disable_search_threshold: 10,
 				width: '200px'
+			
+			});
+
+			$('.wcefr-select-large').chosen({
+		
+				disable_search_threshold: 10,
+				width: '290px'
 			
 			});
 

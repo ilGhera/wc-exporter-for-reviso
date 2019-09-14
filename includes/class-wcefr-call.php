@@ -48,9 +48,11 @@ class wcefrCall {
 	 */
 	public function call( $method, $endpoint = '', $args = null ) {
 
+		error_log( 'ARGS: ' .  print_r( $args, true ) );
+
 		$body = $args ? json_encode( $args ) : '';
 
-		error_log( 'ARGS: ' .  print_r( $body, true ) );
+		// error_log( 'ARGS: ' .  print_r( $body, true ) );
 
 		$response = wp_remote_request(
 
@@ -66,13 +68,20 @@ class wcefrCall {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
-			// error_log( 'WCEFR | RESPONSE: ' . print_r( $response['body'], true ) );
-			return json_decode( $response['body'] );
+			$output = json_decode( $response['body'] );
+
+			if ( isset( $output->errors ) || isset( $output->errorCode ) ) {
+				
+				error_log( 'WCEFR | ERROR: ' . print_r( $output, true ) );
+
+			}
+			
+			return $output;
 
 		} else {
 
 			/*Print the error to the log*/
-			error_log( 'WCEFR | ERROR: ' . print_r( $response, true ) );
+			error_log( 'WCEFR | WP ERROR: ' . print_r( $response, true ) );
 
 		}
 

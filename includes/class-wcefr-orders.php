@@ -26,7 +26,7 @@ class wcefrOrders {
 
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			// add_action( 'admin_footer', array( $this, 'get_remote_invoices' ) );
+			// add_action( 'admin_footer', array( $this, 'get_additional_expenses' ) ); //temp
 
 		}
 
@@ -123,8 +123,6 @@ class wcefrOrders {
 
 		$output = $this->wcefrCall->call( 'get', 'v2/invoices/drafts?pagesize=10000'  );
 
-		error_log( 'FATTURE: ' . print_r( $output, true ) );
-
 		return $output;
 
 	}
@@ -132,7 +130,7 @@ class wcefrOrders {
 
 	/**
 	 * TEMP
-	 * Get the wc payment gatewauys available
+	 * Get the wc payment gateways available
 	 * @return array
 	 */
 	public function get_available_methods() {
@@ -282,12 +280,6 @@ class wcefrOrders {
 							'unitNumber' => 1,
 						),
 						
-						// 'marginInBaseCurrency' => 6.00,
-						// 'marginPercentage' => 100.00,
-						// 'sortKey' => 1,
-						// 'unitCostPrice' => 0.0000000000,
-						// 'deliveredQuantity' => 0.0000000000,
-						// 'manuallyEditedSalesPrice' => false,
 					);
 
 				}
@@ -301,20 +293,96 @@ class wcefrOrders {
 
 
 	/**
-	 * TEMP
 	 * Get additional expenses from Reviso
-	 * @return object
+	 * @param  int 	 $additionalExpensesNumber the id of the specific addition expenses to get
+	 * @return mixed
 	 */
-	private function get_additional_expenses() {
+	public function get_additional_expenses( $additionalExpenseNumber = null ) {
 
 		$output = null;
 
+		$endpoint = $additionalExpenseNumber ? '/' . $additionalExpenseNumber : '';
+		
+		$response = $this->wcefrCall->call( 'get', 'additional-expenses' . $endpoint );
 
-		$response = $this->wcefrCall->call( 'get', 'additional-expenses' );
+		if ( $endpoint ) {
 
-		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+			$output = $response;
+
+		} elseif ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 			
-			$output = $response->collection[0];
+			$output = $response->collection;
+
+		}
+		
+		return $output;
+
+	}
+
+
+	/**
+	 * Add a new additional expenses to Reviso
+	 * @param boolean $transport with true create the additional expenses to use with WC Shipping
+	 * @param mixed   $args      null or an array of arguments for the new additional expenses
+	 */
+	public function add_additional_expenses( $transport = true, $args = null ) {
+
+		if ( $transport ) {
+			
+			$args = array(
+				'name' => __( 'Transportation fee', 'wcefr' ),
+				'account' => array(
+					'accountNumber' => '5805490',
+				),
+				'additionalExpenseType' => 'transport',
+				'vatAccount'			=> array(
+					'vatCode'	=> $this->get_remote_vat_code( 22 ),
+				),
+			);
+
+		}
+
+		$response = $this->wcefrCall->call( 'post', 'additional-expenses', $args );
+
+		if ( isset( $response->additionalExpenseNumber ) ) {
+			
+			return $response->additionalExpenseNumber;
+
+		}
+
+	}
+
+
+	/**
+	 * Get additional expenses to use for transport or create it if doesn't exist
+	 * @return object
+	 */
+	public function get_transport_additional_expenses() {
+
+		$output = array();
+
+		$additional_expenses = $this->get_additional_expenses();
+
+		if ( $additional_expenses ) {
+			
+			foreach ($additional_expenses as $single) {
+			
+				if ( 'transport' ===  $single->additionalExpenseType ) {
+					$output[] = $single;
+				}
+
+			}
+		}
+
+		if ( ! empty( $output ) ) {
+			
+			$output = array(
+				'additionalExpenseNumber' => $output[0]->additionalExpenseNumber,
+			);
+		
+		} else {
+
+			$output = $this->add_additional_expenses( true );
 
 		}
 
@@ -438,6 +506,35 @@ class wcefrOrders {
 
 
 	/**
+	 * Get the vatZone of the order, based on the customer location 
+	 * @param  string $country the two letters country code
+	 * @return int             the vatZoneNumber
+	 */
+	private function get_vat_zone( $country ) {
+		
+		$countries = new WC_Countries();
+        $all_countries = $countries->get_countries(); //temp
+        $europen_countries = $countries->get_european_union_countries();
+        $base_country = $countries->get_base_country();
+    
+        if ( $country === $base_country ) {
+        	
+        	return 1;
+        
+        } elseif ( in_array( $country , $europen_countries) ) {
+
+        	return 2;
+
+        } else {
+
+        	return 3;
+
+        }
+
+    }
+
+
+	/**
 	 * Prepare order data to export to Reviso
 	 * @param  object $order the WC order
 	 * @return array
@@ -494,7 +591,7 @@ class wcefrOrders {
 				'name' 				=>  $client_name,
 				'publicEntryNumber' => $pa_code,
 				'vatZone' 			=> array(
-					'vatZoneNumber' => 1, //temp
+					'vatZoneNumber' => $this->get_vat_zone( $order->get_billing_country() ), //temp
 				),
 				'zip' 				=> $order->get_billing_postcode(),
 			),
@@ -503,10 +600,7 @@ class wcefrOrders {
  			),
  			'additionalExpenseLines' => array( //temp
  				array(
-	 				// 'additionalExpense' => $this->get_additional_expenses(),
-	 				'additionalExpense'     => array(
-	 					'additionalExpenseNumber' => 1, //temp
-	 				),
+	 				'additionalExpense' 	=> $this->get_transport_additional_expenses(),
  					'additionalExpenseType' => 'Transport',
  					'lineNumber' 		    => 1,
  					'amount' 				=> $transport_amount,

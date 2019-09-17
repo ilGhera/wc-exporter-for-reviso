@@ -48,11 +48,11 @@ class wcefrCall {
 	 */
 	public function call( $method, $endpoint = '', $args = null ) {
 
-		error_log( 'ARGS: ' .  print_r( $args, true ) );
+		// error_log( 'ARGS: ' .  print_r( $args, true ) );
 
 		$body = $args ? json_encode( $args ) : '';
 
-		// error_log( 'ARGS: ' .  print_r( $body, true ) );
+		error_log( 'ARGS: ' .  print_r( $body, true ) );
 
 		$response = wp_remote_request(
 

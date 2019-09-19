@@ -30,7 +30,7 @@ class wcefrCall {
 	public function headers() {
 
 		$output = array(
-			'X-AppSecretToken' => 'rqxTsPjvhLfKdbw29IOUdxNl1sIrYNsEKZ6RRIXhlyE1',
+			'X-AppSecretToken' => 'rqxTsPjvhLfKdbw29IOUdxNl1sIrYNsEKZ6RRIXhlyE1', //temp
 			'X-AgreementGrantToken' => $this->get_agreement_grant_token(),
 		  	'Content-Type' => 'application/json',
 		);
@@ -44,15 +44,16 @@ class wcefrCall {
 	 * @param  string $method   could be GET, POST, DELETE or PUT
 	 * @param  string $endpoint the endpoint's name
 	 * @param  array  $args     the data
+	 * @param  bool   $decode   json_dedcode if true
 	 * @return mixed  the response
 	 */
-	public function call( $method, $endpoint = '', $args = null ) {
+	public function call( $method, $endpoint = '', $args = null, $decode = true ) {
 
 		// error_log( 'ARGS: ' .  print_r( $args, true ) );
 
 		$body = $args ? json_encode( $args ) : '';
 
-		error_log( 'ARGS: ' .  print_r( $body, true ) );
+		// error_log( 'ARGS: ' .  print_r( $body, true ) );
 
 		$response = wp_remote_request(
 
@@ -68,7 +69,9 @@ class wcefrCall {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
-			$output = json_decode( $response['body'] );
+			// error_log( 'WCEFR | PDF: ' . print_r( $response, true ) );
+
+			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
 			if ( isset( $output->errors ) || isset( $output->errorCode ) ) {
 				

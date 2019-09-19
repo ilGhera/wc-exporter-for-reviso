@@ -43,6 +43,7 @@ function load_wc_exporter_for_reviso() {
 	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-checkout-fields.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-orders.php' );
+	require( WCEFR_INCLUDES . 'wcefr-invoice.php' );
 
 }
 add_action( 'plugins_loaded', 'load_wc_exporter_for_reviso', 10 );

@@ -23,10 +23,15 @@ class wcefrOrders {
 			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
 			add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
 			add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
-
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			// add_action( 'admin_footer', array( $this, 'get_additional_expenses' ) ); //temp
+			// add_action( 'admin_footer', array( $this, 'get_remote_invoices' ) ); //temp
+
+			/*temp*/
+			add_filter( 'manage_edit-shop_order_columns', array($this, 'wcfe_columns_head' ) );
+			add_action( 'manage_shop_order_posts_custom_column', array($this, 'wcfe_columns_content' ), 10, 2 );	
+		    add_action( 'admin_print_styles', array( $this, 'cw_add_order_profit_column_style' ) );
+
 
 		}
 
@@ -61,6 +66,89 @@ class wcefrOrders {
     	}
     }
 
+    /*temp*/
+    function cw_add_order_profit_column_style() {
+        $css = '.post-type-shop_order .wp-list-table .column-order_invoice { width: 5%; text-align: center; }';
+        wp_add_inline_style( 'woocommerce_admin_styles', $css );
+    }
+
+    /*temp*/
+	public function wcfe_columns_head( $defaults ) {
+		
+		$defaults['order_invoice'] = __( 'Invoice', 'wcefr' );
+		
+		return $defaults;
+	
+	}
+
+	public function download_invoice_pdf( $number ) {
+
+		$order_id = isset( $_POST['order-id'] ) ? $_POST['order-id'] : '';
+
+		if ( $order_id ) {
+
+			$invoice_number = $this->document_exists( $order_id, true );
+
+			if ( $invoice_number ) {
+
+				echo 'Invoice: ' . $invoice_number;
+
+			}
+
+		}
+
+		exit;
+
+		error_log( 'Numero fattura: ' . $number );
+
+		$output = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/' . $number . '/pdf' );
+		$output = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/375/pdf' );
+
+
+		return $output;
+	}
+
+	
+	public function download_invoice_pdf_2() {
+
+		$file = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/375/pdf' ); 
+
+		$filename = 'Invoice-375.pdf'; 
+		  
+		header('Content-type: application/pdf'); 
+		header('Content-Disposition: inline; filename="' . $filename . '"'); 
+		echo $file;		
+
+		exit;
+	}
+
+
+    /*temp*/
+	public function wcfe_columns_content( $column, $order_id ) {
+
+		if( 'order_invoice' === $column ) {
+	
+			$order = wc_get_order( $order_id );
+
+			// $invoice_number = $this->document_exists( $order_id, true );
+
+			// error_log( 'N fatt.: ' . '/v2/invoices/drafts/' . $invoice_number . '/pdf' );
+
+			// if ( $invoice_number ) {
+
+				$icon 	 = WCEFR_URI . 'images/xml.png';
+				// $pdf_url = $this->download_invoice_pdf( $invoice_number );
+
+				// echo '<a href="#" class="wcefr-pdf-download" data-order-id="' . $order_id . '"><img src="' . esc_url( $icon ) . '"></a>';			
+
+				echo '<a href="wcefr-invoice.php?preview=true&order-id=' . $order_id . '" target="_blanck"><img src="' . esc_url( $icon ) . '"></a>';			
+
+			// }
+	
+		}
+	
+	}
+
 	
 	/**
 	 * Get all the orders from Reviso
@@ -69,6 +157,25 @@ class wcefrOrders {
 	public function get_remote_orders() {
 
 		$output = $this->wcefrCall->call( 'get', 'orders?pagesize=10000'  );
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Get all invoices from Reviso
+	 * @param bool $booked search for booke invoices if true
+	 * @return array
+	 */
+	public function get_remote_invoices( $booked = false, $filter = false ) {
+
+		$status = $booked ? 'booked' : 'drafts';
+		$filter = $filter ? $filter : '?pagesize=10000'; 
+
+		$output = $this->wcefrCall->call( 'get', 'v2/invoices/' . $status . $filter );
+
+		// error_log( 'FATTURE: ' . print_r( $output, true ) );
 
 		return $output;
 
@@ -88,10 +195,12 @@ class wcefrOrders {
 
 		if ( $invoice ) {
 
-			$responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/drafts' . $filter );
+			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/drafts' . $filter );
+			$responses[] = $this->get_remote_invoices( false, $filter );
 
 			/*Booked invoices endpoint requires a different filter*/
-			$responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/booked?filter=notes.textLine1$eq:WC-Order-' . $order_id );
+			$responses[] = $this->get_remote_invoices( true, '?filter=notes.textLine1$eq:WC-Order-' . $order_id );
+			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/booked?filter=notes.textLine1$eq:WC-Order-' . $order_id );
 
 		} else {
 
@@ -111,19 +220,6 @@ class wcefrOrders {
 			}
 
 		}
-
-	}
-
-
-	/**
-	 * Get all invoices from Reviso
-	 * @return array
-	 */
-	public function get_remote_invoices() {
-
-		$output = $this->wcefrCall->call( 'get', 'v2/invoices/drafts?pagesize=10000'  );
-
-		return $output;
 
 	}
 
@@ -568,7 +664,7 @@ class wcefrOrders {
 			'roundingAmount' 		 => 0.00,
 			'vatDate' 			     => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'vatAmount' 			 => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
-			'vatIncluded'			 => true, //temp
+			// 'vatIncluded'			 => true,
  			'lines' 				 => $this->order_items_data( $order ),
 			'customer'  			 => array(
 				'splitPayment'	 => false,
@@ -583,17 +679,17 @@ class wcefrOrders {
 			'layout' 				 => array( //temp
 				'isDefault'    => false,
 				'layoutNumber' => 9,
-			),
+			),	
 			'recipient' 			 => array(
 				'address' 			=> $order->get_billing_address_1(),
 				'city' 				=> $order->get_billing_city(),
 				'country' 			=> $order->get_billing_country(),
-				'name' 				=>  $client_name,
+				'name' 				=> $client_name,
 				'publicEntryNumber' => $pa_code,
+				'zip' 				=> $order->get_billing_postcode(),
 				'vatZone' 			=> array(
 					'vatZoneNumber' => $this->get_vat_zone( $order->get_billing_country() ), //temp
 				),
-				'zip' 				=> $order->get_billing_postcode(),
 			),
  			'notes' 				 => array(
  				'text1' => 'WC-Order-' . $order->get_id(),

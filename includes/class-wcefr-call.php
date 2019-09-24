@@ -69,8 +69,6 @@ class wcefrCall {
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
-			// error_log( 'WCEFR | PDF: ' . print_r( $response, true ) );
-
 			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
 			if ( isset( $output->errors ) || isset( $output->errorCode ) ) {

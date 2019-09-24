@@ -13,18 +13,18 @@ if ( isset( $_GET['preview'] ) ) {
 	error_log( 'ORDER: ' . $order_id );
 
 	$class = new wcefrOrders();
-	$invoice_number = $class->document_exists( $order_id, true );
+	$invoice = $class->document_exists( $order_id, true, true );
 
-	error_log( 'INVOICE: ' . $invoice_number );
+	error_log( 'INVOICE: ' . $invoice['id'] );
 
 
-	if ( $invoice_number ) {
+	if ( $invoice['id'] && $invoice['status'] ) {
 	
-		$file = $class->wcefrCall->call( 'get', '/v2/invoices/drafts/' . $invoice_number . '/pdf', null, false ); 
+		$file = $class->wcefrCall->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false ); 
 
 		error_log( 'PDF: ' . print_r( $file, true ) );
 
-		$filename = 'Invoice-' . $invoice_number . '.pdf'; 
+		$filename = 'Invoice-' . $invoice['id'] . '.pdf'; 
 		  
 		header('Content-type: application/pdf'); 
 		header('Content-Disposition: inline; filename="' . $filename . '"'); 

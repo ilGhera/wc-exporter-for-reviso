@@ -91,7 +91,7 @@ class wcefrSettings {
 	 */
 	public function disconnect_callback() {
 
-		delete_option( 'wcefr-agt', $token );
+		delete_option( 'wcefr-agt' );
 
 		exit;
 

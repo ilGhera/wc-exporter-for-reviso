@@ -21,17 +21,15 @@ class wcefrOrders {
 			$this->issue_invoices 		= get_option( 'wcefr-issue-invoices' );
 			$this->book_invoices  		= get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
+
 			add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
 			add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			// add_action( 'admin_footer', array( $this, 'get_remote_invoices' ) ); //temp
-
-			/*temp*/
-			add_filter( 'manage_edit-shop_order_columns', array($this, 'wcfe_columns_head' ) );
-			add_action( 'manage_shop_order_posts_custom_column', array($this, 'wcfe_columns_content' ), 10, 2 );	
-		    add_action( 'admin_print_styles', array( $this, 'cw_add_order_profit_column_style' ) );
-
+			add_action( 'manage_shop_order_posts_custom_column', array($this, 'wc_columns_content' ), 10, 2 );	
+		    add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
+			
+			add_filter( 'manage_edit-shop_order_columns', array($this, 'wc_columns_head' ) );
 			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 
@@ -68,14 +66,24 @@ class wcefrOrders {
     	}
     }
 
-    /*temp*/
-    function cw_add_order_profit_column_style() {
+    
+    /**
+     * Add style to the Invoice column in the orders index 
+     */
+    function invoice_column_style() {
+        
         $css = '.post-type-shop_order .wp-list-table .column-order_invoice { width: 5%; text-align: center; }';
         wp_add_inline_style( 'woocommerce_admin_styles', $css );
+
     }
 
-    /*temp*/
-	public function wcfe_columns_head( $defaults ) {
+
+    /**
+     * Add the title to the Invoice column
+     * @param  array $defaults the wc column heads 
+     * @return array
+     */
+	public function wc_columns_head( $defaults ) {
 		
 		$defaults['order_invoice'] = __( 'Invoice', 'wcefr' );
 		
@@ -83,64 +91,25 @@ class wcefrOrders {
 	
 	}
 
-	public function download_invoice_pdf( $number ) {
-
-		$order_id = isset( $_POST['order-id'] ) ? $_POST['order-id'] : '';
-
-		if ( $order_id ) {
-
-			$invoice_number = $this->document_exists( $order_id, true );
-
-			if ( $invoice_number ) {
-
-				echo 'Invoice: ' . $invoice_number;
-
-			}
-
-		}
-
-		exit;
-
-		error_log( 'Numero fattura: ' . $number );
-
-		$output = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/' . $number . '/pdf' );
-		$output = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/375/pdf' );
-
-
-		return $output;
-	}
-
-	
-	public function download_invoice_pdf_2() {
-
-		$file = $this->wcefrCall->call( 'get', '/v2/invoices/drafts/375/pdf' ); 
-
-		$filename = 'Invoice-375.pdf'; 
-		  
-		header('Content-type: application/pdf'); 
-		header('Content-Disposition: inline; filename="' . $filename . '"'); 
-		echo $file;		
-
-		exit;
-	}
-
-
-    /*temp*/
-	public function wcfe_columns_content( $column, $order_id ) {
+    /**
+     * Set the preview invoice button 
+     * @param  string $column   the WC order index column
+     * @param  int 	  $order_id the WC order id
+     * @return mixed
+     */
+	public function wc_columns_content( $column, $order_id ) {
 
 		if( 'order_invoice' === $column ) {
 	
-			$data = get_post_meta( $order_id, 'wcefr-data', true );
+			$invoice_number = get_post_meta( $order_id, 'wcefr-invoice', true );
 
-			if ( isset( $data['displayInvoiceNumber'] ) ) {
+			if ( $invoice_number ) {
 				
 				$icon 	 = WCEFR_URI . 'images/xml.png';
 	
-				echo '<a href="wcefr-invoice.php?preview=true&order-id=' . $order_id . '" target="_blank" title="' . $data['displayInvoiceNumber'] . '"><img src="' . esc_url( $icon ) . '"></a>';			
+				echo '<a href="wcefr-invoice.php?preview=true&order-id=' . $order_id . '" target="_blank" title="' . $invoice_number . '"><img src="' . esc_url( $icon ) . '"></a>';			
 
 			}
-
-			// }
 	
 		}
 	
@@ -585,50 +554,98 @@ class wcefrOrders {
     }
 
 
+	/**
+	 * Check if a wc order is already on Reviso
+	 * @param  int  $order_id 		  the wc order id
+	 * @param  bool $invoice  		  search in invoices instead of orders
+	 * @param  bool $invoice_details  if set to true the method returns an array with invoice id its status
+	 * @return mixed
+	 */
+	public function document_exists( $order_id, $invoice = false, $invoice_details = false )  {
+
+		$filter    = '?filter=notes.text1$eq:WC-Order-' . $order_id;
+		$responses = array();
+
+		if ( $invoice ) {
+
+			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/drafts' . $filter );
+			$responses['drafts'] = $this->get_remote_invoices( false, $filter );
+
+			/*Booked invoices endpoint requires a different filter*/
+			$responses['booked'] = $this->get_remote_invoices( true, '?filter=notes.textLine1$eq:WC-Order-' . $order_id );
+			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/booked?filter=notes.textLine1$eq:WC-Order-' . $order_id );
+
+		} else {
+
+			$responses[] = $this->wcefrCall->call( 'get', 'orders' . $filter );
+
+		}
+
+		foreach ( $responses as $key => $value ) {
+
+			if ( isset( $value->collection ) && ! empty( $value->collection ) ) {
+
+				$result = $value->collection[0];
+
+				$id = isset( $result->id ) ? $result->id : $result->bookedInvoiceNumber;
+
+				if ( $invoice_details ) {
+
+					$number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
+
+					return array( 
+						'id' 	=> $id,
+						'number' => $number,
+						'status' => $key
+					);
+
+				} else {
+
+					return $id;
+
+				}
+
+			}				
+	
+		}
+
+	}
+
+
+	/**
+	 * Attach Reviso invoice to the WC completed order and custome invoice email
+	 * @param  array  $attachments the WC mail attachments
+	 * @param  string $status      the order status
+	 * @param  object $order       the WC order
+	 */
 	function email_attachments( $attachments, $status, $order ){
 
 		$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
 
 	    if ( isset( $status ) && in_array( $status, $allowed_statuses ) ) {
-	    
-	    	// $attachments[] = get_attached_file( 15106 );
-	    	
 			
-	    		/*temp*/
-				$invoice = $this->document_exists( $order->get_id(), true, true );
+			$invoice = $this->document_exists( $order->get_id(), true, true );
 
-				error_log( 'INVOICE: ' . $invoice['id'] );
+			if ( $invoice['id'] && $invoice['status'] ) {
 
-				if ( $invoice['id'] && $invoice['status'] ) {
+				$filename = 'Invoice-' . $invoice['number'] . '-'; 
+				
+				$pdf  = tempnam( sys_get_temp_dir(), $filename );
 
-					$filename = 'Invoice-' . $invoice['id'] . '.pdf'; 
-					
-					$pdf  = tempnam( sys_get_temp_dir(), $filename );
-					$file = $this->wcefrCall->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false ); 
+				rename( $pdf , $pdf .= '.pdf');
+				
+				$file = $this->wcefrCall->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false ); 
 
-					$handle = fopen( $pdf, 'w' );
-					fwrite( $handle , $file );
-					// $data = stream_get_meta_data( $pdf );
+				$handle = fopen( $pdf, 'w' );
 
-					error_log( 'FILE: ' . print_r( $file, true ) );
-					error_log( 'PDF: ' . print_r( $pdf, true ) );
-					// error_log( 'DATA: ' . print_r( stream_get_meta_data( $pdf ), true ) );
-					// error_log( 'DATA 2: ' . print_r( get_attached_file( 15106 ), true ) );
+				fwrite( $handle , $file );
 
+		    	$attachments[] = $pdf;
 
+		    	fclose( $handle );
+		    	// unlink( $pdf );
 
-			    	$attachments[] = $pdf;
-
-			    	fclose( $handle );
-			    	// unlink( $pdf );
-
-					  
-					// header('Content-type: application/pdf'); 
-					// header('Content-Disposition: inline; filename="' . $filename . '"'); 
-					// echo $file;		
-
-				}
-				// 
+			}
 
 	    }
 
@@ -733,50 +750,41 @@ class wcefrOrders {
 
 
 	/**
-	 * Check if a wc order is already on Reviso
-	 * @param  int  $order_id 		  the wc order id
-	 * @param  bool $invoice  		  search in invoices instead of orders
-	 * @param  bool $invoice_status   if set to true the method returns an array with invoice id its status
-	 * @return mixed
+	 * Export the single WC order to Reviso
+	 * @param  int  $order_id the order id
+	 * @param  bool $invoice export to Reviso as an invoice
 	 */
-	public function document_exists( $order_id, $invoice = false, $invoice_status = false )  {
+	public function export_single_order( $order_id, $invoice = false ) {
 
-		$filter    = '?filter=notes.text1$eq:WC-Order-' . $order_id;
-		$responses = array();
+		$order 			 = new WC_Order( $order_id );		
+		$args 			 = $this->prepare_order_data( $order );
+		$order_completed = 'completed' === $order->get_status() ? true : false;
+		$invoice 		 = $order_completed ? $order_completed : $invoice;
 
-		if ( $invoice ) {
+		if ( $args ) {
+			$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
 
-			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/drafts' . $filter );
-			$responses['drafts'] = $this->get_remote_invoices( false, $filter );
+			$output = $this->wcefrCall->call( 'post', $endpoint, $args );
 
-			/*Booked invoices endpoint requires a different filter*/
-			$responses['booked'] = $this->get_remote_invoices( true, '?filter=notes.textLine1$eq:WC-Order-' . $order_id );
-			// $responses[] = $this->wcefrCall->call( 'get', '/v2/invoices/booked?filter=notes.textLine1$eq:WC-Order-' . $order_id );
+			/*An invoice for this order is ready on Reviso*/
+			if ( $invoice && isset( $output->id ) ) {
+			
+				$data = $output->voucher->voucherNumber->displayVoucherNumber; 
 
-		} else {
+				/*Book the invoise if set by the admin*/
+				if ( $this->book_invoices ) {
 
-			$responses[] = $this->wcefrCall->call( 'get', 'orders' . $filter );
+					$booked = $this->wcefrCall->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
 
-		}
-
-		foreach ( $responses as $key => $value ) {
-
-			if ( isset( $value->collection ) && ! empty( $value->collection ) ) {
-
-				$id = isset( $value->collection[0]->id ) ? $value->collection[0]->id : $value->collection[0]->bookedInvoiceNumber;
-
-				if ( $invoice_status ) {
-
-					return array( 'id' => $id, 'status' => $key );
-
-				} else {
-
-					return $id;
+					$data = $booked->displayInvoiceNumber; 
 
 				}
 
-			}				
-	
+				update_post_meta( $order_id, 'wcefr-invoice', $data );
+
+			}
+
+
 		}
 
 	}
@@ -816,7 +824,10 @@ class wcefrOrders {
 
 				$n++;
 
-				if ( ! $this->document_exists( $post->ID ) && ! $this->document_exists( $post->ID, true ) ) {
+				$order_exists = $this->document_exists( $post->ID );
+				$invoice_exists = $this->document_exists( $post->ID, true, true );
+
+				if ( ! $order_exists && ! $invoice_exists['id'] ) {
 	
 						/*Cron event*/
 						wp_schedule_single_event(
@@ -830,6 +841,13 @@ class wcefrOrders {
 						);													
 	
 				} else {
+
+					/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
+					if ( $invoice_exists['number'] ) {
+
+						update_post_meta( $post->ID, 'wcefr-invoice', $invoice_exists['number'] );
+
+					}
 
 					/*The order is already in Reviso*/
 					$response[] = array(

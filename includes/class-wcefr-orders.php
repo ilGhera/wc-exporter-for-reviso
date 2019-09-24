@@ -770,7 +770,7 @@ class wcefrOrders {
 			$output = $this->wcefrCall->call( 'post', $endpoint, $args );
 
 			/*An invoice for this order is ready on Reviso*/
-			if ( $invoice && isset( $output->id ) ) {
+			if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
 			
 				$data = $output->voucher->voucherNumber->displayVoucherNumber; 
 

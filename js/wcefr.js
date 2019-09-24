@@ -499,6 +499,7 @@ var wcefrController = function() {
 			if ( $(issue_invoices).attr('checked') == 'checked' ) {
 
 				book_invoices_field.show();
+				send_invoices_field.show();
 
 			}
 

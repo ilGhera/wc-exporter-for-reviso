@@ -112,7 +112,7 @@
 				<p class="description"><?php _e( 'Issue invoices created in Reviso directly ', 'wcefr' ); ?></p>
 			</td>
 		</tr>
-		<tr class="wcefr-send-invoices-field">
+		<tr class="wcefr-send-invoices-field" style="display: none;">
 			<th scope="row"><?php _e( 'Send invoices', 'wcefr' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo $wcefr_send_invoices == 1 ? ' checked="checked"' : ''; ?>>

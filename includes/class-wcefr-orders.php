@@ -759,36 +759,51 @@ class wcefrOrders {
 	 */
 	public function export_single_order( $order_id, $invoice = false ) {
 
-		$order 			 = new WC_Order( $order_id );		
-		$args 			 = $this->prepare_order_data( $order );
-		$order_completed = 'completed' === $order->get_status() ? true : false;
-		$invoice 		 = $order_completed ? $order_completed : $invoice;
+		$order_exists = $this->document_exists( $order_id );
+		$invoice_exists = $this->document_exists( $order_id, true, true );
 
-		if ( $args ) {
-			$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
+		if ( ! $order_exists && ! $invoice_exists['id'] ) {
 
-			$output = $this->wcefrCall->call( 'post', $endpoint, $args );
+			$order 			 = new WC_Order( $order_id );		
+			$args 			 = $this->prepare_order_data( $order );
+			$order_completed = 'completed' === $order->get_status() ? true : false;
+			$invoice 		 = $order_completed ? $order_completed : $invoice;
 
-			/*An invoice for this order is ready on Reviso*/
-			if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
-			
-				$data = $output->voucher->voucherNumber->displayVoucherNumber; 
+			if ( $args ) {
+				$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
 
-				/*Book the invoise if set by the admin*/
-				if ( $this->book_invoices ) {
+				$output = $this->wcefrCall->call( 'post', $endpoint, $args );
 
-					$booked = $this->wcefrCall->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
+				/*An invoice for this order is ready on Reviso*/
+				if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
+				
+					$data = $output->voucher->voucherNumber->displayVoucherNumber; 
 
-					$data = $booked->displayInvoiceNumber; 
+					/*Book the invoise if set by the admin*/
+					if ( $this->book_invoices ) {
+
+						$booked = $this->wcefrCall->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
+
+						$data = $booked->displayInvoiceNumber; 
+
+					}
+
+					update_post_meta( $order_id, 'wcefr-invoice', $data );
 
 				}
 
-				update_post_meta( $order_id, 'wcefr-invoice', $data );
+			}
+
+		} else {
+
+			/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
+			if ( $invoice_exists['number'] ) {
+
+				update_post_meta( $order_id, 'wcefr-invoice', $invoice_exists['number'] );
 
 			}
 
-
-		}
+		}		
 
 	}
 
@@ -826,47 +841,25 @@ class wcefrOrders {
 			foreach ( $posts as $post ) {
 
 				$n++;
-
-				$order_exists = $this->document_exists( $post->ID );
-				$invoice_exists = $this->document_exists( $post->ID, true, true );
-
-				if ( ! $order_exists && ! $invoice_exists['id'] ) {
 	
-						/*Cron event*/
-						wp_schedule_single_event(
+				/*Cron event*/
+				wp_schedule_single_event(
 
-							time() + 1,
-							'wcefr_export_single_order_event',
-							array(
-								$post->ID
-							)
-							
-						);													
-	
-				} else {
+					time() + 1,
+					'wcefr_export_single_order_event',
+					array(
+						$post->ID
+					)
+					
+				);													
 
-					/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
-					if ( $invoice_exists['number'] ) {
-
-						update_post_meta( $post->ID, 'wcefr-invoice', $invoice_exists['number'] );
-
-					}
-
-					/*The order is already in Reviso*/
-					$response[] = array(
-						'error',
-						__( 'The order <span>' . $post->ID . '</span> has already been exported', 'wcefr' ),			
-					);
-
-				}
-				
 			}
 
 		}
 
 		$response[] = array(
 			'ok',
-			__( 'Orders to export: <span>' . $n . '</span>', 'wcefr' ),			
+			__( '<span>' . $n . '</span> order(s) export process has begun', 'wcefr' ),			
 		);
 
 		echo json_encode( $response );
@@ -885,6 +878,7 @@ class wcefrOrders {
 
 		$output = $this->wcefrCall->call( 'delete', 'orders/' . $order_id );
 	
+		/*temp*/
 		if ( isset( $output->deletedCount ) && 1 === $output->deletedCount ) {
 			
 			$response = array(
@@ -916,12 +910,13 @@ class wcefrOrders {
 
 		} else {
 
+			$response = array();
+
 			$orders = $this->get_remote_orders();
 
 			if ( isset( $orders->collection ) && count( $orders->collection ) > 0 ) {
 
 				$n = 0;
-				$response = array();
 
 				foreach ( $orders->collection as $order ) {
 
@@ -946,7 +941,7 @@ class wcefrOrders {
 
 				$response[] = array(
 					'ok',
-					__( 'The delete process is started', 'wcefr' ),
+					__( '<span>' . $n . '</span> order(s) delete process has begun', 'wcefr' ),
 				);
 
 				echo json_encode( $response );

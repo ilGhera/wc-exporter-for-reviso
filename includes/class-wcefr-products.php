@@ -368,8 +368,6 @@ class wcefrProducts {
 	 */
 	private function prepare_product_data( $product ) {
 
-		error_log( 'PRODOTTO: '  . print_r( $product, true ) );
-
 		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
 		$output = array(
 			'productNumber'    => $product->get_sku(),
@@ -511,13 +509,13 @@ class wcefrProducts {
 		/*Update the db*/
 		update_option( 'wcefr-products-categories', $terms );
 
-
+		$response = array();
+		
 		$posts = get_posts( $args );
 		
 		if( $posts ) {
 
 			$n = 0;
-			$response = array();
 
 			foreach ( $posts as $post ) {
 
@@ -539,7 +537,7 @@ class wcefrProducts {
 
 			$response[] = array(
 				'ok',
-				__( 'Exported products: <span>' . $n . '</span>', 'wcefr' ),			
+				__( '<span>' . $n . '</span> product(s) export process has begun', 'wcefr' ),			
 			);
 
 			echo json_encode( $response );
@@ -561,14 +559,12 @@ class wcefrProducts {
 
 		$end = $this->format_sku( $product_number );
 
-		$response = array();
-
 		$output = $this->wcefrCall->call( 'delete', 'products/' . $end );
 	
-		if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
-			
+		/*temp*/
+		if ( isset( $output->errorCode ) || isset( $output->developerHint )) {			
 
-			$response[] = array(
+			$response = array(
 				'error',
 				__( 'ERROR! ' . $output->message . ' #' . $product_number . '<br>', 'wcefr' ),
 			);
@@ -576,16 +572,12 @@ class wcefrProducts {
 
 		} else {
 
-			$n++;
-
-			$response[] = array(
+			$response = array(
 				'ok',
 				__( 'Deleted products: <span>' . $n . '</span>', 'wcefr' ),			
 			);
 
 		}
-
-		echo json_encode( $response );
 
 	}
 
@@ -622,7 +614,7 @@ class wcefrProducts {
 
 			$response[] = array(
 				'ok',
-				__( 'The delete process of ' . $n . ' products is started', 'wcefr' ),
+				__( '<span>' . $n . '</span> product(s) delete process has begun', 'wcefr' ),
 			);
 
 		} else {

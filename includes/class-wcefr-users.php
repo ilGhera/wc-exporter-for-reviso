@@ -351,26 +351,7 @@ class wcefrUsers {
 			$output = $this->wcefrCall->call( 'post', $type . '/', $args );
 			
 			return $output;
-			
-			// temp
-			if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
-			
-				$response[] = array(
-					'error',
-					__( 'ERROR! ' . $output->message . '<br>', 'wcefr' ),
-				);
-
-			} else {
-
-				$n++;
-
-				$response[] = array(
-					'ok',
-					__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
-				);
-
-			}
-						
+									
 		}
 
 	}
@@ -422,9 +403,10 @@ class wcefrUsers {
 
 		}
 
+		$message_type = substr( $type, 0, -1 );
 		$response[] = array(
 			'ok',
-			__( 'Exported ' . $type . ': <span>' . $n . '</span>', 'wcefr' ),			
+			__( '<span>' . $n . '</span> ' . $message_type . '(s) export process has begun', 'wcefr' ),			
 		);
 
 
@@ -474,6 +456,7 @@ class wcefrUsers {
 
 		$output = $this->wcefrCall->call( 'delete', $type . '/' . $user->$field_name );
 
+		/*temp*/
 		if ( isset( $output->errorCode ) || isset( $output->developerHint )) {
 
 			$response = array(
@@ -500,6 +483,7 @@ class wcefrUsers {
 
 		if ( isset( $_POST['type'] ) ) {
 
+			$response = array();
 			$type = sanitize_text_field( $_POST['type'] );
 			$users = $this->get_remote_users( $type );
 
@@ -508,7 +492,6 @@ class wcefrUsers {
 			if ( isset( $users->collection ) && count( $users->collection ) > 0 ) {
 				
 				$n = 0;
-				$response = array();
 
 				foreach ( $users->collection as $user ) {
 					
@@ -530,11 +513,17 @@ class wcefrUsers {
  
 				}
 
+				$message_type = substr( $type, 0, -1 );
+				$response[] = array(
+					'ok',
+					__( '<span>' . $n . '</span> ' . $message_type . '(s) delete process has begun', 'wcefr' ),			
+				);
+
 				echo json_encode( $response );
 
 			} else {
 				
-				$response = array(
+				$response[] = array(
 					'error',
 					__( 'ERROR! There are not ' . $type . ' to delete', 'wcefr' ),
 				);

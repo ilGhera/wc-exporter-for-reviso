@@ -195,6 +195,8 @@ var wcefrController = function() {
 
 				e.preventDefault();
 
+				self.delete_messages();
+
 				var type  = $(this).hasClass('customers') ? 'customers' : 'suppliers';
 				var role  = $('.wcefr-' + type + '-role').val();
 				var group = $('.wcefr-' + type + '-groups').val();
@@ -239,6 +241,8 @@ var wcefrController = function() {
 
 				e.preventDefault();
 
+				self.delete_messages();
+
 				var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
 								
 				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
@@ -259,7 +263,7 @@ var wcefrController = function() {
 							var error = 'error' === result[i][0] ? true : false;
 							var update = 0 !== i ? true : false; 
 
-							self.wcefr_response_message( result[i][1], error, true );
+							self.wcefr_response_message( result[i][1], error, false );
 	
 						}
 
@@ -346,7 +350,7 @@ var wcefrController = function() {
 							var error = 'error' === result[i][0] ? true : false;
 							var update = 0 !== i ? true : false; 
 
-							self.wcefr_response_message( result[i][1], error, true );
+							self.wcefr_response_message( result[i][1], error, false );
 	
 						}
 
@@ -412,6 +416,8 @@ var wcefrController = function() {
 
 				e.preventDefault();
 
+				self.delete_messages();
+
 				var statuses = $('.wcefr-orders-statuses').val();
 
 				var data = {
@@ -428,7 +434,7 @@ var wcefrController = function() {
 						var error = 'error' === result[i][0] ? true : false;
 						var update = 0 !== i ? true : false; 
 
-						self.wcefr_response_message( result[i][1], error, true );
+						self.wcefr_response_message( result[i][1], error, false );
 
 					}
 
@@ -451,6 +457,8 @@ var wcefrController = function() {
 			$('.button-primary.wcefr.red.orders').on('click', function(e){
 
 				e.preventDefault();
+
+				self.delete_messages();
 								
 				var answer = confirm( 'Vuoi cancellare tutti gli ordini da Reviso?' );
 
@@ -462,6 +470,8 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
+						console.log(response);
+
 						var result = JSON.parse(response);
 
 						for (var i = 0; i < result.length; i++) {
@@ -469,7 +479,7 @@ var wcefrController = function() {
 							var error = 'error' === result[i][0] ? true : false;
 							var update = 0 !== i ? true : false; 
 
-							self.wcefr_response_message( result[i][1], error, true );
+							self.wcefr_response_message( result[i][1], error, false );
 
 						}
 

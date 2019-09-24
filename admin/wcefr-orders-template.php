@@ -65,6 +65,7 @@
 	$wcefr_export_orders   = get_option( 'wcefr-export-orders' );
 	$wcefr_create_invoices = get_option( 'wcefr-create-invoices' );
 	$wcefr_issue_invoices  = get_option( 'wcefr-issue-invoices' );
+	$wcefr_send_invoices   = get_option( 'wcefr-send-invoices' );
 	$wcefr_book_invoices   = get_option( 'wcefr-book-invoices' );
 	$wcefr_number_series   = get_option( 'wcefr-number-series-prefix' );
 
@@ -77,6 +78,9 @@
 
 		$wcefr_issue_invoices = isset( $_POST['wcefr-issue-invoices'] ) ? $_POST['wcefr-issue-invoices'] : 0;
 		update_option( 'wcefr-issue-invoices', $wcefr_issue_invoices );
+
+		$wcefr_send_invoices = isset( $_POST['wcefr-send-invoices'] ) ? $_POST['wcefr-send-invoices'] : 0;
+		update_option( 'wcefr-send-invoices', $wcefr_send_invoices );
 
 		$wcefr_book_invoices = isset( $_POST['wcefr-book-invoices'] ) ? $_POST['wcefr-book-invoices'] : 0;
 		update_option( 'wcefr-book-invoices', $wcefr_book_invoices );
@@ -106,6 +110,13 @@
 			<td>
 				<input type="checkbox" class="wcefr-issue-invoices" name="wcefr-issue-invoices" value="1"<?php echo $wcefr_issue_invoices == 1 ? ' checked="checked"' : ''; ?>>
 				<p class="description"><?php _e( 'Issue invoices created in Reviso directly ', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+		<tr class="wcefr-send-invoices-field">
+			<th scope="row"><?php _e( 'Send invoices', 'wcefr' ); ?></th>
+			<td>
+				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo $wcefr_send_invoices == 1 ? ' checked="checked"' : ''; ?>>
+				<p class="description"><?php _e( 'Attach invoices to completed order notifications ', 'wcefr' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-book-invoices-field" style="display: none;">

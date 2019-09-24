@@ -494,6 +494,7 @@ var wcefrController = function() {
 			var	issue_invoices 		 = $('.wcefr-issue-invoices');
 			var issue_invoice_button = $('.wcefr-issue-invoices-field span.tzCheckBox');
 			var	book_invoices_field  = $('.wcefr-book-invoices-field');
+			var	send_invoices_field  = $('.wcefr-send-invoices-field');
 			
 			if ( $(issue_invoices).attr('checked') == 'checked' ) {
 
@@ -506,10 +507,12 @@ var wcefrController = function() {
 				if ( $(this).hasClass('checked') ) {
 				
 					book_invoices_field.show();
+					send_invoices_field.show();
 				
 				} else {
 				
 					book_invoices_field.hide('slow');			
+					send_invoices_field.hide('slow');			
 		
 				}
 

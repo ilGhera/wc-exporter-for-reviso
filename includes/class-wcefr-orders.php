@@ -19,6 +19,7 @@ class wcefrOrders {
 			$this->init();
 			
 			$this->issue_invoices 		= get_option( 'wcefr-issue-invoices' );
+			$this->send_invoices  		= get_option( 'wcefr-send-invoices' );
 			$this->book_invoices  		= get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
 
@@ -105,7 +106,7 @@ class wcefrOrders {
 
 			if ( $invoice_number ) {
 				
-				$icon 	 = WCEFR_URI . 'images/xml.png';
+				$icon 	 = WCEFR_URI . 'images/pdf.png';
 	
 				echo '<a href="wcefr-invoice.php?preview=true&order-id=' . $order_id . '" target="_blank" title="' . $invoice_number . '"><img src="' . esc_url( $icon ) . '"></a>';			
 
@@ -140,8 +141,6 @@ class wcefrOrders {
 		$filter = $filter ? $filter : '?pagesize=10000'; 
 
 		$output = $this->wcefrCall->call( 'get', 'v2/invoices/' . $status . $filter );
-
-		// error_log( 'FATTURE: ' . print_r( $output, true ) );
 
 		return $output;
 
@@ -620,34 +619,38 @@ class wcefrOrders {
 	 */
 	function email_attachments( $attachments, $status, $order ){
 
-		$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
+		if ( $this->issue_invoices && $this->send_invoices  ) {
 
-	    if ( isset( $status ) && in_array( $status, $allowed_statuses ) ) {
-			
-			$invoice = $this->document_exists( $order->get_id(), true, true );
+			$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
 
-			if ( $invoice['id'] && $invoice['status'] ) {
-
-				$filename = 'Invoice-' . $invoice['number'] . '-'; 
+		    if ( isset( $status ) && in_array( $status, $allowed_statuses ) ) {
 				
-				$pdf  = tempnam( sys_get_temp_dir(), $filename );
+				$invoice = $this->document_exists( $order->get_id(), true, true );
 
-				rename( $pdf , $pdf .= '.pdf');
-				
-				$file = $this->wcefrCall->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false ); 
+				if ( $invoice['id'] && $invoice['status'] ) {
 
-				$handle = fopen( $pdf, 'w' );
+					$filename = 'Invoice-' . $invoice['number'] . '-'; 
+					
+					$pdf  = tempnam( sys_get_temp_dir(), $filename );
 
-				fwrite( $handle , $file );
+					rename( $pdf , $pdf .= '.pdf');
+					
+					$file = $this->wcefrCall->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false ); 
 
-		    	$attachments[] = $pdf;
+					$handle = fopen( $pdf, 'w' );
 
-		    	fclose( $handle );
-		    	// unlink( $pdf );
+					fwrite( $handle , $file );
 
-			}
+			    	$attachments[] = $pdf;
 
-	    }
+			    	fclose( $handle );
+			    	// unlink( $pdf );
+
+				}
+
+		    }
+
+		}
 
 	    return $attachments;
 

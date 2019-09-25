@@ -16,23 +16,28 @@ class wcefrOrders {
 
 		if ( $init ) {
 
-			$this->init();
-			
-			$this->issue_invoices 		= get_option( 'wcefr-issue-invoices' );
-			$this->send_invoices  		= get_option( 'wcefr-send-invoices' );
-			$this->book_invoices  		= get_option( 'wcefr-book-invoices' );
-			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
+			$settings = new wcefrSettings();
 
-			add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
-			add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
-			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
-			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			add_action( 'manage_shop_order_posts_custom_column', array($this, 'wc_columns_content' ), 10, 2 );	
-		    add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
-			
-			add_filter( 'manage_edit-shop_order_columns', array($this, 'wc_columns_head' ) );
-			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
+			if ( $settings->connected ) {
 
+				$this->init();
+				
+				$this->issue_invoices 		= get_option( 'wcefr-issue-invoices' );
+				$this->send_invoices  		= get_option( 'wcefr-send-invoices' );
+				$this->book_invoices  		= get_option( 'wcefr-book-invoices' );
+				$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
+
+				add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
+				add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
+				add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
+				add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
+				add_action( 'manage_shop_order_posts_custom_column', array($this, 'wc_columns_content' ), 10, 2 );	
+			    add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
+				
+				add_filter( 'manage_edit-shop_order_columns', array($this, 'wc_columns_head' ) );
+				add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
+			
+			}
 
 		}
 

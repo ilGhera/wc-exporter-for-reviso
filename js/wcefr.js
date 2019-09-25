@@ -101,6 +101,35 @@ var wcefrController = function() {
 		});
 
 	}
+
+
+	/**
+	 * Plugin tools available only if connected to Reviso
+	 */
+	self.wcefr_tools_control = function(deactivate = false) {
+
+		jQuery(function($){
+
+			if(deactivate) {
+
+				$('.wcefr-form').addClass('disconnected');
+				$('.wcefr-form.connection').removeClass('disconnected');
+
+				$('.wcefr-form input').attr('disabled','disabled');
+				$('.wcefr-form select').attr('disabled','disabled');
+
+			} else {
+
+				$('.wcefr-form').removeClass('disconnected');
+				$('.wcefr-form input').removeAttr('disabled');
+				$('.wcefr-form select').removeAttr('disabled');
+
+			}
+
+
+		})
+
+	}
 		
 
 	/**
@@ -117,12 +146,22 @@ var wcefrController = function() {
 			$.post(ajaxurl, data, function(response){
 
 				if(response) {
+
+					/*Activate plugin tools*/
+					self.wcefr_tools_control();
 			
 					$('.check-connection').html(response);
 					$('.wcefr-connect').hide();
+					$('.wcefr-disconnect').css('display', 'inline-block');
 					$('.wcefr-disconnect').animate({
 						opacity: 1
 					}, 500);
+
+				} else {
+
+					/*Deactivate plugin tools*/
+					self.wcefr_tools_control(true);
+
 				}
 
 			})
@@ -385,18 +424,16 @@ var wcefrController = function() {
 
 				if (typeof groups === 'object') {
 
+					/*Empty the select*/
+					$('.wcefr-' + type + '-groups').empty();
+					
 					for (key in groups) {
 						$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
 					}
 
-				} else {
-
-					$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
+			        self.chosen(true);
 
 				}
-
-				$('.wcefr-' + type + '-groups').addClass('wcefr-select');
-		        self.chosen(true);
 
 			})
 

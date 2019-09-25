@@ -11,17 +11,23 @@ class wcefrCheckoutFields {
 
 	public function __construct() {
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
-		add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
-		add_action( 'woocommerce_before_order_notes', array( $this, 'display_fields' ) );
-		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_fields' ), 10, 2 );
-		add_action( 'woocommerce_thankyou', array( $this, 'display_custom_data' ) );
-		add_action( 'woocommerce_view_order', array( $this, 'display_custom_data' ) );
-		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_custom_data_in_admin' ) );
-		add_filter( 'woocommerce_email_customer_details', array( $this, 'display_custom_data_in_email' ), 10, 4 );
-		add_action( 'woocommerce_checkout_process', array( $this, 'checkout_fields_check' ) );
+		$settings = new wcefrSettings();
 
-		$this->custom_fields = $this->get_active_custom_fields();
+		if ( $settings->connected ) {
+
+			add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
+			add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
+			add_action( 'woocommerce_before_order_notes', array( $this, 'display_fields' ) );
+			add_action( 'woocommerce_checkout_create_order', array( $this, 'save_fields' ), 10, 2 );
+			add_action( 'woocommerce_thankyou', array( $this, 'display_custom_data' ) );
+			add_action( 'woocommerce_view_order', array( $this, 'display_custom_data' ) );
+			add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_custom_data_in_admin' ) );
+			add_filter( 'woocommerce_email_customer_details', array( $this, 'display_custom_data_in_email' ), 10, 4 );
+			add_action( 'woocommerce_checkout_process', array( $this, 'checkout_fields_check' ) );
+
+			$this->custom_fields = $this->get_active_custom_fields();
+
+		}
 
 	}
 

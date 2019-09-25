@@ -38,9 +38,9 @@ function load_wc_exporter_for_reviso() {
 	require( WCEFR_ADMIN . 'wcefr-admin.php' );
 	require( WCEFR_INCLUDES . 'wcefr-functions.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-call.php' );
+	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-users.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-products.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-checkout-fields.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-orders.php' );
 	require( WCEFR_INCLUDES . 'wcefr-invoice.php' );

@@ -219,6 +219,7 @@ h4.wcefr-connection-status {
 
 .button-primary.wcefr-disconnect {
 	opacity: 0;
+	display: none;
 }
 
 .wcefr-message {

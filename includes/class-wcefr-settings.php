@@ -24,8 +24,9 @@ class wcefrSettings {
 
 		}
 
-		$this->wcefrCall = new wcefrCall();
-		// $this->connected = $this->check_connection_callback( true );
+		$this->wcefrCall = new wcefrCall(); 
+		$this->connected = $this->check_connection_callback( true );
+
 	}
 
 	/**
@@ -99,9 +100,7 @@ class wcefrSettings {
 	 */
 	public function disconnect_callback() {
 
-
-		$output = delete_option( 'wcefr-agt' );
-		error_log( 'DEL: ' . $output );
+		delete_option( 'wcefr-agt' );
 
 		exit;
 
@@ -110,31 +109,30 @@ class wcefrSettings {
 
 	/**
 	 * Display the status of the connection to Reviso
+	 * @param bool $return if true the method returns only if the connection is set
 	 * @return mixed
 	 */
 	public function check_connection_callback( $return = false ) {
 			
 		$response = $this->wcefrCall->call( 'get', 'self' );
-
-		error_log( 'CONNECT: ' . print_r( $response, true ) );
 		
 		if ( isset( $response->application->appNumber ) && 2891 ===  $response->application->appNumber ) {
 
 			if ( $return ) {
-
-				return true;
-			
-			} else {
 				
+				return true;
+
+			} else {
+
 				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . __( 'Connected', 'wcefr' ) . '</span></h4>'; 
 
 			}
-		
-		} elseif ( $return ) {
+
+		} elseif( $return ) {
 
 			return false;
 
-		}
+		}		
 
 		exit;
 	}

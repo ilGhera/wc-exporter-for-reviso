@@ -16,10 +16,16 @@ class wcefrProducts {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_export-products', array( $this, 'export_products' ) );
-			add_action( 'wp_ajax_delete-remote-products', array( $this, 'delete_remote_products' ) );
-			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ), 10, 2 );
-			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ), 10, 2 );
+			$settings = new wcefrSettings();
+
+			if ( $settings->connected ) {
+
+				add_action( 'wp_ajax_export-products', array( $this, 'export_products' ) );
+				add_action( 'wp_ajax_delete-remote-products', array( $this, 'delete_remote_products' ) );
+				add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ), 10, 2 );
+				add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ), 10, 2 );
+			
+			}
 
 		}
 

@@ -34,7 +34,9 @@
 		<tr>
 			<th scope="row"><?php _e( 'Group', 'wcefr' ); ?></th>
 			<td>
-				<select class="wcefr-customers-groups" name="wcefr-customers-groups"></select>
+				<select class="wcefr-customers-groups wcefr-select" name="wcefr-customers-groups">
+					<option><?php _e( 'No groups available', 'wcefr' ); ?></option>
+				</select>
 				<p class="description"><?php _e( 'Select a Reviso customer group.', 'wcefr' ); ?></p>
 			</td>
 		</tr>

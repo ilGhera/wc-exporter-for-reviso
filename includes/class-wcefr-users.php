@@ -16,12 +16,18 @@ class wcefrUsers {
 
 		if ( $init ) {
 
-			add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
-			add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
-			add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
-			add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
-			add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
-			add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+			$settings = new wcefrSettings();
+
+			if ( $settings->connected ) {
+
+				add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
+				add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
+				add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
+				add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+				add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
+				add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
+
+			}
 
 		}
 

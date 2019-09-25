@@ -8,7 +8,7 @@
 ?>
 
 <!-- Reviso connection -->
-<form name="wcefr-settings" class="wcefr-form one-of"  method="post" action="">
+<form name="wcefr-settings" class="wcefr-form connection one-of"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -29,11 +29,6 @@
 
 </form>
 
-<!-- Connection check -->
-<?php
-$class = new wcefrSettings();
-$connected = $class->connected;
-?>
 
 <!-- Global settings -->
 <?php
@@ -90,79 +85,77 @@ if ( isset( $_POST['wcefr-options-sent'] ) ) {
 }
 ?>
 
-<div id="wcefr-settings" class="wcefr-form<?php echo ( ! $connected ? ' disconnected' : '' ); ?>" style="display: block;">
+<!--Start form-->
+<form name="wcefr-options-submit" id="wcefr-options-submit" class="wcefr-form"  method="post" action="">
 
 	<h3 class="wcefr"><?php echo __( 'Checkout page', 'wcefr' ); ?></h3>
+	
+	<table class="form-table">
+		<tr>
+			<th scope="row"><?php echo __( 'Tax documents', 'wcefr' ); ?></th>
+			<td>
+				<p style="margin-bottom: 10px;">
+					<label for="wcefr_company_invoice">
+						<input type="checkbox" name="wcefr_company_invoice" value="1"<?php echo $wcefr_company_invoice == 1 ? ' checked="checked"' : ''; ?>>
+						<?php echo '<span class="tax-document">' .  __( 'Company (Invoice)', 'wcefr' ) . '</span>'; ?>
+					</label>							
+				</p>
+				<p style="margin-bottom: 10px;">
+					<label for="wcefr_private_invoice">
+						<input type="checkbox" name="wcefr_private_invoice" value="1"<?php echo $wcefr_private_invoice == 1 ? ' checked="checked"' : ''; ?>>
+						<?php echo '<span class="tax-document">' .  __( 'Private (Invoice)', 'wcefr' ) . '</span>'; ?>
+					</label>
+				</p>
+				<p>
+					<label for="wcefr_private">
+						<input type="checkbox" name="wcefr_private" value="1"<?php echo $wcefr_private == 1 ? ' checked="checked"' : ''; ?>>
+						<?php echo '<span class="tax-document">' .  __( 'Private (Receipt)', 'wcefr' ) . '</span>'; ?>
+					</label>
+				</p>
+				<p class="description"><?php echo __( 'By activating one or more types of invoice, the fields VAT and Tax Code will be displayed when needed.', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php echo __( 'CF required', 'wcefr' ); ?></th>
+			<td>
+				<label for="wcefr_cf_mandatory">
+					<input type="checkbox" name="wcefr_cf_mandatory" value="1"<?php echo $wcefr_cf_mandatory == 1 ? ' checked="checked"' : ''; ?>>
+				</label>
+				<p class="description"><?php echo __( 'Make the Tax Code field mandatory for receipts to individuals.', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php echo __( 'Check fields', 'wcefr' ); ?></th>
+			<td>
+				<label for="wcefr_fields_check">
+					<input type="checkbox" name="wcefr_fields_check" value="1"<?php echo $wcefr_fields_check == 1 ? ' checked="checked"' : ''; ?>>
+				</label>
+				<p class="description"><?php echo __( 'Activate the control of the VAT and Tax Code fields.', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php echo __( 'PEC', 'wcefr' ); ?></th>
+			<td>
+				<label for="wcefr_pec_active">
+					<input type="checkbox" name="wcefr_pec_active" value="1"<?php echo $wcefr_pec_active == 1 ? ' checked="checked"' : ''; ?>>
+				</label>
+				<p class="description"><?php echo __( 'Activate the PEC field for electronic invoicing', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php echo __( 'Receiving code', 'wcefr' ); ?></th>
+			<td>
+				<label for="wcefr-pa-code">
+					<input type="checkbox" name="wcefr_pa_code_active" value="1"<?php echo $wcefr_pa_code_active == 1 ? ' checked="checked"' : ''; ?>>
+				</label>
+				<p class="description"><?php echo __( 'Activate the Receiving Code field for electronic invoicing', 'wcefr' ); ?></p>
+			</td>
+		</tr>
+	</table>
 
-	<!--Start form-->
-	<form name="wcefr-options-submit" id="wcefr-options-submit"  method="post" action="">
-		<table class="form-table">
-			<tr>
-				<th scope="row"><?php echo __( 'Tax documents', 'wcefr' ); ?></th>
-				<td>
-					<p style="margin-bottom: 10px;">
-						<label for="wcefr_company_invoice">
-							<input type="checkbox" name="wcefr_company_invoice" value="1"<?php echo $wcefr_company_invoice == 1 ? ' checked="checked"' : ''; ?>>
-							<?php echo '<span class="tax-document">' .  __( 'Company (Invoice)', 'wcefr' ) . '</span>'; ?>
-						</label>							
-					</p>
-					<p style="margin-bottom: 10px;">
-						<label for="wcefr_private_invoice">
-							<input type="checkbox" name="wcefr_private_invoice" value="1"<?php echo $wcefr_private_invoice == 1 ? ' checked="checked"' : ''; ?>>
-							<?php echo '<span class="tax-document">' .  __( 'Private (Invoice)', 'wcefr' ) . '</span>'; ?>
-						</label>
-					</p>
-					<p>
-						<label for="wcefr_private">
-							<input type="checkbox" name="wcefr_private" value="1"<?php echo $wcefr_private == 1 ? ' checked="checked"' : ''; ?>>
-							<?php echo '<span class="tax-document">' .  __( 'Private (Receipt)', 'wcefr' ) . '</span>'; ?>
-						</label>
-					</p>
-					<p class="description"><?php echo __( 'By activating one or more types of invoice, the fields VAT and Tax Code will be displayed when needed.', 'wcefr' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php echo __( 'CF required', 'wcefr' ); ?></th>
-				<td>
-					<label for="wcefr_cf_mandatory">
-						<input type="checkbox" name="wcefr_cf_mandatory" value="1"<?php echo $wcefr_cf_mandatory == 1 ? ' checked="checked"' : ''; ?>>
-					</label>
-					<p class="description"><?php echo __( 'Make the Tax Code field mandatory for receipts to individuals.', 'wcefr' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php echo __( 'Check fields', 'wcefr' ); ?></th>
-				<td>
-					<label for="wcefr_fields_check">
-						<input type="checkbox" name="wcefr_fields_check" value="1"<?php echo $wcefr_fields_check == 1 ? ' checked="checked"' : ''; ?>>
-					</label>
-					<p class="description"><?php echo __( 'Activate the control of the VAT and Tax Code fields.', 'wcefr' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php echo __( 'PEC', 'wcefr' ); ?></th>
-				<td>
-					<label for="wcefr_pec_active">
-						<input type="checkbox" name="wcefr_pec_active" value="1"<?php echo $wcefr_pec_active == 1 ? ' checked="checked"' : ''; ?>>
-					</label>
-					<p class="description"><?php echo __( 'Activate the PEC field for electronic invoicing', 'wcefr' ); ?></p>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php echo __( 'Receiving code', 'wcefr' ); ?></th>
-				<td>
-					<label for="wcefr-pa-code">
-						<input type="checkbox" name="wcefr_pa_code_active" value="1"<?php echo $wcefr_pa_code_active == 1 ? ' checked="checked"' : ''; ?>>
-					</label>
-					<p class="description"><?php echo __( 'Activate the Receiving Code field for electronic invoicing', 'wcefr' ); ?></p>
-				</td>
-			</tr>
-		</table>
-
-		<?php wp_nonce_field( 'wcefr-options-submit', 'wcefr-options-nonce' ); ?>
-		
-		<p class="submit">
-			<input type="submit" name="wcefr-options-sent" class="button-primary" value="<?php esc_attr_e( 'Save', 'wcefr' ); ?>" />
-		</p>
-	</form>
-</div>
+	<?php wp_nonce_field( 'wcefr-options-submit', 'wcefr-options-nonce' ); ?>
+	
+	<p class="submit">
+		<input type="submit" name="wcefr-options-sent" class="button-primary" value="<?php esc_attr_e( 'Save', 'wcefr' ); ?>" />
+	</p>
+</form>

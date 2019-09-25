@@ -30,8 +30,10 @@ function load_wc_exporter_for_reviso() {
 	/*Constants declaration*/
 	define( 'WCEFR_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WCEFR_URI', plugin_dir_url( __FILE__ ) );
-	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );
+	define( 'WCEFR_FILE',  __FILE__ );
 	define( 'WCEFR_ADMIN', WCEFR_DIR . 'admin/' );
+	define( 'WCEFR_DIR_NAME', basename( dirname( __FILE__ ) ) );
+	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );
 	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
 
 	/*Files required*/

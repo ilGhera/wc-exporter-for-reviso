@@ -15,7 +15,7 @@ class wcefrProducts {
 	public function __construct( $init = false ) {
 
 		if ( $init ) {
-
+			
 			$settings = new wcefrSettings();
 
 			if ( $settings->connected ) {

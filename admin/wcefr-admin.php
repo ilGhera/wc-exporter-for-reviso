@@ -30,7 +30,6 @@ class wcefrAdmin {
 		    wp_enqueue_script( 'bootstrap-js', plugin_dir_url(__DIR__) . 'js/bootstrap.min.js' );
 		
 			/*css*/
-			wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css' );
 		    wp_enqueue_style( 'bootstrap-iso', plugin_dir_url(__DIR__) . 'css/bootstrap-iso.css' );
 
 		} elseif ( $screen->id === 'edit-shop_order' ) {
@@ -38,6 +37,8 @@ class wcefrAdmin {
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr-shop-orders.js', array( 'jquery' ), '1.0', true );
 
 		}
+
+		wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css' );
 
 	}
 

@@ -47,9 +47,11 @@ class wcefrAdmin {
 	 * @return string
 	 */
 	public function wcefr_add_menu() {
+
 		$wcefr_page = add_submenu_page( 'woocommerce', 'WCEFR Options', 'WC Exporter for Reviso', 'manage_woocommerce', 'wc-exporter-for-reviso', array( $this, 'wcefr_options' ) );
 
 		return $wcefr_page;
+
 	}
 
 

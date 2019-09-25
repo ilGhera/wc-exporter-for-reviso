@@ -29,6 +29,11 @@
 
 </form>
 
+<!-- Connection check -->
+<?php
+$class = new wcefrSettings();
+$connected = $class->connected;
+?>
 
 <!-- Global settings -->
 <?php
@@ -85,7 +90,7 @@ if ( isset( $_POST['wcefr-options-sent'] ) ) {
 }
 ?>
 
-<div id="wcefr-settings" class="wcefr-form" style="display: block;">
+<div id="wcefr-settings" class="wcefr-form<?php echo ( ! $connected ? ' disconnected' : '' ); ?>" style="display: block;">
 
 	<h3 class="wcefr"><?php echo __( 'Checkout page', 'wcefr' ); ?></h3>
 

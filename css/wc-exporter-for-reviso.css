@@ -91,6 +91,10 @@ a.message {
 	display:inline-block;
 }
 
+.wcefr-form.disconnected {
+	opacity: 0.5;
+}
+
 .nav-tab.not-available, .nav-tab.not-available:hover {
 	border-width: 1px 1px medium;
     border-style: solid solid none;

@@ -8,16 +8,24 @@
 
 class wcefrSettings {
 
-	public function __construct() {
+	/**
+	 * Class constructor
+	 * @param boolean $init fire hooks if true
+	 */
+	public function __construct( $init = false ) {
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-		add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback') );
-		add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback') );
-		add_action( 'admin_footer', array( $this, 'check_connection') );
-		add_action( 'admin_footer', array( $this, 'save_agt' ) );
+		if ( $init ) {
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+			add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback') );
+			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback') );
+			add_action( 'admin_footer', array( $this, 'check_connection') );
+			add_action( 'admin_footer', array( $this, 'save_agt' ) );
+
+		}
 
 		$this->wcefrCall = new wcefrCall();
-
+		// $this->connected = $this->check_connection_callback( true );
 	}
 
 	/**
@@ -91,7 +99,9 @@ class wcefrSettings {
 	 */
 	public function disconnect_callback() {
 
-		delete_option( 'wcefr-agt' );
+
+		$output = delete_option( 'wcefr-agt' );
+		error_log( 'DEL: ' . $output );
 
 		exit;
 
@@ -102,18 +112,32 @@ class wcefrSettings {
 	 * Display the status of the connection to Reviso
 	 * @return mixed
 	 */
-	public function check_connection_callback() {
+	public function check_connection_callback( $return = false ) {
 			
 		$response = $this->wcefrCall->call( 'get', 'self' );
+
+		error_log( 'CONNECT: ' . print_r( $response, true ) );
 		
 		if ( isset( $response->application->appNumber ) && 2891 ===  $response->application->appNumber ) {
 
-			echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . __( 'Connected', 'wcefr' ) . '</span></h4>'; 
+			if ( $return ) {
+
+				return true;
+			
+			} else {
+				
+				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . __( 'Connected', 'wcefr' ) . '</span></h4>'; 
+
+			}
 		
-		}		
+		} elseif ( $return ) {
+
+			return false;
+
+		}
 
 		exit;
 	}
 
 }
-new wcefrSettings;
+new wcefrSettings( true );

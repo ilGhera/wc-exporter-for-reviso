@@ -181,10 +181,6 @@ class wcefrUsers {
 
 			 } 
 			
-		} else {
-
-			$output = __( 'No groups available', 'wcefr' );
-		
 		}
 
 		return $output;

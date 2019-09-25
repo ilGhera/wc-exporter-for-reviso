@@ -118,6 +118,9 @@ var wcefrController = function() {
 				$('.wcefr-form input').attr('disabled','disabled');
 				$('.wcefr-form select').attr('disabled','disabled');
 
+				$('.wcefr-suppliers-groups, .wcefr-customers-groups').addClass('wcefr-select');
+		        self.chosen(true);
+
 			} else {
 
 				$('.wcefr-form').removeClass('disconnected');
@@ -424,16 +427,18 @@ var wcefrController = function() {
 
 				if (typeof groups === 'object') {
 
-					/*Empty the select*/
-					$('.wcefr-' + type + '-groups').empty();
-					
 					for (key in groups) {
 						$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
 					}
 
-			        self.chosen(true);
+				} else {
+
+					$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
 
 				}
+
+				$('.wcefr-' + type + '-groups').addClass('wcefr-select');
+		        self.chosen(true);
 
 			})
 
@@ -506,8 +511,6 @@ var wcefrController = function() {
 					}
 
 					$.post(ajaxurl, data, function(response){
-
-						console.log(response);
 
 						var result = JSON.parse(response);
 

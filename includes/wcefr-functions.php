@@ -19,8 +19,12 @@ $wcefr_update_checker = Puc_v4_Factory::buildUpdateChecker(
 
 );
 
-$wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
 
+/**
+ * Secure update check with the Premium Key
+ * @param  array $queryArgs the default args
+ * @return array            the updated args
+ */
 function wcefr_secure_update_check( $queryArgs ) {
 
     $key = base64_encode( get_option( 'wcefr-premium-key' ) );
@@ -34,6 +38,7 @@ function wcefr_secure_update_check( $queryArgs ) {
     return $queryArgs;
 
 }
+$wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
 
 
 /**

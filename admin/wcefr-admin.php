@@ -86,54 +86,73 @@ class wcefrAdmin {
 
 					/*Header*/
 					echo '<h1 class="wcefr main">' . __( 'WooCommerce Exporter for Reviso - Premium', 'wcefr' ) . '</h1>';
+			
+					/*Plugin premium key*/
+					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
 
-						echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
-						echo '<h2 id="wcefr-admin-menu" class="nav-tab-wrapper woo-nav-tab-wrapper">';
-							echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . __( 'Settings', 'wcefr' ) . '</a>';
-							echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . __( 'Suppliers', 'wcefr' ) . '</a>';
-							echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . __( 'Products', 'wcefr' ) . '</a>';
-							echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . __( 'Customers', 'wcefr' ) . '</a>';
-							echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . __( 'Orders', 'wcefr' ) . '</a>';
-						echo '</h2>';
+					if ( isset( $_POST['wcefr-premium-key'] ) ) {
+					
+						$key = sanitize_text_field( $_POST['wcefr-premium-key'] );
+					
+						update_option( 'wcefr-premium-key', $key );
+					
+					}
+
+					/*Premium Key Form*/
+					echo '<form id="wcefr-premium-key" method="post" action="">';
+					echo '<label>' . __( 'Premium Key', 'wcefr' ) . '</label>';
+					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . __( 'Add your Premium Key', 'wcefr' ) . '" value="' . $key . '" />';
+					echo '<p class="description">' . __( 'Add your Premium Key and keep update your copy of <strong>Woocommerce Exporter for Reviso - Premium</strong>.', 'wcefr' ) . '</p>';
+					echo '<input type="submit" class="button button-primary" value="' . __( 'Save ', 'wcefr' ) . '" />';
+					echo '</form>';
+
+					/*Plugin options menu*/
+					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
+					echo '<h2 id="wcefr-admin-menu" class="nav-tab-wrapper woo-nav-tab-wrapper">';
+						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . __( 'Settings', 'wcefr' ) . '</a>';
+						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . __( 'Suppliers', 'wcefr' ) . '</a>';
+						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . __( 'Products', 'wcefr' ) . '</a>';
+						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . __( 'Customers', 'wcefr' ) . '</a>';
+						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . __( 'Orders', 'wcefr' ) . '</a>';
+					echo '</h2>';
+
+					/*Settings*/
+					echo '<div id="wcefr-settings" class="wcefr-admin" style="display: block;">';
+
+						include( WCEFR_ADMIN . 'wcefr-settings-template.php' );
+
+					echo '</div>';
 
 
-						/*Settings*/
-						echo '<div id="wcefr-settings" class="wcefr-admin" style="display: block;">';
+					/*Suppliers*/
+					echo '<div id="wcefr-suppliers" class="wcefr-admin">';
 
-							include( WCEFR_ADMIN . 'wcefr-settings-template.php' );
+						include( WCEFR_ADMIN . 'wcefr-suppliers-template.php' );
 
-						echo '</div>';
-
-
-						/*Suppliers*/
-						echo '<div id="wcefr-suppliers" class="wcefr-admin">';
-
-							include( WCEFR_ADMIN . 'wcefr-suppliers-template.php' );
-
-						echo '</div>';
+					echo '</div>';
 
 
-						/*Products*/
-						echo '<div id="wcefr-products" class="wcefr-admin">';
+					/*Products*/
+					echo '<div id="wcefr-products" class="wcefr-admin">';
 
-							include( WCEFR_ADMIN . 'wcefr-products-template.php' );
+						include( WCEFR_ADMIN . 'wcefr-products-template.php' );
 
-						echo '</div>';
+					echo '</div>';
 
 
-						/*Customers*/
-						echo '<div id="wcefr-customers" class="wcefr-admin">';
+					/*Customers*/
+					echo '<div id="wcefr-customers" class="wcefr-admin">';
 
-							include( WCEFR_ADMIN . 'wcefr-customers-template.php' );
+						include( WCEFR_ADMIN . 'wcefr-customers-template.php' );
 
-						echo '</div>';
+					echo '</div>';
 
-						/*Orders*/
-						echo '<div id="wcefr-orders" class="wcefr-admin">';
+					/*Orders*/
+					echo '<div id="wcefr-orders" class="wcefr-admin">';
 
-							include( WCEFR_ADMIN . 'wcefr-orders-template.php' );
+						include( WCEFR_ADMIN . 'wcefr-orders-template.php' );
 
-						echo '</div>';
+					echo '</div>';
 
 				echo '</div>';
 

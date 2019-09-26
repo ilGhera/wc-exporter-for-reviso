@@ -157,11 +157,11 @@ h3.wcefr.main {
 	clear:both;
 }
 
-form#wcefr-options {
+form#wcefr-premium-key {
 	margin: 2rem 0;
 }
 
-form#wcefr-options label {
+form#wcefr-premium-key label {
 	font-size: 14px;
 	font-weight: bold;
 	display: block;
@@ -169,7 +169,11 @@ form#wcefr-options label {
 }
 
 
-form#wcefr-options input.button {
+form#wcefr-premium-key input[type="text"] {
+	width: 560px;
+}
+
+form#wcefr-premium-key input.button {
 	margin-top: 1rem;
 }
 
@@ -229,4 +233,22 @@ h4.wcefr-connection-status {
 
 .wcefr-message .alert i {
 	padding-right: 1rem;
+}
+
+
+@media screen and (max-width: 1000px) {
+
+	.wrap-left {
+		float: none;
+		width: 100%;
+	}
+
+	.wrap-right {
+		float: none; 
+		width: 100%; 
+		text-align: center; 
+		padding-top: 3rem;
+	}
+
+
 }

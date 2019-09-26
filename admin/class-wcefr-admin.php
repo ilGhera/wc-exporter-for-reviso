@@ -1,38 +1,42 @@
-<?php /**
- * Admin
+<?php
+/**
+ * Admin class
+ *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
  * @since 0.9.0
  */
+class WCEFR_Admin {
 
-class wcefrAdmin {
-
-
+	/**
+	 * Construct
+	 */
 	public function __construct() {
 
 		add_action( 'admin_menu', array( $this, 'wcefr_add_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this , 'wcefr_register_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'wcefr_register_scripts' ) );
 
 	}
 
 
 	/**
 	 * Scripts and style sheets
+	 *
 	 * @return void
 	 */
-	function wcefr_register_scripts() {
+	public function wcefr_register_scripts() {
 
 		$screen = get_current_screen();
-		if ( $screen->id === 'woocommerce_page_wc-exporter-for-reviso' ) {
+		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
 
 			/*js*/
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr.js', array( 'jquery' ), '1.0', true );
-		    wp_enqueue_script( 'bootstrap-js', plugin_dir_url(__DIR__) . 'js/bootstrap.min.js' );
-		
-			/*css*/
-		    wp_enqueue_style( 'bootstrap-iso', plugin_dir_url(__DIR__) . 'css/bootstrap-iso.css' );
+			wp_enqueue_script( 'bootstrap-js', plugin_dir_url( __DIR__ ) . 'js/bootstrap.min.js' );
 
-		} elseif ( $screen->id === 'edit-shop_order' ) {
+			/*css*/
+			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css' );
+
+		} elseif ( 'edit-shop_order' === $screen->id ) {
 
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr-shop-orders.js', array( 'jquery' ), '1.0', true );
 
@@ -45,6 +49,7 @@ class wcefrAdmin {
 
 	/**
 	 * Menu page
+	 *
 	 * @return string
 	 */
 	public function wcefr_add_menu() {
@@ -58,15 +63,17 @@ class wcefrAdmin {
 
 	/**
 	 * Options page
+	 *
 	 * @return mixed
 	 */
 	public function wcefr_options() {
 
 		/*Right of access*/
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( __( 'It seems like you don\'t have permission to see this page', 'wcefr' ) );
-		}
 
+			wp_die( esc_html( __( 'It seems like you don\'t have permission to see this page', 'wcefr' ) ) );
+
+		}
 
 		/*Page template start*/
 		echo '<div class="wrap">';
@@ -76,7 +83,7 @@ class wcefrAdmin {
 				if ( ! class_exists( 'WooCommerce' ) ) {
 					echo '<div id="message" class="error">';
 						echo '<p>';
-							echo '<strong>' . __( 'ATTENTION! It seems like Woocommerce is not installed.', 'wcefr' ) . '</strong>';
+							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed.', 'wcefr' ) ) . '</strong>';
 						echo '</p>';
 					echo '</div>';
 					exit;
@@ -85,35 +92,36 @@ class wcefrAdmin {
 				echo '<div id="wcefr-generale">';
 
 					/*Header*/
-					echo '<h1 class="wcefr main">' . __( 'WooCommerce Exporter for Reviso - Premium', 'wcefr' ) . '</h1>';
-			
+					echo '<h1 class="wcefr main">' . esc_html( __( 'WooCommerce Exporter for Reviso - Premium', 'wcefr' ) ) . '</h1>';
+
 					/*Plugin premium key*/
 					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
 
-					if ( isset( $_POST['wcefr-premium-key'] ) ) {
-					
-						$key = sanitize_text_field( $_POST['wcefr-premium-key'] );
-					
+					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-hidden'] ) && wp_verify_nonce( $_POST['wcefr-premium-key-hidden'], 'wcefr-premium-key' ) ) {
+
+						$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
+
 						update_option( 'wcefr-premium-key', $key );
-					
+
 					}
 
 					/*Premium Key Form*/
 					echo '<form id="wcefr-premium-key" method="post" action="">';
-					echo '<label>' . __( 'Premium Key', 'wcefr' ) . '</label>';
-					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . __( 'Add your Premium Key', 'wcefr' ) . '" value="' . $key . '" />';
-					echo '<p class="description">' . __( 'Add your Premium Key and keep update your copy of <strong>Woocommerce Exporter for Reviso - Premium</strong>.', 'wcefr' ) . '</p>';
-					echo '<input type="submit" class="button button-primary" value="' . __( 'Save ', 'wcefr' ) . '" />';
+					echo '<label>' . esc_html( __( 'Premium Key', 'wcefr' ) ) . '</label>';
+					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wcefr' ) ) . '" value="' . esc_attr( $key ) . '" />';
+					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of <strong>Woocommerce Exporter for Reviso - Premium</strong>.', 'wcefr' ) ) . '</p>';
+					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-hidden' );
+					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save ', 'wcefr' ) ) . '" />';
 					echo '</form>';
 
 					/*Plugin options menu*/
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
 					echo '<h2 id="wcefr-admin-menu" class="nav-tab-wrapper woo-nav-tab-wrapper">';
-						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . __( 'Settings', 'wcefr' ) . '</a>';
-						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . __( 'Suppliers', 'wcefr' ) . '</a>';
-						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . __( 'Products', 'wcefr' ) . '</a>';
-						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . __( 'Customers', 'wcefr' ) . '</a>';
-						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . __( 'Orders', 'wcefr' ) . '</a>';
+						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . esc_html( __( 'Settings', 'wcefr' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wcefr' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wcefr' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wcefr' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . esc_html( __( 'Orders', 'wcefr' ) ) . '</a>';
 					echo '</h2>';
 
 					/*Settings*/
@@ -123,7 +131,6 @@ class wcefrAdmin {
 
 					echo '</div>';
 
-
 					/*Suppliers*/
 					echo '<div id="wcefr-suppliers" class="wcefr-admin">';
 
@@ -131,14 +138,12 @@ class wcefrAdmin {
 
 					echo '</div>';
 
-
 					/*Products*/
 					echo '<div id="wcefr-products" class="wcefr-admin">';
 
 						include( WCEFR_ADMIN . 'wcefr-products-template.php' );
 
 					echo '</div>';
-
 
 					/*Customers*/
 					echo '<div id="wcefr-customers" class="wcefr-admin">';
@@ -163,11 +168,11 @@ class wcefrAdmin {
 				echo '</div>';
 
 			echo '</div>';
-		
+
 			echo '<div class="wrap-right">';
 				echo '<!-- <iframe width="300" height="900" scrolling="no" src="https://www.ilghera.com/images/wcefr-premium-iframe.html"></iframe> -->';
 			echo '</div>';
-			
+
 			echo '<div class="clear"></div>';
 
 		echo '</div>';
@@ -175,4 +180,4 @@ class wcefrAdmin {
 	}
 
 }
-new wcefrAdmin;
+new WCEFR_Admin();

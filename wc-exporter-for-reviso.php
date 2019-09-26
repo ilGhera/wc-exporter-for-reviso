@@ -37,7 +37,7 @@ function load_wc_exporter_for_reviso() {
 	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
 
 	/*Files required*/
-	require( WCEFR_ADMIN . 'wcefr-admin.php' );
+	require( WCEFR_ADMIN . 'class-wcefr-admin.php' );
 	require( WCEFR_INCLUDES . 'wcefr-functions.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-call.php' );
 	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );

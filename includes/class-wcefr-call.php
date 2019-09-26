@@ -5,7 +5,6 @@
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
  */
-
 class wcefrCall {
 
 	private $base_url = 'https://rest.reviso.com/';

@@ -97,7 +97,7 @@ class WCEFR_Admin {
 					/*Plugin premium key*/
 					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
 
-					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-hidden'] ) && wp_verify_nonce( $_POST['wcefr-premium-key-hidden'], 'wcefr-premium-key' ) ) {
+					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( $_POST['wcefr-premium-key-nonce'], 'wcefr-premium-key' ) ) {
 
 						$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
 
@@ -110,7 +110,7 @@ class WCEFR_Admin {
 					echo '<label>' . esc_html( __( 'Premium Key', 'wcefr' ) ) . '</label>';
 					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wcefr' ) ) . '" value="' . esc_attr( $key ) . '" />';
 					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of <strong>Woocommerce Exporter for Reviso - Premium</strong>.', 'wcefr' ) ) . '</p>';
-					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-hidden' );
+					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-nonce' );
 					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save ', 'wcefr' ) ) . '" />';
 					echo '</form>';
 

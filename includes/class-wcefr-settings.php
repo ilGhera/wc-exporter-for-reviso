@@ -1,36 +1,38 @@
 <?php
 /**
  * General settings
+ *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
  * @since 0.9.0
  */
-
-class wcefrSettings {
+class WCEFR_Settings {
 
 	/**
 	 * Class constructor
-	 * @param boolean $init fire hooks if true
+	 *
+	 * @param boolean $init fire hooks if true.
 	 */
 	public function __construct( $init = false ) {
 
 		if ( $init ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-			add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback') );
-			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback') );
-			add_action( 'admin_footer', array( $this, 'check_connection') );
+			add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback' ) );
+			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
+			add_action( 'admin_footer', array( $this, 'check_connection' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 
 		}
 
-		$this->wcefrCall = new wcefrCall(); 
+		$this->wcefr_call = new WCEFR_Call();
 		$this->connected = $this->check_connection_callback( true );
 
 	}
 
 	/**
 	 * Scripts and style sheets
+	 *
 	 * @return void
 	 */
 	public function enqueue() {
@@ -39,7 +41,7 @@ class wcefrSettings {
 		wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
 
 		wp_enqueue_style( 'chosen-style', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
-	    wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
+		wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
 		wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
 
 	}
@@ -47,13 +49,14 @@ class wcefrSettings {
 
 	/**
 	 * Check if the current page is the plugin options page
+	 *
 	 * @return boolean
 	 */
 	public function is_wcefr_admin() {
 
 		$screen = get_current_screen();
 
-		if ( isset( $screen->id ) && $screen->id === 'woocommerce_page_wc-exporter-for-reviso' ) {
+		if ( isset( $screen->id ) && 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
 			return true;
 		}
 
@@ -62,12 +65,13 @@ class wcefrSettings {
 
 	/**
 	 * Save the Agreement Grant Token in the db
+	 *
 	 * @return void
 	 */
 	public function save_agt() {
 
 		if ( $this->is_wcefr_admin() && isset( $_GET['token'] ) ) {
-			$token = sanitize_text_field( $_GET['token'] );
+			$token = sanitize_text_field( wp_unslash( $_GET['token'] ) );
 
 			update_option( 'wcefr-agt', $token );
 		}
@@ -77,6 +81,7 @@ class wcefrSettings {
 
 	/**
 	 * Check the connection to Reviso
+	 *
 	 * @return void
 	 */
 	public function check_connection() {
@@ -96,6 +101,7 @@ class wcefrSettings {
 
 	/**
 	 * Deletes the Agreement Grant Token from the db
+	 *
 	 * @return void
 	 */
 	public function disconnect_callback() {
@@ -109,33 +115,34 @@ class wcefrSettings {
 
 	/**
 	 * Display the status of the connection to Reviso
-	 * @param bool $return if true the method returns only if the connection is set
+	 *
+	 * @param bool $return if true the method returns only if the connection is set.
 	 * @return mixed
 	 */
 	public function check_connection_callback( $return = false ) {
-			
-		$response = $this->wcefrCall->call( 'get', 'self' );
-		
-		if ( isset( $response->application->appNumber ) && 2891 ===  $response->application->appNumber ) {
+
+		$response = $this->wcefr_call->call( 'get', 'self' );
+
+		if ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
 
 			if ( $return ) {
-				
+
 				return true;
 
 			} else {
 
-				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . __( 'Connected', 'wcefr' ) . '</span></h4>'; 
+				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wcefr' ) ) . '</span></h4>';
 
 			}
 
-		} elseif( $return ) {
+		} elseif ( $return ) {
 
 			return false;
 
-		}		
+		}
 
 		exit;
 	}
 
 }
-new wcefrSettings( true );
+new WCEFR_Settings( true );

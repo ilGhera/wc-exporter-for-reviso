@@ -12,9 +12,9 @@
  * Text Domain: wcefr
  */
 
-
 /**
  * Handles the plugin activation
+ *
  * @return void
  */
 function load_wc_exporter_for_reviso() {
@@ -30,7 +30,7 @@ function load_wc_exporter_for_reviso() {
 	/*Constants declaration*/
 	define( 'WCEFR_DIR', plugin_dir_path( __FILE__ ) );
 	define( 'WCEFR_URI', plugin_dir_url( __FILE__ ) );
-	define( 'WCEFR_FILE',  __FILE__ );
+	define( 'WCEFR_FILE', __FILE__ );
 	define( 'WCEFR_ADMIN', WCEFR_DIR . 'admin/' );
 	define( 'WCEFR_DIR_NAME', basename( dirname( __FILE__ ) ) );
 	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );

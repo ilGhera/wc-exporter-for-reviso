@@ -1,5 +1,6 @@
 /**
  * JS
+ * 
  * @author ilGhera
  * @package wc-exporter-for-reviso/js
  * @since 0.9.0
@@ -245,13 +246,14 @@ var wcefrController = function() {
 
 				var data = {
 					'action': 'export-users',
+					'wcefr-export-users-nonce': wcefrUsers.exportNonce,
 					'type': type,
 					'role': role,
 					'group': group
 				}
 
 				$.post(ajaxurl, data, function(response){
-					
+
 					var result = JSON.parse(response);
 
 					for (var i = 0; i < result.length; i++) {
@@ -286,15 +288,16 @@ var wcefrController = function() {
 				self.delete_messages();
 
 				var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
-								
 				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
 
 				if ( answer ) {
 
 					var data = {
 						'action': 'delete-remote-users',
+						'wcefr-delete-users-nonce': wcefrUsers.deleteNonce,
 						'type': type
 					}
+
 
 					$.post(ajaxurl, data, function(response){
 
@@ -464,10 +467,13 @@ var wcefrController = function() {
 
 				var data = {
 					'action': 'export-orders',
+					'wcefr-export-orders-nonce': wcefrOrders.exportNonce,
 					'statuses': statuses
 				}
 
 				$.post(ajaxurl, data, function(response){
+
+					console.log(response);
 										
 					var result = JSON.parse(response);
 
@@ -508,6 +514,7 @@ var wcefrController = function() {
 
 					var data = {
 						'action': 'delete-remote-orders',
+						'wcefr-delete-orders-nonce': wcefrOrders.deleteNonce,
 					}
 
 					$.post(ajaxurl, data, function(response){

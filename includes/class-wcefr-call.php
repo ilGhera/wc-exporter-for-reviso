@@ -73,7 +73,7 @@ class WCEFR_Call {
 
 			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
-			if ( isset( $output->errors ) || isset( $output->errorCode ) ) {
+			if ( isset( $output->errors ) && isset( $output->errorCode ) && 'E04300' !== $output->errorCode ) {
 
 				error_log( 'WCEFR | ERROR: ' . print_r( $output, true ) );
 

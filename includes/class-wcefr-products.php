@@ -501,8 +501,8 @@ class WCEFR_Products {
 				'post_type' => array(
 					'product',
 					'product_variation',
-				)
-,				'post_status'    => 'publish',
+				),
+				'post_status'    => 'publish',
 				'posts_per_page' => -1,
 			);
 
@@ -603,6 +603,7 @@ class WCEFR_Products {
 	public function delete_remote_products() {
 
 		$products = $this->get_remote_products();
+
 		if ( isset( $products->collection ) && count( $products->collection ) > 0 ) {
 
 			$n = 0;

@@ -69,7 +69,7 @@ $delete_products_nonce = wp_create_nonce( 'wcefr-delete-products' );
 
 wp_localize_script(
 	'wcefr-js',
-	'WCEFR_Products',
+	'wcefrProducts',
 	array(
 		'exportNonce' => $export_products_nonce,
 		'deleteNonce' => $delete_products_nonce,

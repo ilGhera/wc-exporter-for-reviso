@@ -452,6 +452,8 @@ class WCEFR_Products {
 
 				}
 
+				error_log( 'PRODOTTO: ' . print_r( $output, true ) ); // temp.
+
 				/*temp*/
 				if ( isset( $output->errorCode ) ) { // temp.
 
@@ -499,8 +501,8 @@ class WCEFR_Products {
 				'post_type' => array(
 					'product',
 					'product_variation',
-				),
-				'post_status'    => 'publish',
+				)
+,				'post_status'    => 'publish',
 				'posts_per_page' => -1,
 			);
 

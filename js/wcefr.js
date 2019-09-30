@@ -340,6 +340,7 @@ var wcefrController = function() {
 
 				var data = {
 					'action': 'export-products',
+					'wcefr-export-products-nonce': wcefrProducts.exportNonce,
 					'terms': terms
 				}
 
@@ -384,6 +385,7 @@ var wcefrController = function() {
 
 					var data = {
 						'action': 'delete-remote-products',
+						'wcefr-delete-products-nonce': wcefrProducts.deleteNonce,
 					}
 
 					$.post(ajaxurl, data, function(response){

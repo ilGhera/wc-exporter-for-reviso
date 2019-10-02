@@ -42,7 +42,32 @@ class WCEFR_Products {
 	 */
 	private function get_remote_products() {
 
-		$output = $this->wcefr_call->call( 'get', 'products?pagesize=10000' );
+		$output = null;
+
+		for ($i=0; $i < 5 ; $i++) { 
+			
+			$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=10' );
+			
+			if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
+
+				if ( isset( $output->collection ) ) {
+	
+					$output = array_merge( $output->collection, $get_products->collection );
+	
+				} else {
+
+					$output = $get_products;
+
+				}
+
+			} else {
+
+				continue;
+
+			}
+		}
+
+		error_log( 'OUTPUT: ' . print_r( $output, true ) );
 
 		return $output;
 

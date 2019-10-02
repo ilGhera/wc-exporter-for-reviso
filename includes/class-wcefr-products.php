@@ -46,17 +46,21 @@ class WCEFR_Products {
 
 		for ($i=0; $i < 5 ; $i++) { 
 			
+			error_log( 'NUMERO: ' . $i );
+
 			$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=10' );
 			
 			if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
 
 				if ( isset( $output->collection ) ) {
 	
-					$output = array_merge( $output->collection, $get_products->collection );
+					$output->collection = array_merge( $output->collection, $get_products->collection );
 	
 				} else {
 
 					$output = $get_products;
+
+					error_log( 'OUTPUT: ' . print_r( $output, true ) );
 
 				}
 
@@ -65,12 +69,12 @@ class WCEFR_Products {
 				continue;
 
 			}
+		
 		}
 
-		error_log( 'OUTPUT: ' . print_r( $output, true ) );
+		error_log( 'PRODOTTI: ' . print_r( $output, true ) );
 
 		return $output;
-
 	}
 
 

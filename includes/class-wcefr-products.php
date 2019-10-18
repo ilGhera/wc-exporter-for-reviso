@@ -42,37 +42,37 @@ class WCEFR_Products {
 	 */
 	private function get_remote_products() {
 
-		$output = null;
+		$output = $this->wcefr_call->call( 'get', 'products?pagesize=1000' );
 
-		for ($i=0; $i < 5 ; $i++) { 
-			
-			error_log( 'NUMERO: ' . $i );
+		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
 
-			$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=10' );
-			
-			if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
+		if ( 1000 < $results ) {
 
-				if ( isset( $output->collection ) ) {
-	
+			$limit = $results / 1000;
+			error_log( 'LIMIT: ' . $limit );
+			error_log( 'LIMIT INT: ' . intval($limit) );
+
+			for ($i=0; $i < $limit ; $i++) { 
+				
+				error_log( 'NUMERO: ' . $i );
+
+				$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=1000' );
+				
+				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
+		
 					$output->collection = array_merge( $output->collection, $get_products->collection );
-	
+
 				} else {
 
-					$output = $get_products;
-
-					error_log( 'OUTPUT: ' . print_r( $output, true ) );
+					continue;
 
 				}
-
-			} else {
-
-				continue;
-
+			
 			}
-		
+
 		}
 
-		error_log( 'PRODOTTI: ' . print_r( $output, true ) );
+		// error_log( 'PRODOTTI: ' . print_r( $output, true ) );
 
 		return $output;
 	}

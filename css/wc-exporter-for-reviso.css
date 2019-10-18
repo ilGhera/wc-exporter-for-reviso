@@ -235,6 +235,10 @@ h4.wcefr-connection-status {
 	padding-right: 1rem;
 }
 
+.wcefr-loading {
+	display: block;
+	text-align: center; 
+}
 
 @media screen and (max-width: 1000px) {
 

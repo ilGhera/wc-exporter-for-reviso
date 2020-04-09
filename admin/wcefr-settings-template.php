@@ -166,3 +166,13 @@ if ( isset( $_POST['wcefr-options-nonce'] ) && wp_verify_nonce( $_POST['wcefr-op
 		<input type="submit" name="wcefr-options-sent" class="button-primary" value="<?php esc_attr_e( 'Save', 'wcefr' ); ?>" />
 	</p>
 </form>
+
+<?php
+/*Pass data to the script file*/
+wp_localize_script(
+	'wcefr-js',
+	'wcefrSettings',
+	array(
+		'responseLoading' => WCEFR_URI . 'images/loader.gif',
+	)
+);

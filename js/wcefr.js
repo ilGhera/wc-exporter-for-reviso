@@ -200,6 +200,23 @@ var wcefrController = function() {
 
 
 	/**
+	 * Adds a spinning gif to the message box waiting for the response
+	 */
+	self.wcefr_response_loading = function() {
+
+		jQuery(function($){
+
+			var container = $('.wcefr-message .yes');
+
+			$(container).html('<div class="wcefr-loading"><img></div>');
+			$('img', container).attr('src', wcefrSettings.responseLoading);
+
+		})
+
+	}
+
+
+	/**
 	 * Show a message to the admin
 	 * @param  {string} message the text
 	 * @param  {bool}   error   different style with true
@@ -207,6 +224,9 @@ var wcefrController = function() {
 	self.wcefr_response_message = function(message, error = false, update = false) {
 
 		jQuery(function($){
+
+			/*Remove the loading gif*/
+			$('.wcefr-message .yes').html('');
 
 			var container	  = error ? $('.wcefr-message .not') : $('.wcefr-message .yes');
 			var message_class = error ? 'alert-danger' : 'alert-info';
@@ -301,6 +321,8 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
+						self.wcefr_response_loading();
+
 						var result = JSON.parse(response);
 
 						for (var i = 0; i < result.length; i++) {
@@ -389,6 +411,8 @@ var wcefrController = function() {
 					}
 
 					$.post(ajaxurl, data, function(response){
+
+						self.wcefr_response_loading();
 
 						var result = JSON.parse(response);
 
@@ -521,6 +545,8 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
+						self.wcefr_response_loading();
+
 						var result = JSON.parse(response);
 
 						for (var i = 0; i < result.length; i++) {
@@ -584,7 +610,7 @@ var wcefrController = function() {
 
 	/**
 	 * Fires Chosen
-	 * @param  {bool} destroy metodo distroy
+	 * @param  {bool} destroy method distroy
 	 */
 	self.chosen = function(destroy = false) {
 
@@ -615,7 +641,7 @@ var wcefrController = function() {
 /**
  * Class starter with onLoad method
  */
-jQuery(document).ready(function ($) {
+jQuery(document).ready(function($) {
 	
 	var Controller = new wcefrController;
 	Controller.onLoad();

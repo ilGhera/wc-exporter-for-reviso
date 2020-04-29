@@ -450,7 +450,7 @@ class WCEFR_Orders {
 
 			/*Add the new user in Reviso*/
 			$wcefr_users = new WCEFR_Users();
-			$new_user = $wcefr_users->export_single_user( 1, $user, 'customers', $order );
+			$new_user    = $wcefr_users->export_single_user( $user->ID, 'customers', $order );
 
 			return $new_user->customerNumber;
 

@@ -605,7 +605,7 @@ class WCEFR_Products {
 		$output = $this->wcefr_call->call( 'delete', 'products/' . $end );
 
 		/*temp*/
-		if ( isset( $output->errorCode ) || isset( $output->developerHint ) ) {
+		if ( isset( $output->errorCode ) ) {
 
 			$response = array(
 				'error',

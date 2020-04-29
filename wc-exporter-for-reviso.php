@@ -37,15 +37,16 @@ function load_wc_exporter_for_reviso() {
 	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
 
 	/*Files required*/
-	require( WCEFR_ADMIN . 'class-wcefr-admin.php' );
-	require( WCEFR_INCLUDES . 'wcefr-functions.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-call.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-users.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-products.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-checkout-fields.php' );
-	require( WCEFR_INCLUDES . 'class-wcefr-orders.php' );
-	require( WCEFR_INCLUDES . 'wcefr-invoice.php' );
+	require_once( WCEFR_DIR . 'libraries/action-scheduler/action-scheduler.php' );
+	require_once( WCEFR_ADMIN . 'class-wcefr-admin.php' );
+	require_once( WCEFR_INCLUDES . 'wcefr-functions.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-call.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-users.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-products.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-checkout-fields.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-orders.php' );
+	require_once( WCEFR_INCLUDES . 'wcefr-invoice.php' );
 
 }
-add_action( 'plugins_loaded', 'load_wc_exporter_for_reviso', 10 );
+add_action( 'plugins_loaded', 'load_wc_exporter_for_reviso', -10 );

@@ -11,9 +11,7 @@ jQuery(document).ready(function($) {
 		
 		$(this).on('click', function(){
 
-
 			var order_id = $(this).data('order-id');
-			console.log('ORDER ID: ' + order_id);
 
 			var data = {
 				'action': 'wcefr-download-pdf',

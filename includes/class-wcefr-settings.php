@@ -18,15 +18,14 @@ class WCEFR_Settings {
 		if ( $init ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-			add_action( 'wp_ajax_check-connection', array( $this, 'check_connection_callback' ) );
+			add_action( 'wp_ajax_wcefr-check-connection', array( $this, 'check_connection_callback' ) );
 			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
-			add_action( 'admin_footer', array( $this, 'check_connection' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-		$this->connected = $this->check_connection_callback( true );
+		// $this->connected = $this->check_connection_callback( true );
 
 	}
 
@@ -80,26 +79,6 @@ class WCEFR_Settings {
 
 
 	/**
-	 * Check the connection to Reviso
-	 *
-	 * @return void
-	 */
-	public function check_connection() {
-
-		if ( $this->is_wcefr_admin() ) {
-			?>	
-			<script>
-				jQuery(document).ready(function($){
-					var Controller = new wcefrController;
-					Controller.wcefr_check_connection();
-				})
-			</script>
-			<?php
-		}
-	}
-
-
-	/**
 	 * Deletes the Agreement Grant Token from the db
 	 *
 	 * @return void
@@ -107,6 +86,8 @@ class WCEFR_Settings {
 	public function disconnect_callback() {
 
 		delete_option( 'wcefr-agt' );
+
+		error_log( 'TEST: ' . delete_option( 'wcefr-agt' ) );
 
 		exit;
 
@@ -123,8 +104,14 @@ class WCEFR_Settings {
 
 		$response = $this->wcefr_call->call( 'get', 'self' );
 
-		if ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
+		if ( isset( $response->httpStatusCode ) && isset( $response->message ) ) {
 
+			echo false;
+
+		} elseif ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
+
+			error_log( 'APP NUMBER: ' . $response->application->appNumber );
+	
 			if ( $return ) {
 
 				return true;
@@ -135,13 +122,10 @@ class WCEFR_Settings {
 
 			}
 
-		} elseif ( $return ) {
-
-			return false;
-
 		}
 
 		exit;
+
 	}
 
 }

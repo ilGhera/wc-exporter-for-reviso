@@ -28,8 +28,8 @@ class WCEFR_Orders {
 				$this->book_invoices        = get_option( 'wcefr-book-invoices' );
 				$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
 
-				add_action( 'wp_ajax_export-orders', array( $this, 'export_orders' ) );
-				add_action( 'wp_ajax_delete-remote-orders', array( $this, 'delete_remote_orders' ) );
+				add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
+				add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
 				add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 				add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
 				add_action( 'manage_shop_order_posts_custom_column', array( $this, 'wc_columns_content' ), 10, 2 );
@@ -39,6 +39,7 @@ class WCEFR_Orders {
 				add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 			}
+
 		}
 
 		$this->wcefr_call = new WCEFR_Call();

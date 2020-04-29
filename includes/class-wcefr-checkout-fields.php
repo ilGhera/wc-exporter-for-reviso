@@ -180,14 +180,21 @@ class WCEFR_Checkout_Fields {
 				}
 			}
 
-			if ( ! isset( $this->custom_fields['billing_wcefr_pec'] ) && isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
+			/*Rendo obbligatorio cf e p. iva ed azienda solo quando richiesto*/
+			if ( isset( $_POST['billing_wcefr_invoice_type'] ) ) {
 
-				$fields['billing']['billing_wcefr_pa_code']['required'] = true;
+				if ( 'private' !== $_POST['billing_wcefr_invoice_type'] ) {
 
-			} elseif ( isset( $this->custom_fields['billing_wcefr_pec'] ) && ! isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
+					if ( ! isset( $this->custom_fields['billing_wcefr_pec'] ) && isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
 
-				$fields['billing']['billing_wcefr_pec']['required'] = true;
+						$fields['billing']['billing_wcefr_pa_code']['required'] = true;
 
+					} elseif ( isset( $this->custom_fields['billing_wcefr_pec'] ) && ! isset( $this->custom_fields['billing_wcefr_pa_code'] ) ) {
+
+						$fields['billing']['billing_wcefr_pec']['required'] = true;
+
+					}
+				}
 			}
 		}
 

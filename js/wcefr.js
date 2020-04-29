@@ -23,6 +23,7 @@ var wcefrController = function() {
 		self.wcefr_delete_remote_orders();
 		self.wcefr_disconnect();
 		self.book_invoice();
+		self.wcefr_check_connection();
 	}
 
 
@@ -144,7 +145,7 @@ var wcefrController = function() {
 		jQuery(function($){
 
 			var data = {
-				'action': 'check-connection'
+				'action': 'wcefr-check-connection'
 			}
 
 			$.post(ajaxurl, data, function(response){
@@ -265,7 +266,7 @@ var wcefrController = function() {
 				var group = $('.wcefr-' + type + '-groups').val();
 
 				var data = {
-					'action': 'export-users',
+					'action': 'wcefr-export-users',
 					'wcefr-export-users-nonce': wcefrUsers.exportNonce,
 					'type': type,
 					'role': role,
@@ -307,13 +308,13 @@ var wcefrController = function() {
 
 				self.delete_messages();
 
-				var type = $(this).hasClass('customers') ? 'customers' : 'suppliers';
-				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' );
+				var type   = $(this).hasClass('customers') ? 'customers' : 'suppliers';
+				var answer = confirm( 'Vuoi cancellare tutti i ' + type + ' da Reviso?' ); //temp.
 
 				if ( answer ) {
 
 					var data = {
-						'action': 'delete-remote-users',
+						'action': 'wcefr-delete-remote-users',
 						'wcefr-delete-users-nonce': wcefrUsers.deleteNonce,
 						'type': type
 					}
@@ -321,17 +322,21 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
-						self.wcefr_response_loading();
+						if ( response ) {
 
-						var result = JSON.parse(response);
+							self.wcefr_response_loading();
 
-						for (var i = 0; i < result.length; i++) {
+							var result = JSON.parse(response);
 
-							var error = 'error' === result[i][0] ? true : false;
-							var update = 0 !== i ? true : false; 
+							for (var i = 0; i < result.length; i++) {
 
-							self.wcefr_response_message( result[i][1], error, false );
-	
+								var error = 'error' === result[i][0] ? true : false;
+								var update = 0 !== i ? true : false; 
+
+								self.wcefr_response_message( result[i][1], error, false );
+		
+							}
+
 						}
 
 					})
@@ -361,7 +366,7 @@ var wcefrController = function() {
 				var terms = $('.wcefr-products-categories').val();
 
 				var data = {
-					'action': 'export-products',
+					'action': 'wcefr-export-products',
 					'wcefr-export-products-nonce': wcefrProducts.exportNonce,
 					'terms': terms
 				}
@@ -406,7 +411,7 @@ var wcefrController = function() {
 				if ( answer ) {
 
 					var data = {
-						'action': 'delete-remote-products',
+						'action': 'wcefr-delete-remote-products',
 						'wcefr-delete-products-nonce': wcefrProducts.deleteNonce,
 					}
 
@@ -446,7 +451,7 @@ var wcefrController = function() {
 
 			var groups;
 			var data = {
-				'action': 'get-' + type + '-groups',
+				'action': 'wcefr-get-' + type + '-groups',
 				'confirm': 'yes' 
 			}
 
@@ -492,14 +497,12 @@ var wcefrController = function() {
 				var statuses = $('.wcefr-orders-statuses').val();
 
 				var data = {
-					'action': 'export-orders',
+					'action': 'wcefr-export-orders',
 					'wcefr-export-orders-nonce': wcefrOrders.exportNonce,
 					'statuses': statuses
 				}
 
 				$.post(ajaxurl, data, function(response){
-
-					console.log(response);
 										
 					var result = JSON.parse(response);
 
@@ -539,7 +542,7 @@ var wcefrController = function() {
 				if ( answer ) {
 
 					var data = {
-						'action': 'delete-remote-orders',
+						'action': 'wcefr-delete-remote-orders',
 						'wcefr-delete-orders-nonce': wcefrOrders.deleteNonce,
 					}
 

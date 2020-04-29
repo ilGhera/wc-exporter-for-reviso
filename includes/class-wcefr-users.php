@@ -21,10 +21,10 @@ class WCEFR_Users {
 
 			if ( $settings->connected ) {
 
-				add_action( 'wp_ajax_export-users', array( $this, 'export_users' ) );
-				add_action( 'wp_ajax_delete-remote-users', array( $this, 'delete_remote_users' ) );
-				add_action( 'wp_ajax_get-customers-groups', array( $this, 'get_customers_groups' ) );
-				add_action( 'wp_ajax_get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+				add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
+				add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
+				add_action( 'wp_ajax_wcefr-get-customers-groups', array( $this, 'get_customers_groups' ) );
+				add_action( 'wp_ajax_wcefr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
 				add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
 				add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 
@@ -234,7 +234,7 @@ class WCEFR_Users {
 	/**
 	 * Prepare the single user data to export to Reviso
 	 *
-	 * @param  object $user  the WP user if exists.
+	 * @param  array  $user  the WP user if exists.
 	 * @param  string $type  customers or suppliers.
 	 * @param  object $order the WC order to get the customer details.
 	 * @return array
@@ -245,13 +245,13 @@ class WCEFR_Users {
 
 		if ( $user ) {
 
-			$user_details = get_userdata( $user->ID );
+			$user_details = get_userdata( $user['ID'] );
 
 			$user_data = array_map(
 				function( $a ) {
 					return $a[0];
 				},
-				get_user_meta( $user->ID )
+				get_user_meta( $user['ID'] )
 			);
 
 			$name                    = $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'];
@@ -375,7 +375,7 @@ class WCEFR_Users {
 	 *
 	 * @param  string $type customers or suppliers.
 	 */
-	public function export_users( $type ) {
+	public function export_users() {
 
 		if ( isset( $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-users-nonce'], 'wcefr-export-users' ) ) {
 
@@ -387,10 +387,8 @@ class WCEFR_Users {
 			update_option( 'wcefr-' . $type . '-role', $role );
 			update_option( 'wcefr-' . $type . '-group', $group );
 
-			$args = array( 'role' => $role );
-
-			$users = get_users( $args );
-
+			$args     = array( 'role' => $role );
+			$users    = get_users( $args );
 			$response = array();
 
 			if ( $users ) {
@@ -402,14 +400,14 @@ class WCEFR_Users {
 					$n++;
 
 					/*Cron event*/
-					wp_schedule_single_event(
-						time() + 1,
+					as_enqueue_async_action(
 						'wcefr_export_single_user_event',
 						array(
 							$n,
 							$user,
 							$type,
-						)
+						),
+						'wcefr_export_single_user'
 					);
 
 				}
@@ -429,34 +427,6 @@ class WCEFR_Users {
 		}
 
 		exit;
-	}
-
-
-	/**
-	 * Export WP users as suppliers in Reviso
-	 */
-	public function export_suppliers() {
-
-		if ( isset( $_POST['wcefr-suppliers-role'], $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-users-nonce'], 'wcefr-export-users' ) ) {
-
-			$response = $this->export_users( 'suppliers' );
-
-		}
-
-	}
-
-
-	/**
-	 * Export WP users as customers in Reviso
-	 */
-	public function export_customers() {
-
-		if ( isset( $_POST['wcefr-suppliers-role'], $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-users-nonce'], 'wcefr-export-users' ) ) {
-
-			$response = $this->export_users( 'customers' );
-
-		}
-
 	}
 
 
@@ -498,8 +468,11 @@ class WCEFR_Users {
 	 * Delete all customers/ suppliers in Reviso
 	 */
 	public function delete_remote_users() {
+		
+		error_log('delete users');
 
 		if ( isset( $_POST['type'], $_POST['wcefr-delete-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-delete-users-nonce'], 'wcefr-delete-users' ) ) {
+
 
 			$response = array();
 			$type = sanitize_text_field( wp_unslash( $_POST['type'] ) );

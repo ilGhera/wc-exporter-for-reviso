@@ -24,6 +24,7 @@ class WCEFR_Call {
 	private function get_agreement_grant_token() {
 
 		$output = get_option( 'wcefr-agt' );
+
 		return $output;
 
 	}
@@ -37,9 +38,9 @@ class WCEFR_Call {
 	public function headers() {
 
 		$output = array(
-			'X-AppSecretToken' => 'rqxTsPjvhLfKdbw29IOUdxNl1sIrYNsEKZ6RRIXhlyE1',
+			'X-AppSecretToken'      => 'rqxTsPjvhLfKdbw29IOUdxNl1sIrYNsEKZ6RRIXhlyE1',
 			'X-AgreementGrantToken' => $this->get_agreement_grant_token(),
-			'Content-Type' => 'application/json',
+			'Content-Type'          => 'application/json',
 		);
 
 		return $output;
@@ -73,13 +74,8 @@ class WCEFR_Call {
 
 			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
-			if ( isset( $output->errors ) && isset( $output->errorCode ) && 'E04300' !== $output->errorCode ) {
-
-				error_log( 'WCEFR | ERROR: ' . print_r( $output, true ) );
-
-			}
-
 			return $output;
+				
 
 		} else {
 

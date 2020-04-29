@@ -21,9 +21,9 @@ class WCEFR_Checkout_Fields {
 	 */
 	public function __construct() {
 
-		$settings = new WCEFR_Settings();
+		// $settings = new WCEFR_Settings();
 
-		if ( $settings->connected ) {
+		// if ( $settings->connected ) {
 
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
 			add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
@@ -37,7 +37,7 @@ class WCEFR_Checkout_Fields {
 
 			$this->custom_fields = $this->get_active_custom_fields();
 
-		}
+		// }
 
 	}
 

@@ -17,9 +17,9 @@ class WCEFR_Users {
 
 		if ( $init ) {
 
-			$settings = new WCEFR_Settings();
+			// $settings = new WCEFR_Settings();
 
-			if ( $settings->connected ) {
+			// if ( $settings->connected ) {
 
 				add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
 				add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
@@ -28,7 +28,7 @@ class WCEFR_Users {
 				add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
 				add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 
-			}
+			// }
 
 		}
 

@@ -17,9 +17,9 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$settings = new WCEFR_Settings();
+			// $settings = new WCEFR_Settings();
 
-			if ( $settings->connected ) {
+			// if ( $settings->connected ) {
 
 				$this->init();
 
@@ -38,7 +38,7 @@ class WCEFR_Orders {
 				add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
 				add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
-			}
+			// }
 
 		}
 

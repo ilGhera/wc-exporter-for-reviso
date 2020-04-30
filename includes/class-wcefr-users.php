@@ -244,14 +244,14 @@ class WCEFR_Users {
 				get_user_meta( $user_id )
 			);
 
-			$name                    = $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'];
-			$user_email              = $user_data['billing_email'];
-			$country                 = $user_data['billing_country'];
-			$city                    = $user_data['billing_city'];
-			$state                   = $user_data['billing_state'];
-			$address                 = $user_data['billing_address_1'];
-			$postcode                = $user_data['billing_postcode'];
-			$phone                   = $user_data['billing_phone'];
+			$name                    = isset( $user_data['billing_first_name'], $user_data['billing_last_name'] ) ? $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'] : '';
+			$user_email              = isset( $user_data['billing_email'] ) ? $user_data['billing_email'] : '';
+			$country                 = isset( $user_data['billing_country'] ) ? $user_data['billing_country'] : '';
+			$city                    = isset( $user_data['billing_city'] ) ? $user_data['billing_city'] : '';
+			$state                   = isset( $user_data['billing_state'] ) ? $user_data['billing_state'] : '';
+			$address                 = isset( $user_data['billing_address_1'] ) ? $user_data['billing_address_1'] : '';
+			$postcode                = isset( $user_data['billing_postcode'] ) ? $user_data['billing_postcode'] : '';
+			$phone                   = isset( $user_data['billing_phone'] ) ? $user_data['billing_phone'] : '';
 			$website                 = $user_details->user_url;
 			$vat_number              = isset( $user_data['billing_wcefr_piva'] ) ? $user_data['billing_wcefr_piva'] : null;
 			$identification_number   = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
@@ -364,7 +364,7 @@ class WCEFR_Users {
 			/*Log the error*/
 			if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-				error_log( 'WCEFR ERROR | ' . $output->message );
+				error_log( 'WCEFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
 
 			}
 
@@ -444,7 +444,7 @@ class WCEFR_Users {
 		/*Log the error*/
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-			error_log( 'WCEFR ERROR | ' . $output->message );
+			error_log( 'WCEFR ERROR | Reviso user ' . $user_number . ' | ' . $output->message );
 
 		}
 

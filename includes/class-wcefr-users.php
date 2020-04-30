@@ -140,30 +140,26 @@ class WCEFR_Users {
 	 */
 	private function user_exists( $type, $email ) {
 
-		$output = false;
-		$mails = array();
-
-		$users = $this->get_remote_users( $type );
-
 		$field_name = 'customers' === $type ? 'customerNumber' : 'supplierNumber';
 
-		if ( isset( $users->collection ) ) {
+		$output = $this->wcefr_call->call( 'get', $type . '?filter=email$eq:' . $email );
 
-			foreach ( $users->collection as $customer ) {
+		// error_log( $email . ': ' . print_r( $output, true ) );
 
-				$mails[ $customer->$field_name ] = $customer->email;
+		if ( ! $output ) {
+			
+			return false;
+
+		} else {
+
+			if( isset( $output->collection[0]->$field_name ) ) {
+
+				return $output->collection[0]->$field_name;
 
 			}
 
 		}
 
-		if ( in_array( $email, $mails ) ) {
-
-			$output = true;
-
-		}
-
-		return $output;
 	}
 
 
@@ -294,7 +290,7 @@ class WCEFR_Users {
 			'city'                   => $city,
 			'address'                => $address,
 			'zip'                    => $postcode,
-			'telephoneAndFaxNumber'  => $phone,
+			'phone'                  => $phone,
 			'vatZone' => array(
 				'vatZoneNumber' => 1,
 			),
@@ -350,11 +346,20 @@ class WCEFR_Users {
 	 */
 	public function export_single_user( $user_id, $type, $order = null ) {
 
-		$args = $this->prepare_user_data( $user_id, $type, $order );
+		$args      = $this->prepare_user_data( $user_id, $type, $order );
+		$remote_id = $this->user_exists( $type, $args['email'] );
 
-		if ( $args && ! $this->user_exists( $type, $args['email'] ) ) {
+		if ( $args ) {
 
-			$output = $this->wcefr_call->call( 'post', $type . '/', $args );
+			if ( ! $remote_id ) {
+
+				$output = $this->wcefr_call->call( 'post', $type . '/', $args );
+
+			} else {
+
+				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
+
+			}
 
 			/*Log the error*/
 			if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {

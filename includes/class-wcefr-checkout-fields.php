@@ -21,23 +21,24 @@ class WCEFR_Checkout_Fields {
 	 */
 	public function __construct() {
 
-		// $settings = new WCEFR_Settings();
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
+		add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
+		add_action( 'woocommerce_before_order_notes', array( $this, 'display_fields' ) );
+		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_fields' ), 10, 2 );
+		add_action( 'woocommerce_thankyou', array( $this, 'display_custom_data' ) );
+		add_action( 'woocommerce_view_order', array( $this, 'display_custom_data' ) );
+		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_custom_data_in_admin' ) );
+		add_filter( 'woocommerce_email_customer_details', array( $this, 'display_custom_data_in_email' ), 10, 4 );
+		add_action( 'woocommerce_checkout_process', array( $this, 'checkout_fields_check' ) );
+		add_action( 'show_user_profile', array( $this, 'extra_user_profile_fields' ) );
+		add_action( 'edit_user_profile', array( $this, 'extra_user_profile_fields' ) );
+		add_action( 'personal_options_update', array( $this, 'save_extra_user_profile_fields' ) );
+		add_action( 'edit_user_profile_update', array( $this, 'save_extra_user_profile_fields' ) );
 
-		// if ( $settings->connected ) {
-
-			add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
-			add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
-			add_action( 'woocommerce_before_order_notes', array( $this, 'display_fields' ) );
-			add_action( 'woocommerce_checkout_create_order', array( $this, 'save_fields' ), 10, 2 );
-			add_action( 'woocommerce_thankyou', array( $this, 'display_custom_data' ) );
-			add_action( 'woocommerce_view_order', array( $this, 'display_custom_data' ) );
-			add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_custom_data_in_admin' ) );
-			add_filter( 'woocommerce_email_customer_details', array( $this, 'display_custom_data_in_email' ), 10, 4 );
-			add_action( 'woocommerce_checkout_process', array( $this, 'checkout_fields_check' ) );
-
-			$this->custom_fields = $this->get_active_custom_fields();
-
-		// }
+		$this->custom_fields = $this->get_active_custom_fields();
+		$this->cf_mandatory  = get_option( 'wcefr_cf_mandatory' );
+		$this->only_italy    = get_option( 'wcefr_only_italy' );
+		$this->cf_only_italy = get_option( 'wcefr_cf_only_italy' );
 
 	}
 
@@ -360,6 +361,70 @@ class WCEFR_Checkout_Fields {
 				}
 			}
 			echo '<div style="display: block; padding-bottom: 25px;"></div>';
+		}
+
+	}
+
+	/**
+	 * Add custom fields to user profile page
+	 *
+	 * @param  object $user user WP.
+	 * @return mixed
+	 */
+	public function extra_user_profile_fields( $user ) {
+
+		if ( $this->custom_fields ) {
+
+			echo '<h3>' . esc_html__( 'Electronic invoicing', 'wcefr' ) . '</h3>';
+
+			echo '<table class="form-table">';
+
+				foreach ( $this->custom_fields as $key => $value ) {
+
+					echo '<tr>';
+						echo '<th><label for="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</label></th>';
+						echo '<td>';
+							echo '<input type="text" name="' . esc_attr( $key ) . '" id="' . esc_attr( $key ) . '" value="' . esc_attr( get_the_author_meta( $key, $user->ID ) ) . '" class="regular-text" />';
+						echo '</td>';
+					echo '</tr>';
+
+				}
+
+			echo '</table>';
+		}
+
+	}
+
+	/**
+	 * Edit custom fields in user profile page
+	 *
+	 * @param  int $user_id l'id dell'utente WP.
+	 * @return mixed
+	 */
+	public function save_extra_user_profile_fields( $user_id ) {
+
+		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+
+			return false;
+
+		} else {
+
+			if ( $this->custom_fields ) {
+
+				foreach ( $this->custom_fields as $key => $value ) {
+
+					$new_value = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
+
+					if ( $new_value ) {
+
+						update_user_meta( $user_id, $key, $new_value );
+
+					}
+
+				}
+
+			}
+
 		}
 
 	}

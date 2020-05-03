@@ -17,16 +17,10 @@ class WCEFR_Products {
 
 		if ( $init ) {
 
-			// $settings = new WCEFR_Settings();
-
-			// if ( $settings->connected ) {
-
-				add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
-				add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
-				add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ), 10, 2 );
-				add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ), 10, 2 );
-
-			// }
+			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
+			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
+			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ) );
+			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
 
 		}
 
@@ -416,6 +410,18 @@ class WCEFR_Products {
 	private function prepare_product_data( $product ) {
 
 		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
+
+		$width  = $product->get_width();
+		$height = $product->get_height();
+		$length = $product->get_length();
+		$volume = 0;
+
+		if ( $width && $height && $length ) {
+		
+			$volume = number_format( ( $width * $height * $length ), 2 );
+
+		}
+
 		$output = array(
 			'productNumber'    => $product->get_sku(),
 			'barred'           => false,
@@ -429,6 +435,9 @@ class WCEFR_Products {
 			'unit'             => array(
 				'unitNumber' => 1,
 			),
+			'inventory'        => array(
+				'packageVolume' => $volume,
+			),
 		);
 
 		return $output;
@@ -437,7 +446,7 @@ class WCEFR_Products {
 
 
 	/**
-	 * Prepare the sku for getting the right product endpoint
+	 * Prepare the sku to get the right product endpoint
 	 *
 	 * @param  string $sku the product sku.
 	 * @return string
@@ -454,61 +463,51 @@ class WCEFR_Products {
 	/**
 	 * Export single product to Reviso
 	 *
-	 * @param  int $n       the count of products exported.
-	 * @param  int $post_id the product id.
+	 * @param  int $product_id the product id.
 	 */
-	public function export_single_product( $n, $post_id ) {
+	public function export_single_product( $product_id ) {
 
-		$product = wc_get_product( $post_id );
-		$sku = $product->get_sku();
+		$product = wc_get_product( $product_id );
 
-		/*Avoid parent product export*/
-		if ( ! $product->is_type( 'variable' ) ) {
+		if ( $product ) {
+			
+			$sku = $product->get_sku();
 
-			$args = $this->prepare_product_data( $product );
+			/*Avoid parent product export*/
+			if ( ! $product->is_type( 'variable' ) ) {
 
-			if ( $args ) {
+				$args = $this->prepare_product_data( $product );
+	
+				// error_log( 'ARGS: ' . print_r( $args, true ) );
 
-				$end = $this->format_sku( $sku );
+				if ( $args ) {
 
-				if ( $this->product_exists( $end ) ) {
+					$end = $this->format_sku( $sku );
 
-					$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args );
+					if ( $this->product_exists( $end ) ) {
 
-				} else {
+						$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args );
+						// error_log( 'OUTPUT 1: ' . print_r( $output, true ) );
 
-					$output = $this->wcefr_call->call( 'post', 'products', $args );
+					} else {
 
-				}
+						$output = $this->wcefr_call->call( 'post', 'products', $args );
+						// error_log( 'OUTPUT 2: ' . print_r( $output, true ) );
 
-				error_log( 'PRODOTTO: ' . print_r( $output, true ) ); // temp.
+					}
 
-				/*temp*/
-				if ( isset( $output->errorCode ) ) { // temp.
+					/*Log the error*/
+					if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-					$response[] = array(
-						'error',
-						/* translators: 1: the error message 2: the product sku */
-						esc_html( sprintf( __( 'ERROR! %1$s #%2$s<br>', 'wcefr' ), $output->message, $product->get_sku() ) ),
-					);
+						error_log( 'WCEFR ERROR | Product ID ' . $product_id . ' | ' . $output->message );
 
-				} else {
-
-					$response[] = array(
-						'ok',
-						/* translators: the products count */
-						esc_html( sprintf( __( 'Exported products: %d', 'wcefr' ), $n ) ),
-					);
+					}
 
 				}
-
-				echo json_encode( $response );
 
 			}
 
 		}
-
-		exit;
 
 	}
 
@@ -520,10 +519,8 @@ class WCEFR_Products {
 
 		if ( isset( $_POST['wcefr-export-products-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-products-nonce'], 'wcefr-export-products' ) ) {
 
-			$class = new WCEFR_Orders();
-
-			$terms = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
-
+			$class    = new WCEFR_Orders();
+			$terms    = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
 			$response = array();
 
 			$args = array(
@@ -563,14 +560,13 @@ class WCEFR_Products {
 
 					$n++;
 
-					/*Cron event*/
-					wp_schedule_single_event(
-						time() + 1,
+					/*Schedule single event*/
+					as_enqueue_async_action(
 						'wcefr_export_single_product_event',
 						array(
-							$n,
-							$post->ID,
-						)
+							'product_id' => $post->ID,
+						),
+						'wcefr_export_single_product'
 					);
 
 				}
@@ -578,7 +574,7 @@ class WCEFR_Products {
 				$response[] = array(
 					'ok',
 					/* translators: the products count */
-					esc_html( sprintf( __( '%n product(s) export process has begun', 'wcefr' ), $n ) ),
+					esc_html( sprintf( __( '%d product(s) export process has begun', 'wcefr' ), $n ) ),
 				);
 
 				echo json_encode( $response );
@@ -595,31 +591,18 @@ class WCEFR_Products {
 	/**
 	 * Delete a single product on Reviso
 	 *
-	 * @param  int $n              the count of products exported.
 	 * @param  int $product_number the product to delete in Reviso.
 	 */
-	public function delete_remote_single_product( $n, $product_number ) {
+	public function delete_remote_single_product( $product_number ) {
 
 		$end = $this->format_sku( $product_number );
 
 		$output = $this->wcefr_call->call( 'delete', 'products/' . $end );
 
-		/*temp*/
-		if ( isset( $output->errorCode ) ) {
+		/*Log the error*/
+		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-			$response = array(
-				'error',
-				/* translators: 1: the error message 2: the product number */
-				esc_html( sprintf( __( 'ERROR! %1$s #%2$n<br>', 'wcefr' ), $output->message, $product_number ) ),
-			);
-
-		} else {
-
-			$response = array(
-				'ok',
-				/* translators: the product count */
-				esc_html( sprintf( __( 'Deleted products: %d', 'wcefr' ), $n ) ),
-			);
+			error_log( 'WCEFR ERROR | Reviso product ' . $product_number . ' | ' . $output->message );
 
 		}
 
@@ -642,15 +625,15 @@ class WCEFR_Products {
 
 				$n++;
 
-				/*Cron event*/
-				wp_schedule_single_event(
-					time() + 1,
+				/*Schedule single event*/
+				as_enqueue_async_action(
 					'wcefr_delete_remote_single_product_event',
 					array(
-						$n,
-						$product->productNumber,
-					)
+						'product_number' => $product->productNumber,
+					),
+					'wcefr_delete_remote_single_product'
 				);
+
 
 			}
 

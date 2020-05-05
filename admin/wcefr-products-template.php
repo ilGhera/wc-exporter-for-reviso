@@ -51,7 +51,7 @@
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Delete products', 'wcefr' ); ?></th>
 			<td>
-				<p class="description"><?php esc_html_e( 'Delete all products on Reviso.<br>Note that you cannot delete a product that has been used on an Invoice.', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Delete all products on Reviso. Note that you cannot delete a product that has been used on an Invoice.', 'wcefr' ); ?></p>
 			</td>
 		</tr>
 	</table>

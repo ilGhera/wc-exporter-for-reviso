@@ -260,6 +260,7 @@ var wcefrController = function() {
 				e.preventDefault();
 
 				self.delete_messages();
+				self.wcefr_response_loading();
 
 				var type  = $(this).hasClass('customers') ? 'customers' : 'suppliers';
 				var role  = $('.wcefr-' + type + '-role').val();
@@ -313,6 +314,8 @@ var wcefrController = function() {
 
 				if ( answer ) {
 
+					self.wcefr_response_loading();
+
 					var data = {
 						'action': 'wcefr-delete-remote-users',
 						'wcefr-delete-users-nonce': wcefrUsers.deleteNonce,
@@ -323,8 +326,6 @@ var wcefrController = function() {
 					$.post(ajaxurl, data, function(response){
 
 						if ( response ) {
-
-							self.wcefr_response_loading();
 
 							var result = JSON.parse(response);
 
@@ -362,6 +363,7 @@ var wcefrController = function() {
 				e.preventDefault();
 
 				self.delete_messages();
+				self.wcefr_response_loading();
 
 				var terms = $('.wcefr-products-categories').val();
 
@@ -410,6 +412,8 @@ var wcefrController = function() {
 
 				if ( answer ) {
 
+					self.wcefr_response_loading();
+
 					var data = {
 						'action': 'wcefr-delete-remote-products',
 						'wcefr-delete-products-nonce': wcefrProducts.deleteNonce,
@@ -417,7 +421,6 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
-						self.wcefr_response_loading();
 
 						var result = JSON.parse(response);
 
@@ -493,6 +496,7 @@ var wcefrController = function() {
 				e.preventDefault();
 
 				self.delete_messages();
+				self.wcefr_response_loading();
 
 				var statuses = $('.wcefr-orders-statuses').val();
 
@@ -541,14 +545,14 @@ var wcefrController = function() {
 
 				if ( answer ) {
 
+					self.wcefr_response_loading();
+
 					var data = {
 						'action': 'wcefr-delete-remote-orders',
 						'wcefr-delete-orders-nonce': wcefrOrders.deleteNonce,
 					}
 
 					$.post(ajaxurl, data, function(response){
-
-						self.wcefr_response_loading();
 
 						var result = JSON.parse(response);
 

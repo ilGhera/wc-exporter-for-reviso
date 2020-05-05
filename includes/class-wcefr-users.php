@@ -144,15 +144,13 @@ class WCEFR_Users {
 
 		$output = $this->wcefr_call->call( 'get', $type . '?filter=email$eq:' . $email );
 
-		// error_log( $email . ': ' . print_r( $output, true ) );
-
 		if ( ! $output ) {
-			
+
 			return false;
 
 		} else {
 
-			if( isset( $output->collection[0]->$field_name ) ) {
+			if ( isset( $output->collection[0]->$field_name ) ) {
 
 				return $output->collection[0]->$field_name;
 
@@ -380,7 +378,7 @@ class WCEFR_Users {
 	 */
 	public function export_users() {
 
-		if ( isset( $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-users-nonce'], 'wcefr-export-users' ) ) {
+		if ( isset( $_POST['wcefr-export-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-users-nonce'] ), 'wcefr-export-users' ) ) {
 
 			$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
 			$role  = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
@@ -456,7 +454,7 @@ class WCEFR_Users {
 	 */
 	public function delete_remote_users() {
 
-		if ( isset( $_POST['type'], $_POST['wcefr-delete-users-nonce'] ) && wp_verify_nonce( $_POST['wcefr-delete-users-nonce'], 'wcefr-delete-users' ) ) {
+		if ( isset( $_POST['type'], $_POST['wcefr-delete-users-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-delete-users-nonce'] ), 'wcefr-delete-users' ) ) {
 
 			$response = array();
 			$type = sanitize_text_field( wp_unslash( $_POST['type'] ) );

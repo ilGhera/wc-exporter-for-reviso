@@ -43,17 +43,13 @@ class WCEFR_Products {
 		if ( 1000 < $results ) {
 
 			$limit = $results / 1000;
-			error_log( 'LIMIT: ' . $limit );
-			error_log( 'LIMIT INT: ' . intval($limit) );
 
-			for ($i=0; $i < $limit ; $i++) { 
-				
-				error_log( 'NUMERO: ' . $i );
+			for ( $i = 1; $i < $limit; $i++ ) {
 
 				$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=1000' );
-				
+
 				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
-		
+
 					$output->collection = array_merge( $output->collection, $get_products->collection );
 
 				} else {
@@ -61,31 +57,32 @@ class WCEFR_Products {
 					continue;
 
 				}
-			
+
 			}
 
 		}
 
-		// error_log( 'PRODOTTI: ' . print_r( $output, true ) );
-
 		return $output;
+
 	}
 
 
 	/**
 	 * Check if a specific product exists in Reviso
 	 *
-	 * @param  string $sku the WC product sku.
+	 * @param  string $sku_ready the WC product sku already formatted for Reviso endpoint.
 	 * @return bool
 	 */
-	private function product_exists( $sku ) {
+	private function product_exists( $sku_ready ) {
 
 		$output = true;
 
-		$response = $this->wcefr_call->call( 'get', 'products/' . $sku );
+		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
 
-		if ( isset( $response->errorCode ) ) {
+		if ( ! $response || isset( $response->errorCode ) ) {
+
 			$output = false;
+
 		}
 
 		return $output;
@@ -94,18 +91,29 @@ class WCEFR_Products {
 
 
 	/**
-	 * Returns the product description less than 500 characters long
+	 * Returns the string passed less long than the limit specified
 	 *
-	 * @param  string $text the full WC product description.
+	 * @param  string $text  the full WC product description.
+	 * @param  int    $limit the string length limit.
 	 * @return string
 	 */
-	private function prepare_product_description( $text ) {
+	private function avoid_length_exceed( $text, $limit ) {
 
 		$output = $text;
 
-		if ( strlen( $text ) > 500 ) {
+		if ( strlen( $text ) > $limit ) {
 
-			$output = substr( $text, 0, 496 ) . ' ...';
+			if ( 25 === intval( $limit ) ) {
+
+				/*Product number (sku)*/
+				$output = substr( $text, 0, $limit );
+
+			} else {
+
+				/*Product name and description*/
+				$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+
+			}
 
 		}
 
@@ -126,9 +134,7 @@ class WCEFR_Products {
 
 		$where = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
 
-		$query = "
-			SELECT * FROM " . $wpdb->prefix . "woocommerce_tax_rates $where 
-		";
+		$query = 'SELECT * FROM ' . $wpdb->prefix . 'woocommerce_tax_rates' . $where;
 
 		$results = $wpdb->get_results( $query );
 
@@ -402,50 +408,6 @@ class WCEFR_Products {
 
 
 	/**
-	 * Prepare the single product data for Reviso
-	 *
-	 * @param  object $product the WC product.
-	 * @return array
-	 */
-	private function prepare_product_data( $product ) {
-
-		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
-
-		$width  = $product->get_width();
-		$height = $product->get_height();
-		$length = $product->get_length();
-		$volume = 0;
-
-		if ( $width && $height && $length ) {
-		
-			$volume = number_format( ( $width * $height * $length ), 2 );
-
-		}
-
-		$output = array(
-			'productNumber'    => $product->get_sku(),
-			'barred'           => false,
-			'name'             => $product->get_name(),
-			'description'      => $this->prepare_product_description( $product->get_description() ),
-			'salesPrice'       => (float) number_format( $sale_price, 2 ),
-			'productGroup'     => array(
-				'productGroupNumber' => $this->get_product_group( $product->is_taxable(), $product->get_tax_class() ),
-			),
-			'recommendedPrice' => (float) number_format( $product->get_regular_price(), 2 ),
-			'unit'             => array(
-				'unitNumber' => 1,
-			),
-			'inventory'        => array(
-				'packageVolume' => $volume,
-			),
-		);
-
-		return $output;
-
-	}
-
-
-	/**
 	 * Prepare the sku to get the right product endpoint
 	 *
 	 * @param  string $sku the product sku.
@@ -453,7 +415,72 @@ class WCEFR_Products {
 	 */
 	private function format_sku( $sku ) {
 
-		$output = str_replace( '/', '_6_', $sku );
+		$output = str_replace( '_', '_8_', $sku );
+		$output = str_replace( '<', '_0_', $output );
+		$output = str_replace( '>', '_1_', $output );
+		$output = str_replace( '*', '_2_', $output );
+		$output = str_replace( '%', '_3_', $output );
+		$output = str_replace( ':', '_4_', $output );
+		$output = str_replace( '&', '_5_', $output );
+		$output = str_replace( '/', '_6_', $output );
+		$output = str_replace( '\\', '_7_', $output );
+		$output = str_replace( ' ', '_9_', $output );
+		$output = str_replace( '?', '_10_', $output );
+		$output = str_replace( '.', '_11_', $output );
+		$output = str_replace( '#', '_12_', $output );
+		$output = str_replace( '+', '_13_', $output );
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Prepare the single product data for Reviso
+	 *
+	 * @param  object $product the WC product.
+	 * @return array
+	 */
+	private function prepare_product_data( $product ) {
+
+		/*Sale price*/
+		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
+		$description = utf8_encode( $product->get_description() );
+
+		/*Get the product volume if available*/
+		$volume = 0;
+		$width  = $product->get_width();
+
+		if ( $width ) {
+
+			$height = $product->get_height();
+			$length = $product->get_length();
+
+			if ( $width && $height && $length ) {
+
+				$volume = $width * $height * $length;
+
+			}
+
+		}
+
+		$output = array(
+			'productNumber'    => $this->avoid_length_exceed( $product->get_sku(), 25 ),
+			'barred'           => false,
+			'name'             => $this->avoid_length_exceed( $product->get_name(), 300 ),
+			'description'      => $this->avoid_length_exceed( $description, 500 ),
+			'salesPrice'       => floatval( wc_format_decimal( $sale_price, 2 ) ),
+			'productGroup'     => array(
+				'productGroupNumber' => $this->get_product_group( $product->is_taxable(), $product->get_tax_class() ),
+			),
+			'recommendedPrice' => floatval( wc_format_decimal( $product->get_regular_price(), 2 ) ),
+			'unit'             => array(
+				'unitNumber' => 1,
+			),
+			'inventory'        => array(
+				'packageVolume' => $volume,
+			),
+		);
 
 		return $output;
 
@@ -470,15 +497,13 @@ class WCEFR_Products {
 		$product = wc_get_product( $product_id );
 
 		if ( $product ) {
-			
+
 			$sku = $product->get_sku();
 
 			/*Avoid parent product export*/
 			if ( ! $product->is_type( 'variable' ) ) {
 
 				$args = $this->prepare_product_data( $product );
-	
-				// error_log( 'ARGS: ' . print_r( $args, true ) );
 
 				if ( $args ) {
 
@@ -487,12 +512,10 @@ class WCEFR_Products {
 					if ( $this->product_exists( $end ) ) {
 
 						$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args );
-						// error_log( 'OUTPUT 1: ' . print_r( $output, true ) );
 
 					} else {
 
 						$output = $this->wcefr_call->call( 'post', 'products', $args );
-						// error_log( 'OUTPUT 2: ' . print_r( $output, true ) );
 
 					}
 
@@ -517,7 +540,7 @@ class WCEFR_Products {
 	 */
 	public function export_products() {
 
-		if ( isset( $_POST['wcefr-export-products-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-products-nonce'], 'wcefr-export-products' ) ) {
+		if ( isset( $_POST['wcefr-export-products-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-products-nonce'] ), 'wcefr-export-products' ) ) {
 
 			$class    = new WCEFR_Orders();
 			$terms    = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
@@ -595,8 +618,7 @@ class WCEFR_Products {
 	 */
 	public function delete_remote_single_product( $product_number ) {
 
-		$end = $this->format_sku( $product_number );
-
+		$end    = $this->format_sku( $product_number );
 		$output = $this->wcefr_call->call( 'delete', 'products/' . $end );
 
 		/*Log the error*/
@@ -633,7 +655,6 @@ class WCEFR_Products {
 					),
 					'wcefr_delete_remote_single_product'
 				);
-
 
 			}
 

@@ -17,28 +17,22 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			// $settings = new WCEFR_Settings();
+			$this->init();
 
-			// if ( $settings->connected ) {
+			$this->issue_invoices       = get_option( 'wcefr-issue-invoices' );
+			$this->send_invoices        = get_option( 'wcefr-send-invoices' );
+			$this->book_invoices        = get_option( 'wcefr-book-invoices' );
+			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
 
-				$this->init();
+			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
+			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
+			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
+			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
+			add_action( 'manage_shop_order_posts_custom_column', array( $this, 'wc_columns_content' ), 10, 2 );
+			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
 
-				$this->issue_invoices       = get_option( 'wcefr-issue-invoices' );
-				$this->send_invoices        = get_option( 'wcefr-send-invoices' );
-				$this->book_invoices        = get_option( 'wcefr-book-invoices' );
-				$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
-
-				add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
-				add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
-				add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
-				add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-				add_action( 'manage_shop_order_posts_custom_column', array( $this, 'wc_columns_content' ), 10, 2 );
-				add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
-
-				add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
-				add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
-
-			// }
+			add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
+			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 		}
 
@@ -132,7 +126,31 @@ class WCEFR_Orders {
 	 */
 	public function get_remote_orders() {
 
-		$output = $this->wcefr_call->call( 'get', 'orders?pagesize=10000' );
+		$output = $this->wcefr_call->call( 'get', 'orders?pagesize=1000' );
+
+		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
+
+		if ( 1000 < $results ) {
+
+			$limit = $results / 1000;
+
+			for ( $i = 1; $i < $limit; $i++ ) {
+
+				$get_orders = $this->wcefr_call->call( 'get', 'orders?skippages=' . $i . '&pagesize=1000' );
+
+				if ( isset( $get_orders->collection ) && ! empty( $get_orders->collection ) ) {
+
+					$output->collection = array_merge( $output->collection, $get_orders->collection );
+
+				} else {
+
+					continue;
+
+				}
+
+			}
+
+		}
 
 		return $output;
 
@@ -143,15 +161,39 @@ class WCEFR_Orders {
 	 * Get all invoices from Reviso
 	 *
 	 * @param bool   $booked search for booke invoices if true.
-	 * @param string $filter to egt specific invoices.
+	 * @param string $filter to get a specific invoice.
 	 * @return array
 	 */
 	public function get_remote_invoices( $booked = false, $filter = false ) {
 
 		$status = $booked ? 'booked' : 'drafts';
-		$filter = $filter ? $filter : '?pagesize=10000';
+		$filter = $filter ? $filter : '?pagesize=1000';
 
 		$output = $this->wcefr_call->call( 'get', 'v2/invoices/' . $status . $filter );
+
+		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
+
+		if ( 1000 < $results ) {
+
+			$limit = $results / 1000;
+
+			for ( $i = 1; $i < $limit; $i++ ) {
+
+				$get_invoices = $this->wcefr_call->call( 'get', 'v2/invoices/' . $status . '?skippages=' . $i . '&pagesize=1000' );
+
+				if ( isset( $get_invoices->collection ) && ! empty( $get_invoices->collection ) ) {
+
+					$output->collection = array_merge( $output->collection, $get_invoices->collection );
+
+				} else {
+
+					continue;
+
+				}
+
+			}
+
+		}
 
 		return $output;
 
@@ -459,11 +501,57 @@ class WCEFR_Orders {
 	}
 
 
+	public function get_remote_accounting_years() {
+
+		$output = $this->wcefr_call->call( 'get', 'accounting-years' );
+
+		error_log( 'ACCOUNTING YEARS: ' . print_r( $output, true ) );
+
+	}
+
+
+
+	public function check_remote_accounting_years() {
+
+
+		$output   = false; 
+		$year 	  = wp_date( 'Y' );
+		$response = $this->wcefr_call->call( 'get', 'accounting-years/' . $year );
+
+		error_log( 'RESPONSE 1: ' . print_r( $response, true ) );
+
+		if ( is_array( $response ) && isset( $response['year'] ) && $year === $response['year'] ) {
+			
+			return true;
+
+		} else {
+
+			$args = array(
+				'fromDate' => wp_date( $year ) . '-01-01',
+				'toDate'   => wp_date( $year ) . '-12-31',
+				'year'     => $year
+			);
+
+			$add = $this->wcefr_call->call( 'post', 'accounting-years', $args );
+
+			error_log( 'RESPONSE 2: ' . print_r( $add, true ) );
+
+			if ( is_array( $add ) && isset( $add['year'] ) && $year === $add['year'] ) {
+
+				return true;
+
+			}
+
+		}
+
+	}
+
+
 	/**
 	 * Get a specific number sirie from Reviso
 	 *
 	 * @param  string $prefix     example are FVE, FVL, ecc.
-	 * @param  string $entry_type used for filter the number series.
+	 * @param  string $entry_type used to filter the number series.
 	 * @param  bool   $first      if true returns the numberSeriesNumber of the first result, otherwise all the array.
 	 * @return mixed
 	 */
@@ -473,6 +561,8 @@ class WCEFR_Orders {
 
 			/*Used for invoices*/
 			$response = $this->wcefr_call->call( 'get', 'number-series?filter=prefix$eq:' . $prefix );
+
+			error_log( 'PREFIX: ' . print_r( $response, true ) );
 
 		} elseif ( $entry_type ) {
 
@@ -509,8 +599,17 @@ class WCEFR_Orders {
 	 */
 	private function create_remote_voucher( $order ) {
 
+		/*temp*/
+		// $this->check_remote_accounting_years();
+		$test = $this->wcefr_call->call( 'get', '/number-series?filter=entryType$eq:financeVoucher' );
+
+		error_log( 'NUMBER SERIES: ' . print_r( $test, true ) );
+
+
 		$lines = array();
 		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+
+		// error_log( 'REMOTE CUSTOMER: ' . print_r( $customer_number, true ) );
 
 		if ( $order->get_items() ) {
 
@@ -532,14 +631,18 @@ class WCEFR_Orders {
 		}
 
 		$args = array(
-			'date'         => date( 'Y-m-d' ),
+			'date'         => wp_date( 'Y-m-d' ),
 			'lines'        => $lines,
 			'numberSeries' => array(
-				'numberSeriesNumber' => $this->get_remote_number_series( null, 'financeVoucher', true ),
+				'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
 			),
 		);
 
+		error_log( 'ARGS voucher: ' . print_r( $args, true ) );
+
 		$response = $this->wcefr_call->call( 'post', '/vouchers/drafts/customer-invoices', $args );
+
+		error_log( 'OUTPUT voucher: ' . print_r( $response, true ) );
 
 		return $response;
 
@@ -563,7 +666,7 @@ class WCEFR_Orders {
 
 			return 1;
 
-		} elseif ( in_array( $country, $europen_countries) ) {
+		} elseif ( in_array( $country, $europen_countries ) ) {
 
 			return 2;
 
@@ -651,7 +754,7 @@ class WCEFR_Orders {
 
 				$invoice = $this->document_exists( $order->get_id(), true, true );
 
-				if ( $invoice['id'] && $invoice['status'] ) {
+				if ( isset( $invoice['id'] ) && isset( $invoice['status'] ) ) {
 
 					$filename = 'Invoice-' . $invoice['number'] . '-';
 
@@ -672,7 +775,7 @@ class WCEFR_Orders {
 
 				}
 
-		    }
+			}
 
 		}
 
@@ -785,10 +888,13 @@ class WCEFR_Orders {
 	 */
 	public function export_single_order( $order_id, $invoice = false ) {
 
-		$order_exists = $this->document_exists( $order_id );
+		$order_exists   = $this->document_exists( $order_id );
 		$invoice_exists = $this->document_exists( $order_id, true, true );
 
-		if ( ! $order_exists && ! $invoice_exists['id'] ) {
+		// error_log( '$order_exists: ' . $order_exists );
+		// error_log( '$invoice_exists: ' . print_r( $invoice_exists, true ) );
+
+		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
 			$order           = new WC_Order( $order_id );
 			$args            = $this->prepare_order_data( $order );
@@ -799,6 +905,9 @@ class WCEFR_Orders {
 				$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
 
 				$output = $this->wcefr_call->call( 'post', $endpoint, $args );
+
+				// error_log( 'ARGS: ' . print_r( $args, true ) );
+				// error_log( 'OUTPUT: ' . print_r( $output, true ) );
 
 				/*An invoice for this order is ready on Reviso*/
 				if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
@@ -815,6 +924,13 @@ class WCEFR_Orders {
 					}
 
 					update_post_meta( $order_id, 'wcefr-invoice', $data );
+
+				}
+
+				/*Log the error*/
+				if ( isset( $output->errorCode ) && isset( $output->developerHint ) && isset( $output->message ) ) {
+
+					error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message . ' | ' . $output->developerHint );
 
 				}
 
@@ -864,7 +980,7 @@ class WCEFR_Orders {
 	 */
 	public function export_orders() {
 
-		if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( $_POST['wcefr-export-orders-nonce'], 'wcefr-export-orders' ) ) {
+		if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-orders-nonce'] ), 'wcefr-export-orders' ) ) {
 
 			$statuses = isset( $_POST['statuses'] ) ? $this->sanitize_array( $_POST['statuses'] ) : array( 'any' );
 
@@ -887,9 +1003,9 @@ class WCEFR_Orders {
 
 			$posts = get_posts( $args );
 
-			error_log( 'STATUSES: ' . print_r( $statuses, true ) );
-			error_log( 'ARGS: ' . print_r( $args, true ) );
-			error_log( 'ORDINI: ' . print_r( $posts, true ) );
+			// error_log( 'STATUSES: ' . print_r( $statuses, true ) );
+			// error_log( 'ARGS: ' . print_r( $args, true ) );
+			// error_log( 'ORDINI: ' . print_r( $posts, true ) );
 
 			$n = 0;
 
@@ -900,14 +1016,12 @@ class WCEFR_Orders {
 					$n++;
 
 					/*Cron event*/
-					wp_schedule_single_event(
-
-						time() + 1,
+					as_enqueue_async_action(
 						'wcefr_export_single_order_event',
 						array(
-							$post->ID,
-						)
-
+							'order_id' => $post->ID,
+						),
+						'wcefr_export_single_order'
 					);
 
 				}
@@ -932,29 +1046,16 @@ class WCEFR_Orders {
 	/**
 	 * Delete the single order from Reviso
 	 *
-	 * @param  int $n        the count of orders to delete.
 	 * @param  int $order_id the order id to delete.
 	 */
-	public function delete_remote_single_order( $n, $order_id ) {
+	public function delete_remote_single_order( $order_id ) {
 
 		$output = $this->wcefr_call->call( 'delete', 'orders/' . $order_id );
 
-		/*temp*/
-		if ( isset( $output->deletedCount ) && 1 === $output->deletedCount ) {
+		/*Log the error*/
+		if ( isset( $output->errorCode ) && isset( $output->developerHint ) && isset( $output->message ) ) {
 
-			$response = array(
-				'ok',
-				/* translators: users count */
-				esc_html( sprintf( __( 'Deleted order: %d', 'wcefr' ), $n ) ),
-			);
-
-		} else {
-
-			$response = array(
-				'error',
-				/* translators: the product id */
-				esc_html( sprintf( __( 'ERROR! An error occurred with the order #%d<br>', 'wcefr' ), $product->order->id ) ),
-			);
+			error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message . ' | ' . $output->developerHint );
 
 		}
 
@@ -978,6 +1079,8 @@ class WCEFR_Orders {
 
 			$orders = $this->get_remote_orders();
 
+			error_log( 'ORDERS: ' . print_r( $orders, true ) );
+
 			if ( isset( $orders->collection ) && count( $orders->collection ) > 0 ) {
 
 				$n = 0;
@@ -986,17 +1089,13 @@ class WCEFR_Orders {
 
 					$n++;
 
-
 					/*Cron event*/
-					wp_schedule_single_event(
-
-						time() + 1,
+					as_enqueue_async_action(
 						'wcefr_delete_remote_single_order_event',
 						array(
-							$n,
-							$order->id,
-						)
-
+							'order_id' => $order->id,
+						),
+						'wcefr_delete_remote_single_order'
 					);
 
 					echo json_encode( $response );

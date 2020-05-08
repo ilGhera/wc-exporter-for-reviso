@@ -218,6 +218,22 @@ var wcefrController = function() {
 
 
 	/**
+	 * Scroll page to the response message
+	 */
+	self.wcefr_response_scroll = function() {
+
+		jQuery(function($){
+	        
+	        $('html, body').animate({
+	        	scrollTop: $('.wcefr-message').offset().top
+	        }, 'slow');
+
+		})
+
+	}
+
+
+	/**
 	 * Show a message to the admin
 	 * @param  {string} message the text
 	 * @param  {bool}   error   different style with true
@@ -261,6 +277,7 @@ var wcefrController = function() {
 
 				self.delete_messages();
 				self.wcefr_response_loading();
+				self.wcefr_response_scroll();
 
 				var type  = $(this).hasClass('customers') ? 'customers' : 'suppliers';
 				var role  = $('.wcefr-' + type + '-role').val();
@@ -315,6 +332,7 @@ var wcefrController = function() {
 				if ( answer ) {
 
 					self.wcefr_response_loading();
+					self.wcefr_response_scroll();
 
 					var data = {
 						'action': 'wcefr-delete-remote-users',
@@ -364,6 +382,7 @@ var wcefrController = function() {
 
 				self.delete_messages();
 				self.wcefr_response_loading();
+				self.wcefr_response_scroll();
 
 				var terms = $('.wcefr-products-categories').val();
 
@@ -413,6 +432,7 @@ var wcefrController = function() {
 				if ( answer ) {
 
 					self.wcefr_response_loading();
+					self.wcefr_response_scroll();
 
 					var data = {
 						'action': 'wcefr-delete-remote-products',
@@ -497,6 +517,7 @@ var wcefrController = function() {
 
 				self.delete_messages();
 				self.wcefr_response_loading();
+				self.wcefr_response_scroll();
 
 				var statuses = $('.wcefr-orders-statuses').val();
 
@@ -546,6 +567,7 @@ var wcefrController = function() {
 				if ( answer ) {
 
 					self.wcefr_response_loading();
+					self.wcefr_response_scroll();
 
 					var data = {
 						'action': 'wcefr-delete-remote-orders',

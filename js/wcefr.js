@@ -605,18 +605,59 @@ var wcefrController = function() {
 
 		jQuery(function($){
 
-			var	issue_invoices 		 = $('.wcefr-issue-invoices');
-			var issue_invoice_button = $('.wcefr-issue-invoices-field span.tzCheckBox');
-			var	book_invoices_field  = $('.wcefr-book-invoices-field');
-			var	send_invoices_field  = $('.wcefr-send-invoices-field');
+			var create_invoice_button = $('.wcefr-create-invoices-field td span.tzCheckBox');
+			var issue_invoice_button  = $('.wcefr-issue-invoices-field td span.tzCheckBox');
+			var	invoices_field        = $('.wcefr-invoices-field');
+			var	book_invoices_field   = $('.wcefr-book-invoices-field');
+			var	send_invoices_field   = $('.wcefr-send-invoices-field');
 			
-			if ( $(issue_invoices).attr('checked') == 'checked' ) {
+			if ( $(create_invoice_button).hasClass('checked') ) {
+				
+				console.log('TEST: ' + $(create_invoice_button).hasClass('checked'));
+				invoices_field.show();
 
-				book_invoices_field.show();
-				send_invoices_field.show();
+				if ( $(issue_invoice_button).hasClass('checked') ) {
+
+					book_invoices_field.show();
+					send_invoices_field.show();
+
+				} else {
+				
+					book_invoices_field.hide();			
+					send_invoices_field.hide();			
+		
+				}
 
 			}
 
+			/*Hide all if invoices creation is disabled*/
+			$(create_invoice_button).on( 'click', function(){
+
+				if ( $(this).hasClass('checked') ) {
+				
+					invoices_field.show();
+
+					if ( $(issue_invoice_button).hasClass('checked') ) {
+
+					book_invoices_field.show();
+					send_invoices_field.show();
+
+				} else {
+				
+					book_invoices_field.hide();			
+					send_invoices_field.hide();			
+		
+				}
+				
+				} else {
+				
+					invoices_field.hide('slow');
+	
+				}
+
+			})
+
+			/*Hide options related to the issue of invoices*/
 			$(issue_invoice_button).on( 'click', function(){
 				
 				if ( $(this).hasClass('checked') ) {

@@ -113,28 +113,28 @@ wp_localize_script(
 				<p class="description"><?php esc_html_e( 'Export orders to Reviso automatically', 'wcefr' ); ?></p>
 			</td>
 		</tr>
-		<tr>
+		<tr class="wcefr-create-invoices-field">
 			<th scope="row"><?php esc_html_e( 'Create invoices', 'wcefr' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-create-invoices" value="1"<?php echo 1 == $wcefr_create_invoices ? ' checked="checked"' : ''; ?>>
 				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders ', 'wcefr' ); ?></p>
 			</td>
 		</tr>
-		<tr class="wcefr-issue-invoices-field">
+		<tr class="wcefr-invoices-field wcefr-issue-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Issue invoices', 'wcefr' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-issue-invoices" name="wcefr-issue-invoices" value="1"<?php echo 1 == $wcefr_issue_invoices ? ' checked="checked"' : ''; ?>>
 				<p class="description"><?php esc_html_e( 'Issue invoices created in Reviso directly ', 'wcefr' ); ?></p>
 			</td>
 		</tr>
-		<tr class="wcefr-send-invoices-field" style="display: none;">
+		<tr class="wcefr-invoices-field wcefr-send-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Send invoices', 'wcefr' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo 1 == $wcefr_send_invoices ? ' checked="checked"' : ''; ?>>
 				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications ', 'wcefr' ); ?></p>
 			</td>
 		</tr>
-		<tr class="wcefr-book-invoices-field" style="display: none;">
+		<tr class="wcefr-invoices-field wcefr-book-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Book invoices', 'wcefr' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-book-invoices" value="1"<?php echo 1 == $wcefr_book_invoices ? ' checked="checked"' : ''; ?>>

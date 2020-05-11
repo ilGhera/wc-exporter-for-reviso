@@ -39,6 +39,11 @@ class WCEFR_Orders {
 
 		$this->wcefr_call = new WCEFR_Call();
 
+		// $test = $this->wcefr_call->call( 'get', '/number-series?filter=entryType$eq:financeVoucher' );
+		// $test = $this->wcefr_call->call( 'get', '/apps' );
+		// error_log( 'TEST: ' . print_r( $test, true ) );
+
+
 	}
 
 
@@ -601,9 +606,9 @@ class WCEFR_Orders {
 		/*temp*/
 		// $this->check_remote_accounting_years();
 		// $test = $this->wcefr_call->call( 'get', '/number-series?filter=entryType$eq:financeVoucher' );
-		$test = $this->wcefr_call->call( 'get', '/vouchers' );
+		// $test = $this->wcefr_call->call( 'get', '/vouchers' );
 
-		// error_log( 'VOUCHERS: ' . print_r( $test, true ) );
+		// error_lgo( 'SERIE NUMERICHE FINANCE: ' . print_r( $test, true ) );
 		// error_log( 'test1000: ' . print_r( $this->wcefr_call->call( 'get', '/number-series/30' ), true ) );
 
 		$lines = array();
@@ -634,8 +639,8 @@ class WCEFR_Orders {
 			'date'         => wp_date( 'Y-m-d' ),
 			'lines'        => $lines,
 			'numberSeries' => array(
-				'numberSeriesNumber' => $this->get_remote_number_series( null, 'financeVoucher', true ),
-				// 'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
+				// 'numberSeriesNumber' => $this->get_remote_number_series( null, 'financeVoucher', true ),
+				'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
 			),
 		);
 

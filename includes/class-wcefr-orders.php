@@ -85,7 +85,7 @@ class WCEFR_Orders {
 	 */
 	public function wc_columns_head( $defaults ) {
 
-		$defaults['order_invoice'] = __( 'Invoice', 'wcefr' );
+		$defaults['order_invoice'] = __( 'Invoice', 'wc-exporter-for-reviso' );
 
 		return $defaults;
 
@@ -404,7 +404,7 @@ class WCEFR_Orders {
 		if ( $transport ) {
 
 			$args = array(
-				'name' => __( 'Transportation fee', 'wcefr' ),
+				'name' => __( 'Transportation fee', 'wc-exporter-for-reviso' ),
 				'account' => array(
 					'accountNumber' => '5805490',
 				),
@@ -1002,7 +1002,7 @@ class WCEFR_Orders {
 			$response[] = array(
 				'ok',
 				/* translators: users count */
-				esc_html( sprintf( __( '%d order(s) export process has begun', 'wcefr' ), $n ) ),
+				esc_html( sprintf( __( '%d order(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 			);
 
 			echo json_encode( $response );
@@ -1072,7 +1072,7 @@ class WCEFR_Orders {
 				$response[] = array(
 					'ok',
 					/* translators: users count */
-					esc_html( sprintf( __( '%d order(s) delete process has begun', 'wcefr' ), $n ) ),
+					esc_html( sprintf( __( '%d order(s) delete process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 				);
 
 				echo json_encode( $response );
@@ -1081,7 +1081,7 @@ class WCEFR_Orders {
 
 				$response[] = array(
 					'error',
-					esc_html( __( 'ERROR! There are not orders to delete', 'wcefr' ) ),
+					esc_html( __( 'ERROR! There are not orders to delete', 'wc-exporter-for-reviso' ) ),
 				);
 
 				echo json_encode( $response );

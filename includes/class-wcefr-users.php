@@ -418,7 +418,7 @@ class WCEFR_Users {
 			$response[] = array(
 				'ok',
 				/* translators: 1: users count 2: user type */
-				esc_html( sprintf( __( '%1$d %2$s(s) export process has begun', 'wcefr' ), $n, $message_type ) ),
+				esc_html( sprintf( __( '%1$d %2$s(s) export process has begun', 'wc-exporter-for-reviso' ), $n, $message_type ) ),
 			);
 
 			echo json_encode( $response );
@@ -486,7 +486,7 @@ class WCEFR_Users {
 				$response[] = array(
 					'ok',
 					/* translators: 1: users count 2: user type */
-					esc_html( sprintf( __( '%1$d %2$s(s) delete process has begun', 'wcefr' ), $n, $message_type ) ),
+					esc_html( sprintf( __( '%1$d %2$s(s) delete process has begun', 'wc-exporter-for-reviso' ), $n, $message_type ) ),
 				);
 
 				echo json_encode( $response );
@@ -496,7 +496,7 @@ class WCEFR_Users {
 				$response[] = array(
 					'error',
 					/* translators: user type */
-					esc_html( sprintf( __( 'ERROR! There are not %s to delete', 'wcefr' ), $type ) ),
+					esc_html( sprintf( __( 'ERROR! There are not %s to delete', 'wc-exporter-for-reviso' ), $type ) ),
 				);
 
 				echo json_encode( $response );

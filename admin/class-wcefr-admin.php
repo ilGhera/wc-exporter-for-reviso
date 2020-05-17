@@ -71,7 +71,7 @@ class WCEFR_Admin {
 		/*Right of access*/
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 
-			wp_die( esc_html( __( 'It seems like you don\'t have permission to see this page', 'wcefr' ) ) );
+			wp_die( esc_html( __( 'It seems like you don\'t have permission to see this page', 'wc-exporter-for-reviso' ) ) );
 
 		}
 
@@ -83,7 +83,7 @@ class WCEFR_Admin {
 				if ( ! class_exists( 'WooCommerce' ) ) {
 					echo '<div id="message" class="error">';
 						echo '<p>';
-							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed.', 'wcefr' ) ) . '</strong>';
+							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed.', 'wc-exporter-for-reviso' ) ) . '</strong>';
 						echo '</p>';
 					echo '</div>';
 					exit;
@@ -92,7 +92,7 @@ class WCEFR_Admin {
 				echo '<div id="wcefr-generale">';
 
 					/*Header*/
-					echo '<h1 class="wcefr main">' . esc_html( __( 'WooCommerce Exporter for Reviso - Premium', 'wcefr' ) ) . '</h1>';
+					echo '<h1 class="wcefr main">' . esc_html( __( 'WooCommerce Exporter for Reviso - Premium', 'wc-exporter-for-reviso' ) ) . '</h1>';
 
 					/*Plugin premium key*/
 					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
@@ -107,21 +107,21 @@ class WCEFR_Admin {
 
 					/*Premium Key Form*/
 					echo '<form id="wcefr-premium-key" method="post" action="">';
-					echo '<label>' . esc_html( __( 'Premium Key', 'wcefr' ) ) . '</label>';
-					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wcefr' ) ) . '" value="' . esc_attr( $key ) . '" />';
-					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Exporter for Reviso - Premium.', 'wcefr' ) ) . '</p>';
+					echo '<label>' . esc_html( __( 'Premium Key', 'wc-exporter-for-reviso' ) ) . '</label>';
+					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wc-exporter-for-reviso' ) ) . '" value="' . esc_attr( $key ) . '" />';
+					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Exporter for Reviso - Premium.', 'wc-exporter-for-reviso' ) ) . '</p>';
 					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-nonce' );
-					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save ', 'wcefr' ) ) . '" />';
+					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save ', 'wc-exporter-for-reviso' ) ) . '" />';
 					echo '</form>';
 
 					/*Plugin options menu*/
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
 					echo '<h2 id="wcefr-admin-menu" class="nav-tab-wrapper woo-nav-tab-wrapper">';
-						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . esc_html( __( 'Settings', 'wcefr' ) ) . '</a>';
-						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wcefr' ) ) . '</a>';
-						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wcefr' ) ) . '</a>';
-						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wcefr' ) ) . '</a>';
-						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . esc_html( __( 'Orders', 'wcefr' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . esc_html( __( 'Settings', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . esc_html( __( 'Orders', 'wc-exporter-for-reviso' ) ) . '</a>';
 					echo '</h2>';
 
 					/*Settings*/

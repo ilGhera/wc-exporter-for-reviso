@@ -25,7 +25,7 @@ function load_wc_exporter_for_reviso() {
 	}
 
 	/*Internationalization*/
-	load_plugin_textdomain( 'wcefr', false, basename( dirname( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'wc-exporter-for-reviso', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 	/*Constants declaration*/
 	define( 'WCEFR_DIR', plugin_dir_path( __FILE__ ) );

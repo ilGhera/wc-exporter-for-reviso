@@ -113,7 +113,7 @@ class WCEFR_Settings {
 
 			} else {
 
-				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wcefr' ) ) . '</span></h4>';
+				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-exporter-for-reviso' ) ) . '</span></h4>';
 
 			}
 

@@ -14,7 +14,7 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'User role', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'User role', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<select class="wcefr-suppliers-role wcefr-select" name="wcefr-suppliers-role">
 					<?php
@@ -29,21 +29,21 @@
 					}
 					?>
 				</select>
-				<p class="description"><?php esc_html_e( 'Select your suppliers user role', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select your suppliers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Group', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Group', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<select class="wcefr-suppliers-groups" name="wcefr-suppliers-groups"></select>
-				<p class="description"><?php esc_html_e( 'Select a Reviso suppliers group.', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select a Reviso suppliers group.', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
 
 	<p class="submit">
-		<input type="submit" name="download_csv" class="button-primary wcefr export-users suppliers" value="<?php esc_html_e( 'Export to Reviso', 'wcefr' ); ?>" />
+		<input type="submit" name="download_csv" class="button-primary wcefr export-users suppliers" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
 
 </form>
@@ -54,15 +54,15 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Delete suppliers', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Delete suppliers', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<p class="description"><?php esc_html_e( 'Delete all suppliers on Reviso.', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Delete all suppliers on Reviso.', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
 	
 	<p class="submit">
-		<input type="submit" class="button-primary wcefr red users suppliers" value="<?php esc_html_e( 'Delete from Reviso', 'wcefr' ); ?>" />
+		<input type="submit" class="button-primary wcefr red users suppliers" value="<?php esc_html_e( 'Delete from Reviso', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
 
 </form>

@@ -70,10 +70,10 @@ class WCEFR_Checkout_Fields {
 		$output = array();
 
 		$custom_fields = array(
-			'billing_wcefr_piva'    => __( 'VAT number', 'wcefr' ),
-			'billing_wcefr_cf'      => __( 'Fiscal code', 'wcefr' ),
-			'billing_wcefr_pec'     => __( 'PEC', 'wcefr' ),
-			'billing_wcefr_pa_code' => __( 'Receiver code', 'wcefr' ),
+			'billing_wcefr_piva'    => __( 'VAT number', 'wc-exporter-for-reviso' ),
+			'billing_wcefr_cf'      => __( 'Fiscal code', 'wc-exporter-for-reviso' ),
+			'billing_wcefr_pec'     => __( 'PEC', 'wc-exporter-for-reviso' ),
+			'billing_wcefr_pa_code' => __( 'Receiver code', 'wc-exporter-for-reviso' ),
 		);
 
 		foreach ( $custom_fields as $key => $value ) {
@@ -97,15 +97,15 @@ class WCEFR_Checkout_Fields {
 		$select = array(
 			'private' => array(
 				'active' => get_option( 'wcefr_private' ),
-				'field'  => array( 'private' => __( 'Private (Receipt)', 'wcefr' ) ),
+				'field'  => array( 'private' => __( 'Private (Receipt)', 'wc-exporter-for-reviso' ) ),
 			),
 			'private_invoice' => array(
 				'active' => get_option( 'wcefr_private_invoice' ),
-				'field' => array( 'private-invoice' => __( 'Private (Invoice)', 'wcefr' ) ),
+				'field' => array( 'private-invoice' => __( 'Private (Invoice)', 'wc-exporter-for-reviso' ) ),
 			),
 			'company_invoice' => array(
 				'active' => get_option( 'wcefr_company_invoice' ),
-				'field' => array( 'company-invoice' => __( 'Company (Invoice)', 'wcefr' ) ),
+				'field' => array( 'company-invoice' => __( 'Company (Invoice)', 'wc-exporter-for-reviso' ) ),
 			),
 		);
 
@@ -116,7 +116,7 @@ class WCEFR_Checkout_Fields {
 			$fields['billing']['billing_wcefr_invoice_type'] = array(
 				'type'    => 'select',
 				'options' => array(),
-				'label'   => __( 'Fiscal document', 'wcefr' ),
+				'label'   => __( 'Fiscal document', 'wc-exporter-for-reviso' ),
 				'required'    => true,
 				'class'   => array(
 					'field-name form-row-wide',
@@ -234,7 +234,7 @@ class WCEFR_Checkout_Fields {
 				$pa_code = isset( $_POST['billing_wcefr_pa_code'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_wcefr_pa_code'] ) ) : '';
 
 				if ( ! $pec && ! $pa_code ) {
-					wc_add_notice( __( 'The <strong> PEC </strong> field or the <strong> Receiver Code </strong> field must be completed.', 'wcefr' ), 'error' );
+					wc_add_notice( __( 'The <strong> PEC </strong> field or the <strong> Receiver Code </strong> field must be completed.', 'wc-exporter-for-reviso' ), 'error' );
 				}
 			}
 		}
@@ -286,7 +286,7 @@ class WCEFR_Checkout_Fields {
 
 		$order = wc_get_order( $order_id );
 
-		echo '<h2>' . esc_html( __( 'Electronic invoicing', 'wcefr' ) ) . '</h2>';
+		echo '<h2>' . esc_html( __( 'Electronic invoicing', 'wc-exporter-for-reviso' ) ) . '</h2>';
 
 		echo '<table class="shop_table shop_table_responsive">';
 			echo '<tbody>';
@@ -335,7 +335,7 @@ class WCEFR_Checkout_Fields {
 
 		if ( $this->custom_fields ) {
 
-			echo '<h2>' . esc_html( __( 'Electronic invoicing', 'wcefr' ) ) . '</h2>';
+			echo '<h2>' . esc_html( __( 'Electronic invoicing', 'wc-exporter-for-reviso' ) ) . '</h2>';
 			foreach ( $this->custom_fields as $key => $value ) {
 				if ( $order->get_meta( '_' . $key ) ) {
 					echo '<p style="margin: 0 0 8px;">' . esc_html( $value ) . ': <span style="font-weight: normal;">' . esc_html( $order->get_meta( '_' . $key ) ) . '</span></p>';
@@ -356,7 +356,7 @@ class WCEFR_Checkout_Fields {
 
 		if ( $this->custom_fields ) {
 
-			echo '<h3>' . esc_html__( 'Electronic invoicing', 'wcefr' ) . '</h3>';
+			echo '<h3>' . esc_html__( 'Electronic invoicing', 'wc-exporter-for-reviso' ) . '</h3>';
 
 			echo '<table class="form-table">';
 

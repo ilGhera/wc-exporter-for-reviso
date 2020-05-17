@@ -597,7 +597,7 @@ class WCEFR_Products {
 				$response[] = array(
 					'ok',
 					/* translators: the products count */
-					esc_html( sprintf( __( '%d product(s) export process has begun', 'wcefr' ), $n ) ),
+					esc_html( sprintf( __( '%d product(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 				);
 
 				echo json_encode( $response );
@@ -661,14 +661,14 @@ class WCEFR_Products {
 			$response[] = array(
 				'ok',
 				/* translators: the products count */
-				esc_html( sprintf( __( '%d product(s) delete process has begun', 'wcefr' ), $n ) ),
+				esc_html( sprintf( __( '%d product(s) delete process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 			);
 
 		} else {
 
 			$response[] = array(
 				'error',
-				esc_html( __( 'ERROR! There are not products to delete', 'wcefr' ) ),
+				esc_html( __( 'ERROR! There are not products to delete', 'wc-exporter-for-reviso' ) ),
 			);
 
 		}

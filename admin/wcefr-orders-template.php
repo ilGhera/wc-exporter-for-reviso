@@ -14,25 +14,25 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Order status', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Order status', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<select class="wcefr-orders-statuses wcefr-select" name="wcefr-orders-statuses[]" multiple data-placeholder="<?php esc_html_e( 'All orders types', 'wcefr' ); ?>">
+				<select class="wcefr-orders-statuses wcefr-select" name="wcefr-orders-statuses[]" multiple data-placeholder="<?php esc_html_e( 'All orders types', 'wc-exporter-for-reviso' ); ?>">
 					<?php
 					$saved_statuses = get_option( 'wcefr-orders-statuses' ) ? get_option( 'wcefr-orders-statuses' ) : array();
 					$statuses = wc_get_order_statuses();
 					foreach ( $statuses as $key => $value ) {
 						echo '<option name="' . esc_attr( $key ) . '" value="' . esc_attr( $key ) . '"';
 						echo ( in_array( $key, $saved_statuses ) ) ? ' selected="selected">' : '>';
-						echo esc_html( __( $value, 'wcefr' ) ) . '</option>';
+						echo esc_html( __( $value, 'wc-exporter-for-reviso' ) ) . '</option>';
 					}
 					?>
 				</select>
-				<p class="description"><?php esc_html_e( 'Select which orders to export ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select which orders to export ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
 
-	<input type="submit" class="button-primary wcefr export orders" value="<?php esc_html_e( 'Export to Reviso', 'wcefr' ); ?>">
+	<input type="submit" class="button-primary wcefr export orders" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>">
 
 </form>
 
@@ -42,15 +42,15 @@
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Delete orders', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Delete orders', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<p class="description"><?php esc_html_e( 'Delete all orders on Reviso', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Delete all orders on Reviso', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
 	
 	<p class="submit">
-		<input type="submit" class="button-primary wcefr red orders" value="<?php esc_html_e( 'Delete from Reviso', 'wcefr' ); ?>" />
+		<input type="submit" class="button-primary wcefr red orders" value="<?php esc_html_e( 'Delete from Reviso', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
 
 </form>
@@ -107,42 +107,42 @@ wp_localize_script(
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Export orders', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Export orders', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-export-orders" value="1"<?php echo 1 == $wcefr_export_orders ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Export orders to Reviso automatically', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Export orders to Reviso automatically', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-create-invoices-field">
-			<th scope="row"><?php esc_html_e( 'Create invoices', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Create invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-create-invoices" value="1"<?php echo 1 == $wcefr_create_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-issue-invoices-field" style="display: none;">
-			<th scope="row"><?php esc_html_e( 'Issue invoices', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Issue invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-issue-invoices" name="wcefr-issue-invoices" value="1"<?php echo 1 == $wcefr_issue_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Issue invoices created in Reviso directly ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Issue invoices created in Reviso directly ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-send-invoices-field" style="display: none;">
-			<th scope="row"><?php esc_html_e( 'Send invoices', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Send invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo 1 == $wcefr_send_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-book-invoices-field" style="display: none;">
-			<th scope="row"><?php esc_html_e( 'Book invoices', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Book invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-book-invoices" value="1"<?php echo 1 == $wcefr_book_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Book invoices created in Reviso directly ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Book invoices created in Reviso directly ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-number-series-field">
-			<th scope="row"><?php esc_html_e( 'Number series', 'wcefr' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Number series', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<?php
 				$class = new WCEFR_Orders();
@@ -164,7 +164,7 @@ wp_localize_script(
 
 				}
 				?>
-				<p class="description"><?php esc_html_e( 'Choose the series of numbers to use for invoices ', 'wcefr' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Choose the series of numbers to use for invoices ', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
@@ -172,7 +172,7 @@ wp_localize_script(
 	<?php wp_nonce_field( 'wcefr-orders-settings', 'wcefr-orders-settings-nonce' ); ?>
 	
 	<p class="submit">
-		<input type="submit" name="wcefr-orders-settings-sent" class="button-primary wcefr orders-settings" value="<?php esc_html_e( 'Save options', 'wcefr' ); ?>" />
+		<input type="submit" name="wcefr-orders-settings-sent" class="button-primary wcefr orders-settings" value="<?php esc_html_e( 'Save options', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
 
 </form>

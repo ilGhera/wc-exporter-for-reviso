@@ -83,7 +83,7 @@ class WCEFR_Admin {
 				if ( ! class_exists( 'WooCommerce' ) ) {
 					echo '<div id="message" class="error">';
 						echo '<p>';
-							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed.', 'wc-exporter-for-reviso' ) ) . '</strong>';
+							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-exporter-for-reviso' ) ) . '</strong>';
 						echo '</p>';
 					echo '</div>';
 					exit;
@@ -109,9 +109,9 @@ class WCEFR_Admin {
 					echo '<form id="wcefr-premium-key" method="post" action="">';
 					echo '<label>' . esc_html( __( 'Premium Key', 'wc-exporter-for-reviso' ) ) . '</label>';
 					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wc-exporter-for-reviso' ) ) . '" value="' . esc_attr( $key ) . '" />';
-					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Exporter for Reviso - Premium.', 'wc-exporter-for-reviso' ) ) . '</p>';
+					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Exporter for Reviso - Premium', 'wc-exporter-for-reviso' ) ) . '</p>';
 					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-nonce' );
-					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save ', 'wc-exporter-for-reviso' ) ) . '" />';
+					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save', 'wc-exporter-for-reviso' ) ) . '" />';
 					echo '</form>';
 
 					/*Plugin options menu*/

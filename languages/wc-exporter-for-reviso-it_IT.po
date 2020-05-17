@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-17 08:09+0200\n"
-"PO-Revision-Date: 2020-05-17 08:45+0200\n"
+"POT-Creation-Date: 2020-05-17 09:48+0200\n"
+"PO-Revision-Date: 2020-05-17 09:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -24,8 +24,8 @@ msgid "It seems like you don't have permission to see this page"
 msgstr "Sembra che tu non abbia i permessi per visualizzare questa pagina"
 
 #: admin/class-wcefr-admin.php:86
-msgid "ATTENTION! It seems like Woocommerce is not installed."
-msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato."
+msgid "ATTENTION! It seems like Woocommerce is not installed"
+msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato"
 
 #: admin/class-wcefr-admin.php:95
 msgid "WooCommerce Exporter for Reviso - Premium"
@@ -42,13 +42,13 @@ msgstr "Aggiungi la tua Premium Key"
 #: admin/class-wcefr-admin.php:112
 msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Exporter for "
-"Reviso - Premium."
+"Reviso - Premium"
 msgstr ""
 "Aggiungi la tua Premium Key e mantieni aggiornato WooCommerce for Reviso - "
 "Premium"
 
-#: admin/class-wcefr-admin.php:114
-msgid "Save "
+#: admin/class-wcefr-admin.php:114 admin/wcefr-settings-template.php:166
+msgid "Save"
 msgstr "Salva"
 
 #: admin/class-wcefr-admin.php:120
@@ -84,7 +84,7 @@ msgid "Group"
 msgstr "Gruppo"
 
 #: admin/wcefr-customers-template.php:40
-msgid "Select a Reviso customer group."
+msgid "Select a Reviso customer group"
 msgstr "Seleziona un gruppo clienti di Reviso"
 
 #: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
@@ -97,7 +97,7 @@ msgid "Delete customers"
 msgstr "Cancella clienti"
 
 #: admin/wcefr-customers-template.php:59
-msgid "Delete all customers on Reviso."
+msgid "Delete all customers on Reviso"
 msgstr "Cancella tutti i clienti in Reviso"
 
 #: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
@@ -114,7 +114,7 @@ msgid "All orders types"
 msgstr "Tutti gli ordini"
 
 #: admin/wcefr-orders-template.php:30
-msgid "Select which orders to export "
+msgid "Select which orders to export"
 msgstr "Seleziona quali ordini esportare"
 
 #: admin/wcefr-orders-template.php:45
@@ -138,7 +138,7 @@ msgid "Create invoices"
 msgstr "Crea fattura"
 
 #: admin/wcefr-orders-template.php:120
-msgid "Create invoices in Reviso for completed orders "
+msgid "Create invoices in Reviso for completed orders"
 msgstr "Crea la fattura in Reviso per gli ordini completati"
 
 #: admin/wcefr-orders-template.php:124
@@ -154,7 +154,7 @@ msgid "Send invoices"
 msgstr "Invia fattura"
 
 #: admin/wcefr-orders-template.php:134
-msgid "Attach invoices to completed order notifications "
+msgid "Attach invoices to completed order notifications"
 msgstr "Allega fattura alla mail di conferma d'ordine"
 
 #: admin/wcefr-orders-template.php:138
@@ -257,7 +257,7 @@ msgid "CF required"
 msgstr "CF richiesto"
 
 #: admin/wcefr-settings-template.php:131
-msgid "Make the Tax Code field mandatory for receipts to individuals."
+msgid "Make the Tax Code field mandatory for receipts to individuals"
 msgstr "Rendi il campo Codice Fiscale obbligatorio per le ricevute a privati"
 
 #: admin/wcefr-settings-template.php:135
@@ -265,7 +265,7 @@ msgid "Check fields"
 msgstr "Controllo campi"
 
 #: admin/wcefr-settings-template.php:140
-msgid "Activate the control of the VAT and Tax Code fields."
+msgid "Activate the control of the VAT and Tax Code fields"
 msgstr "Attiva il controllo di Partita IVA e Codice Fiscale"
 
 #: admin/wcefr-settings-template.php:144
@@ -285,16 +285,12 @@ msgstr "Codice destinatario"
 msgid "Activate the Receiving Code field for electronic invoicing"
 msgstr "Attiva il campo codice destinatario per la fatturazione elettronica"
 
-#: admin/wcefr-settings-template.php:166
-msgid "Save"
-msgstr "Salva"
-
 #: admin/wcefr-suppliers-template.php:32
 msgid "Select your suppliers user role"
 msgstr "Seleziona il ruolo utente usato per i fornitori"
 
 #: admin/wcefr-suppliers-template.php:40
-msgid "Select a Reviso suppliers group."
+msgid "Select a Reviso suppliers group"
 msgstr "Seleziona un gruppo fornitori Reviso"
 
 #: admin/wcefr-suppliers-template.php:57
@@ -302,7 +298,7 @@ msgid "Delete suppliers"
 msgstr "Cancella fornitori"
 
 #: admin/wcefr-suppliers-template.php:59
-msgid "Delete all suppliers on Reviso."
+msgid "Delete all suppliers on Reviso"
 msgstr "Cancella tutti i fornitori in Reviso"
 
 #: includes/class-wcefr-checkout-fields.php:73
@@ -324,7 +320,7 @@ msgstr "Documento fiscale"
 #: includes/class-wcefr-checkout-fields.php:237
 msgid ""
 "The <strong> PEC </strong> field or the <strong> Receiver Code </strong> "
-"field must be completed."
+"field must be completed"
 msgstr ""
 "Uno dei campi tra<strong> PEC </strong> e <strong> Codice Fiscale </strong> "
 "deve essere compilato"
@@ -389,3 +385,6 @@ msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"
+
+#~ msgid "Save "
+#~ msgstr "Salva"

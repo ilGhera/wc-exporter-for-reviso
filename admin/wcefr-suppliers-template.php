@@ -37,7 +37,7 @@
 			<th scope="row"><?php esc_html_e( 'Group', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<select class="wcefr-suppliers-groups" name="wcefr-suppliers-groups"></select>
-				<p class="description"><?php esc_html_e( 'Select a Reviso suppliers group.', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select a Reviso suppliers group', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
@@ -56,7 +56,7 @@
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Delete suppliers', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<p class="description"><?php esc_html_e( 'Delete all suppliers on Reviso.', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Delete all suppliers on Reviso', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>

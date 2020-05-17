@@ -128,7 +128,7 @@ if ( isset( $_POST['wcefr-options-nonce'] ) && wp_verify_nonce( wp_unslash( $_PO
 				<label for="wcefr_cf_mandatory">
 					<input type="checkbox" name="wcefr_cf_mandatory" value="1"<?php echo 1 == $wcefr_cf_mandatory ? ' checked="checked"' : ''; ?>>
 				</label>
-				<p class="description"><?php esc_html_e( 'Make the Tax Code field mandatory for receipts to individuals.', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Make the Tax Code field mandatory for receipts to individuals', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr>
@@ -137,7 +137,7 @@ if ( isset( $_POST['wcefr-options-nonce'] ) && wp_verify_nonce( wp_unslash( $_PO
 				<label for="wcefr_fields_check">
 					<input type="checkbox" name="wcefr_fields_check" value="1"<?php echo 1 == $wcefr_fields_check ? ' checked="checked"' : ''; ?>>
 				</label>
-				<p class="description"><?php esc_html_e( 'Activate the control of the VAT and Tax Code fields.', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Activate the control of the VAT and Tax Code fields', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr>

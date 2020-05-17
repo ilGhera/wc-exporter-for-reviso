@@ -234,7 +234,7 @@ class WCEFR_Checkout_Fields {
 				$pa_code = isset( $_POST['billing_wcefr_pa_code'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_wcefr_pa_code'] ) ) : '';
 
 				if ( ! $pec && ! $pa_code ) {
-					wc_add_notice( __( 'The <strong> PEC </strong> field or the <strong> Receiver Code </strong> field must be completed.', 'wc-exporter-for-reviso' ), 'error' );
+					wc_add_notice( __( 'The <strong> PEC </strong> field or the <strong> Receiver Code </strong> field must be completed', 'wc-exporter-for-reviso' ), 'error' );
 				}
 			}
 		}

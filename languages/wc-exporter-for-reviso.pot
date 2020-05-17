@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2020-05-17 09:10+0200\n"
+"POT-Creation-Date: 2020-05-17 09:49+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -25,7 +25,7 @@ msgid "It seems like you don't have permission to see this page"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:86
-msgid "ATTENTION! It seems like Woocommerce is not installed."
+msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:95
@@ -43,11 +43,11 @@ msgstr ""
 #: admin/class-wcefr-admin.php:112
 msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Exporter for "
-"Reviso - Premium."
+"Reviso - Premium"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:114
-msgid "Save "
+#: admin/class-wcefr-admin.php:114 admin/wcefr-settings-template.php:166
+msgid "Save"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:120
@@ -83,7 +83,7 @@ msgid "Group"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:40
-msgid "Select a Reviso customer group."
+msgid "Select a Reviso customer group"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
@@ -96,7 +96,7 @@ msgid "Delete customers"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:59
-msgid "Delete all customers on Reviso."
+msgid "Delete all customers on Reviso"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
@@ -113,7 +113,7 @@ msgid "All orders types"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:30
-msgid "Select which orders to export "
+msgid "Select which orders to export"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:45
@@ -137,7 +137,7 @@ msgid "Create invoices"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:120
-msgid "Create invoices in Reviso for completed orders "
+msgid "Create invoices in Reviso for completed orders"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:124
@@ -153,7 +153,7 @@ msgid "Send invoices"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:134
-msgid "Attach invoices to completed order notifications "
+msgid "Attach invoices to completed order notifications"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:138
@@ -252,7 +252,7 @@ msgid "CF required"
 msgstr ""
 
 #: admin/wcefr-settings-template.php:131
-msgid "Make the Tax Code field mandatory for receipts to individuals."
+msgid "Make the Tax Code field mandatory for receipts to individuals"
 msgstr ""
 
 #: admin/wcefr-settings-template.php:135
@@ -260,7 +260,7 @@ msgid "Check fields"
 msgstr ""
 
 #: admin/wcefr-settings-template.php:140
-msgid "Activate the control of the VAT and Tax Code fields."
+msgid "Activate the control of the VAT and Tax Code fields"
 msgstr ""
 
 #: admin/wcefr-settings-template.php:144
@@ -280,16 +280,12 @@ msgstr ""
 msgid "Activate the Receiving Code field for electronic invoicing"
 msgstr ""
 
-#: admin/wcefr-settings-template.php:166
-msgid "Save"
-msgstr ""
-
 #: admin/wcefr-suppliers-template.php:32
 msgid "Select your suppliers user role"
 msgstr ""
 
 #: admin/wcefr-suppliers-template.php:40
-msgid "Select a Reviso suppliers group."
+msgid "Select a Reviso suppliers group"
 msgstr ""
 
 #: admin/wcefr-suppliers-template.php:57
@@ -297,7 +293,7 @@ msgid "Delete suppliers"
 msgstr ""
 
 #: admin/wcefr-suppliers-template.php:59
-msgid "Delete all suppliers on Reviso."
+msgid "Delete all suppliers on Reviso"
 msgstr ""
 
 #: includes/class-wcefr-checkout-fields.php:73
@@ -319,7 +315,7 @@ msgstr ""
 #: includes/class-wcefr-checkout-fields.php:237
 msgid ""
 "The <strong> PEC </strong> field or the <strong> Receiver Code </strong> "
-"field must be completed."
+"field must be completed"
 msgstr ""
 
 #: includes/class-wcefr-checkout-fields.php:289

@@ -49,4 +49,4 @@ function load_wc_exporter_for_reviso() {
 	require_once( WCEFR_INCLUDES . 'wcefr-invoice.php' );
 
 }
-add_action( 'plugins_loaded', 'load_wc_exporter_for_reviso', -10 );
+add_action( 'after_setup_theme', 'load_wc_exporter_for_reviso', 1 );

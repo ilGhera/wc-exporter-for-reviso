@@ -97,7 +97,7 @@ class WCEFR_Admin {
 					/*Plugin premium key*/
 					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
 
-					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( $_POST['wcefr-premium-key-nonce'], 'wcefr-premium-key' ) ) {
+					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-premium-key-nonce'] ), 'wcefr-premium-key' ) ) {
 
 						$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
 

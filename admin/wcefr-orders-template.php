@@ -83,7 +83,7 @@ wp_localize_script(
 	$wcefr_book_invoices   = get_option( 'wcefr-book-invoices' );
 	$wcefr_number_series   = get_option( 'wcefr-number-series-prefix' );
 
-	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( $_POST['wcefr-orders-settings-nonce'], 'wcefr-orders-settings' ) ) {
+	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-orders-settings-nonce'] ), 'wcefr-orders-settings' ) ) {
 
 		$wcefr_export_orders = isset( $_POST['wcefr-export-orders'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-export-orders'] ) ) : 0;
 		update_option( 'wcefr-export-orders', $wcefr_export_orders );

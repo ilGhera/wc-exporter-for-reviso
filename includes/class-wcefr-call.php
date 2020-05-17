@@ -75,7 +75,7 @@ class WCEFR_Call {
 			$output = $decode ? json_decode( $response['body'] ) : $response['body'];
 
 			return $output;
-				
+
 
 		} else {
 

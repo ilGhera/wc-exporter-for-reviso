@@ -42,7 +42,7 @@ $wcefr_fields_check    = get_option( 'wcefr_fields_check' );
 $wcefr_pec_active      = get_option( 'billing_wcefr_pec_active' );
 $wcefr_pa_code_active  = get_option( 'billing_wcefr_pa_code_active' );
 
-if ( isset( $_POST['wcefr-options-nonce'] ) && wp_verify_nonce( $_POST['wcefr-options-nonce'], 'wcefr-options' ) ) {
+if ( isset( $_POST['wcefr-options-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-options-nonce'] ), 'wcefr-options' ) ) {
 
 	if ( isset( $_POST['wcefr-options-sent'] ) ) {
 		$wcefr_company_invoice = isset( $_POST['wcefr_company_invoice'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr_company_invoice'] ) ) : 0;

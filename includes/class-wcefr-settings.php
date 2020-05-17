@@ -105,7 +105,7 @@ class WCEFR_Settings {
 
 			echo false;
 
-		} elseif ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
+		} elseif ( isset( $response->application->appNumber ) ) {
 
 			if ( $return ) {
 

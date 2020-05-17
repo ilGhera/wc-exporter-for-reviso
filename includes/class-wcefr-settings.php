@@ -86,8 +86,6 @@ class WCEFR_Settings {
 
 		delete_option( 'wcefr-agt' );
 
-		error_log( 'TEST: ' . delete_option( 'wcefr-agt' ) );
-
 		exit;
 
 	}
@@ -108,8 +106,6 @@ class WCEFR_Settings {
 			echo false;
 
 		} elseif ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
-
-			error_log( 'APP NUMBER: ' . $response->application->appNumber );
 
 			if ( $return ) {
 

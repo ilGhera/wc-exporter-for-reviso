@@ -507,8 +507,6 @@ class WCEFR_Orders {
 		$year     = wp_date( 'Y' );
 		$response = $this->wcefr_call->call( 'get', 'accounting-years/' . $year );
 
-		error_log( 'RESPONSE 1: ' . print_r( $response, true ) );
-
 		if ( is_array( $response ) && isset( $response['year'] ) && $year === $response['year'] ) {
 
 			return true;
@@ -522,8 +520,6 @@ class WCEFR_Orders {
 			);
 
 			$add = $this->wcefr_call->call( 'post', 'accounting-years', $args );
-
-			error_log( 'RESPONSE 2: ' . print_r( $add, true ) );
 
 			if ( is_array( $add ) && isset( $add['year'] ) && $year === $add['year'] ) {
 
@@ -1053,8 +1049,6 @@ class WCEFR_Orders {
 			$response = array();
 
 			$orders = $this->get_remote_orders();
-
-			error_log( 'ORDERS: ' . print_r( $orders, true ) );
 
 			if ( isset( $orders->collection ) && count( $orders->collection ) > 0 ) {
 

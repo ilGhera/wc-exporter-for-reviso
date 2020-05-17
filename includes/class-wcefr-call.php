@@ -76,7 +76,6 @@ class WCEFR_Call {
 
 			return $output;
 
-
 		} else {
 
 			/*Print the error to the log*/

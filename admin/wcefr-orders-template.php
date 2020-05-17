@@ -27,7 +27,7 @@
 					}
 					?>
 				</select>
-				<p class="description"><?php esc_html_e( 'Select which orders to export ', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select which orders to export', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>
@@ -117,7 +117,7 @@ wp_localize_script(
 			<th scope="row"><?php esc_html_e( 'Create invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" name="wcefr-create-invoices" value="1"<?php echo 1 == $wcefr_create_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders ', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-issue-invoices-field" style="display: none;">
@@ -131,7 +131,7 @@ wp_localize_script(
 			<th scope="row"><?php esc_html_e( 'Send invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo 1 == $wcefr_send_invoices ? ' checked="checked"' : ''; ?>>
-				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications ', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-book-invoices-field" style="display: none;">

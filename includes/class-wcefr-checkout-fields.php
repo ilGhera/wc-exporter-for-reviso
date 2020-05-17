@@ -23,9 +23,9 @@ class WCEFR_Checkout_Fields {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_checkout_script' ) );
 		add_filter( 'woocommerce_checkout_fields', array( $this, 'set_custom_fields' ) );
-		add_action( 'woocommerce_before_order_notes', array( $this, 'display_fields' ) );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_fields' ), 10, 2 );
-		add_action( 'woocommerce_thankyou', array( $this, 'display_custom_data' ) );
+		add_action( 'woocommerce_thankyou', 
+			array( $this, 'display_custom_data' ) );
 		add_action( 'woocommerce_view_order', array( $this, 'display_custom_data' ) );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_custom_data_in_admin' ) );
 		add_filter( 'woocommerce_email_customer_details', array( $this, 'display_custom_data_in_email' ), 10, 4 );
@@ -252,24 +252,6 @@ class WCEFR_Checkout_Fields {
 			if ( isset( $_POST['billing_wcefr_invoice_type'] ) && 'company-invoice' === $_POST['billing_wcefr_invoice_type'] ) {
 				if ( isset( $_POST['billing_wcefr_piva'] ) && '' !== $_POST['billing_wcefr_piva'] && false === $this->fiscal_field_checker( $_POST['billing_wcefr_piva'] ) ) {
 					wc_add_notice( 'WARNING! The <strong> VAT number </strong> entered is incorrect.', 'error' );
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * TEMP
-	 *
-	 * Add the custom fields to the checkout page.
-	 * @param object $checkout
-	 */
-	public function display_fields( $checkout ) {
-
-		if ( $this->custom_fields ) {
-			foreach ( $this->custom_fields as $key => $value ) {
-				if ( isset( $checkout->checkout_fields[ $key ] ) ) {
-					// woocommerce_form_field( $key, array('label' => $value), $checkout->get_value( $key ) );.
 				}
 			}
 		}

@@ -1,0 +1,384 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WC Exporter for Reviso\n"
+"POT-Creation-Date: 2020-05-17 09:10+0200\n"
+"PO-Revision-Date: 2016-05-26 13:25+0200\n"
+"Last-Translator: ilGhera <info@ilghera.com>\n"
+"Language-Team: ilGhera <info@ilghera.com>\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: plugin-update-checker\n"
+"X-Poedit-SearchPathExcluded-1: libraries\n"
+"X-Poedit-SearchPathExcluded-2: vendor\n"
+
+#: admin/class-wcefr-admin.php:74
+msgid "It seems like you don't have permission to see this page"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:86
+msgid "ATTENTION! It seems like Woocommerce is not installed."
+msgstr ""
+
+#: admin/class-wcefr-admin.php:95
+msgid "WooCommerce Exporter for Reviso - Premium"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:110
+msgid "Premium Key"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:111
+msgid "Add your Premium Key"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:112
+msgid ""
+"Add your Premium Key and keep update your copy of Woocommerce Exporter for "
+"Reviso - Premium."
+msgstr ""
+
+#: admin/class-wcefr-admin.php:114
+msgid "Save "
+msgstr ""
+
+#: admin/class-wcefr-admin.php:120
+msgid "Settings"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:121
+msgid "Suppliers"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:122
+msgid "Products"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:123
+msgid "Customers"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:124
+msgid "Orders"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:17 admin/wcefr-suppliers-template.php:17
+msgid "User role"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:32
+msgid "Select your customers user role"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:37 admin/wcefr-suppliers-template.php:37
+msgid "Group"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:40
+msgid "Select a Reviso customer group."
+msgstr ""
+
+#: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
+#: admin/wcefr-products-template.php:42 admin/wcefr-suppliers-template.php:46
+msgid "Export to Reviso"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:57
+msgid "Delete customers"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:59
+msgid "Delete all customers on Reviso."
+msgstr ""
+
+#: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
+#: admin/wcefr-products-template.php:60 admin/wcefr-suppliers-template.php:65
+msgid "Delete from Reviso"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:17
+msgid "Order status"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:19
+msgid "All orders types"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:30
+msgid "Select which orders to export "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:45
+msgid "Delete orders"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:47
+msgid "Delete all orders on Reviso"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:110
+msgid "Export orders"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:113
+msgid "Export orders to Reviso automatically"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:117
+msgid "Create invoices"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:120
+msgid "Create invoices in Reviso for completed orders "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:124
+msgid "Issue invoices"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:127
+msgid "Issue invoices created in Reviso directly "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:131
+msgid "Send invoices"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:134
+msgid "Attach invoices to completed order notifications "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:138
+msgid "Book invoices"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:141
+msgid "Book invoices created in Reviso directly "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:145
+msgid "Number series"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:167
+msgid "Choose the series of numbers to use for invoices "
+msgstr ""
+
+#: admin/wcefr-orders-template.php:175
+msgid "Save options"
+msgstr ""
+
+#: admin/wcefr-products-template.php:17
+msgid "Products categories"
+msgstr ""
+
+#: admin/wcefr-products-template.php:19
+msgid "All categories"
+msgstr ""
+
+#: admin/wcefr-products-template.php:37
+msgid "Select which categories to send to Reviso"
+msgstr ""
+
+#: admin/wcefr-products-template.php:52
+msgid "Delete products"
+msgstr ""
+
+#: admin/wcefr-products-template.php:54
+msgid ""
+"Delete all products on Reviso. Note that you cannot delete a product that "
+"has been used on an Invoice."
+msgstr ""
+
+#: admin/wcefr-settings-template.php:17
+msgid "Connection status"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:21
+msgid "Not connected"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:24
+msgid "Connect with your Reviso credentials"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:29
+msgid "Connect to Reviso"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:30
+msgid "Disconnect from Reviso"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:98
+msgid "Checkout page"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:102
+msgid "Tax documents"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:107
+#: includes/class-wcefr-checkout-fields.php:108
+msgid "Company (Invoice)"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:113
+#: includes/class-wcefr-checkout-fields.php:104
+msgid "Private (Invoice)"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:119
+#: includes/class-wcefr-checkout-fields.php:100
+msgid "Private (Receipt)"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:122
+msgid ""
+"By activating one or more types of invoice, the fields VAT and Tax Code will "
+"be displayed when needed."
+msgstr ""
+
+#: admin/wcefr-settings-template.php:126
+msgid "CF required"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:131
+msgid "Make the Tax Code field mandatory for receipts to individuals."
+msgstr ""
+
+#: admin/wcefr-settings-template.php:135
+msgid "Check fields"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:140
+msgid "Activate the control of the VAT and Tax Code fields."
+msgstr ""
+
+#: admin/wcefr-settings-template.php:144
+#: includes/class-wcefr-checkout-fields.php:75
+msgid "PEC"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:149
+msgid "Activate the PEC field for electronic invoicing"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:153
+msgid "Receiving code"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:158
+msgid "Activate the Receiving Code field for electronic invoicing"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:166
+msgid "Save"
+msgstr ""
+
+#: admin/wcefr-suppliers-template.php:32
+msgid "Select your suppliers user role"
+msgstr ""
+
+#: admin/wcefr-suppliers-template.php:40
+msgid "Select a Reviso suppliers group."
+msgstr ""
+
+#: admin/wcefr-suppliers-template.php:57
+msgid "Delete suppliers"
+msgstr ""
+
+#: admin/wcefr-suppliers-template.php:59
+msgid "Delete all suppliers on Reviso."
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:73
+msgid "VAT number"
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:74
+msgid "Fiscal code"
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:76
+msgid "Receiver code"
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:119
+msgid "Fiscal document"
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:237
+msgid ""
+"The <strong> PEC </strong> field or the <strong> Receiver Code </strong> "
+"field must be completed."
+msgstr ""
+
+#: includes/class-wcefr-checkout-fields.php:289
+#: includes/class-wcefr-checkout-fields.php:338
+#: includes/class-wcefr-checkout-fields.php:359
+msgid "Electronic invoicing"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:88
+msgid "Invoice"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:407
+msgid "Transportation fee"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:1005
+#, php-format
+msgid "%d order(s) export process has begun"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:1075
+#, php-format
+msgid "%d order(s) delete process has begun"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:1084
+msgid "ERROR! There are not orders to delete"
+msgstr ""
+
+#: includes/class-wcefr-products.php:600
+#, php-format
+msgid "%d product(s) export process has begun"
+msgstr ""
+
+#: includes/class-wcefr-products.php:664
+#, php-format
+msgid "%d product(s) delete process has begun"
+msgstr ""
+
+#: includes/class-wcefr-products.php:671
+msgid "ERROR! There are not products to delete"
+msgstr ""
+
+#: includes/class-wcefr-settings.php:116
+msgid "Connected"
+msgstr ""
+
+#: includes/class-wcefr-users.php:421
+#, php-format
+msgid "%1$d %2$s(s) export process has begun"
+msgstr ""
+
+#: includes/class-wcefr-users.php:489
+#, php-format
+msgid "%1$d %2$s(s) delete process has begun"
+msgstr ""
+
+#: includes/class-wcefr-users.php:499
+#, php-format
+msgid "ERROR! There are not %s to delete"
+msgstr ""

@@ -39,11 +39,6 @@ class WCEFR_Orders {
 
 		$this->wcefr_call = new WCEFR_Call();
 
-		// $test = $this->wcefr_call->call( 'get', '/number-series?filter=entryType$eq:financeVoucher' );
-		// $test = $this->wcefr_call->call( 'get', '/apps' );
-		// error_log( 'TEST: ' . print_r( $test, true ) );
-
-
 	}
 
 
@@ -67,7 +62,7 @@ class WCEFR_Orders {
 			add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) );
 
 		}
-	
+
 	}
 
 
@@ -168,13 +163,9 @@ class WCEFR_Orders {
 	 */
 	public function get_remote_invoices( $booked = false, $filter = false ) {
 
-		$status = $booked ? 'booked' : 'drafts';
-		$filter = $filter ? $filter : '?pagesize=1000';
-
-		$output = $this->wcefr_call->call( 'get', 'v2/invoices/' . $status . $filter );
-
-		// error_log( 'FATTURA: ' . print_r( $output, true ) );
-
+		$status  = $booked ? 'booked' : 'drafts';
+		$filter  = $filter ? $filter : '?pagesize=1000';
+		$output  = $this->wcefr_call->call( 'get', 'v2/invoices/' . $status . $filter );
 		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
 
 		if ( 1000 < $results ) {
@@ -213,7 +204,7 @@ class WCEFR_Orders {
 
 		$gateways = WC()->payment_gateways->get_available_payment_gateways();
 
-		$enabled_gateways = [];
+		$enabled_gateways = array();
 
 		if ( $gateways ) {
 			foreach ( $gateways as $gateway ) {
@@ -505,27 +496,21 @@ class WCEFR_Orders {
 	}
 
 
-	public function get_remote_accounting_years() {
-
-		$output = $this->wcefr_call->call( 'get', 'accounting-years' );
-
-		error_log( 'ACCOUNTING YEARS: ' . print_r( $output, true ) );
-
-	}
-
-
-
+	/**
+	 * Add current year in Reviso accounting years if it doesn't exists
+	 *
+	 * @return bool
+	 */
 	public function check_remote_accounting_years() {
 
-
-		$output   = false; 
-		$year 	  = wp_date( 'Y' );
+		$output   = false;
+		$year     = wp_date( 'Y' );
 		$response = $this->wcefr_call->call( 'get', 'accounting-years/' . $year );
 
 		error_log( 'RESPONSE 1: ' . print_r( $response, true ) );
 
 		if ( is_array( $response ) && isset( $response['year'] ) && $year === $response['year'] ) {
-			
+
 			return true;
 
 		} else {
@@ -533,7 +518,7 @@ class WCEFR_Orders {
 			$args = array(
 				'fromDate' => wp_date( $year ) . '-01-01',
 				'toDate'   => wp_date( $year ) . '-12-31',
-				'year'     => $year
+				'year'     => $year,
 			);
 
 			$add = $this->wcefr_call->call( 'post', 'accounting-years', $args );
@@ -565,8 +550,6 @@ class WCEFR_Orders {
 
 			/*Used for invoices*/
 			$response = $this->wcefr_call->call( 'get', 'number-series?filter=prefix$eq:' . $prefix );
-
-			// error_log( 'PREFIX: ' . print_r( $response, true ) );
 
 		} elseif ( $entry_type ) {
 
@@ -603,18 +586,8 @@ class WCEFR_Orders {
 	 */
 	private function create_remote_voucher( $order ) {
 
-		/*temp*/
-		// $this->check_remote_accounting_years();
-		// $test = $this->wcefr_call->call( 'get', '/number-series?filter=entryType$eq:financeVoucher' );
-		// $test = $this->wcefr_call->call( 'get', '/vouchers' );
-
-		// error_lgo( 'SERIE NUMERICHE FINANCE: ' . print_r( $test, true ) );
-		// error_log( 'test1000: ' . print_r( $this->wcefr_call->call( 'get', '/number-series/30' ), true ) );
-
 		$lines = array();
 		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
-
-		// error_log( 'REMOTE CUSTOMER: ' . print_r( $customer_number, true ) );
 
 		if ( $order->get_items() ) {
 
@@ -639,16 +612,11 @@ class WCEFR_Orders {
 			'date'         => wp_date( 'Y-m-d' ),
 			'lines'        => $lines,
 			'numberSeries' => array(
-				// 'numberSeriesNumber' => $this->get_remote_number_series( null, 'financeVoucher', true ),
 				'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
 			),
 		);
 
-		error_log( 'ARGS voucher: ' . print_r( $args, true ) );
-
 		$response = $this->wcefr_call->call( 'post', '/vouchers/drafts/customer-invoices', $args );
-
-		error_log( 'OUTPUT voucher: ' . print_r( $response, true ) );
 
 		return $response;
 
@@ -682,7 +650,7 @@ class WCEFR_Orders {
 
 		}
 
-		}
+	}
 
 
 	/**
@@ -807,10 +775,7 @@ class WCEFR_Orders {
 		$transport_vat_rate     = $this->get_percentage( $transport_vat_amount, $transport_amount );
 		$transport_gross_amount = $transport_amount + $transport_vat_amount;
 		$order_completed        = 'completed' === $order->get_status() ? true : false;
-
-		error_log( '$order_completed: ' . $order_completed  );
-
-		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order );
 
 		/*Add the payment method if not already on Reviso*/
 		$payment_method = $this->add_remote_payment_method( $order->get_payment_method_title() );
@@ -827,7 +792,7 @@ class WCEFR_Orders {
 			'roundingAmount'         => 0.00,
 			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'vatAmount'              => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
-			'vatIncluded'            => false, //wc_prices_include_tax(),
+			'vatIncluded'            => false,
 			'lines'                  => $this->order_items_data( $order ),
 			'customer'               => array(
 				'splitPayment'   => false,
@@ -911,9 +876,6 @@ class WCEFR_Orders {
 
 		}
 
-		// error_log( '$order_exists: ' . $order_exists );
-		// error_log( '$invoice_exists: ' . print_r( $invoice_exists, true ) );
-
 		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
 			$order           = new WC_Order( $order_id );
@@ -925,9 +887,6 @@ class WCEFR_Orders {
 				$endpoint = $invoice ? '/v2/invoices/drafts/' : 'orders';
 
 				$output = $this->wcefr_call->call( 'post', $endpoint, $args );
-
-				error_log( 'ARGS: ' . print_r( $args, true ) );
-				// error_log( 'SINGLE ORDER: ' . print_r( $output, true ) );
 
 				/*An invoice for this order is ready on Reviso*/
 				if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
@@ -1022,10 +981,6 @@ class WCEFR_Orders {
 			}
 
 			$posts = get_posts( $args );
-
-			// error_log( 'STATUSES: ' . print_r( $statuses, true ) );
-			// error_log( 'ARGS: ' . print_r( $args, true ) );
-			// error_log( 'ORDINI: ' . print_r( $posts, true ) );
 
 			$n = 0;
 

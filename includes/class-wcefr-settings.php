@@ -25,7 +25,6 @@ class WCEFR_Settings {
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-		// $this->connected = $this->check_connection_callback( true );
 
 	}
 
@@ -111,7 +110,7 @@ class WCEFR_Settings {
 		} elseif ( isset( $response->application->appNumber ) && 2891 === $response->application->appNumber ) {
 
 			error_log( 'APP NUMBER: ' . $response->application->appNumber );
-	
+
 			if ( $return ) {
 
 				return true;

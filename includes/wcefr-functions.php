@@ -77,11 +77,11 @@ function wcefr_update_message( $plugin_data, $response ) {
 	}
 
 	$allowed_tags = array(
-		'strong' => [],
-		'a'      => [
-			'href'   => [],
-			'target' => [],
-		],
+		'strong' => array(),
+		'a'      => array(
+			'href'   => array(),
+			'target' => array(),
+		),
 	);
 
 	echo ( $message ) ? '<br><span class="wcefr-alert">' . wp_kses( $message, $allowed_tags ) . '</span>' : '';

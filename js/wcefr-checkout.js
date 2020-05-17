@@ -1,5 +1,6 @@
 /**
  * Handles the visualizations of the fiscal fields based on the documents types activated by the admin
+ *
  * @author ilGhera
  * @package wc-exporter-for-danea-reviso/js
  * @since 0.9.0

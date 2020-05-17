@@ -613,7 +613,6 @@ var wcefrController = function() {
 			
 			if ( $(create_invoice_button).hasClass('checked') ) {
 				
-				console.log('TEST: ' + $(create_invoice_button).hasClass('checked'));
 				invoices_field.show();
 
 				if ( $(issue_invoice_button).hasClass('checked') ) {

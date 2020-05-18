@@ -92,27 +92,7 @@ class WCEFR_Admin {
 				echo '<div id="wcefr-generale">';
 
 					/*Header*/
-					echo '<h1 class="wcefr main">' . esc_html( __( 'WooCommerce Exporter for Reviso - Premium', 'wc-exporter-for-reviso' ) ) . '</h1>';
-
-					/*Plugin premium key*/
-					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
-
-					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-premium-key-nonce'] ), 'wcefr-premium-key' ) ) {
-
-						$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
-
-						update_option( 'wcefr-premium-key', $key );
-
-					}
-
-					/*Premium Key Form*/
-					echo '<form id="wcefr-premium-key" method="post" action="">';
-					echo '<label>' . esc_html( __( 'Premium Key', 'wc-exporter-for-reviso' ) ) . '</label>';
-					echo '<input type="text" class="regular-text code" name="wcefr-premium-key" id="wcefr-premium-key" placeholder="' . esc_html( __( 'Add your Premium Key', 'wc-exporter-for-reviso' ) ) . '" value="' . esc_attr( $key ) . '" />';
-					echo '<p class="description">' . esc_html( __( 'Add your Premium Key and keep update your copy of Woocommerce Exporter for Reviso - Premium', 'wc-exporter-for-reviso' ) ) . '</p>';
-					wp_nonce_field( 'wcefr-premium-key', 'wcefr-premium-key-nonce' );
-					echo '<input type="submit" class="button button-primary" value="' . esc_html( __( 'Save', 'wc-exporter-for-reviso' ) ) . '" />';
-					echo '</form>';
+					echo '<h1 class="wcefr main">' . esc_html( __( 'WooCommerce Exporter for Reviso', 'wc-exporter-for-reviso' ) ) . '</h1>';
 
 					/*Plugin options menu*/
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';

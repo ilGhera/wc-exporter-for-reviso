@@ -126,8 +126,8 @@ var wcefrController = function() {
 			} else {
 
 				$('.wcefr-form').removeClass('disconnected');
-				$('.wcefr-form input').removeAttr('disabled');
-				$('.wcefr-form select').removeAttr('disabled');
+				$('.wcefr-form.free input').removeAttr('disabled');
+				$('.wcefr-form.free select').removeAttr('disabled');
 
 			}
 

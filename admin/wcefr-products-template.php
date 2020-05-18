@@ -20,26 +20,25 @@
 					<?php
 					$terms = get_terms( 'product_cat' );
 
-					/*Get the value from the db*/
-					$products_categories = get_option( 'wcefr-products-categories' );
-
 					if ( $terms ) {
 						foreach ( $terms as $single_term ) {
 
-							$selected = is_array( $products_categories ) && in_array( $single_term->term_id, $products_categories ) ? ' selected="selected"' : '';
+							echo '<option value="' . esc_attr( $single_term->term_id ) . '">' . esc_html( $single_term->name ) . '</option>';
 
-							echo '<option value="' . esc_attr( $single_term->term_id ) . '"' . esc_html( $selected ) . '>' . esc_html( $single_term->name ) . '</option>';
 						}
 					}
 					?>
 
 				</select>
 				<p class="description"><?php esc_html_e( 'Select which categories to send to Reviso', 'wc-exporter-for-reviso' ); ?></p>
+				
+				<?php wcefr_go_premium(); ?>
+			
 			</td>
 		</tr>
 	</table>
 
-	<input type="submit" name="wcefr-products-export" class="button-primary wcefr export products" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>">
+	<input type="submit" name="wcefr-products-export" class="button-primary wcefr export products" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>" disabled>
 
 </form>
 
@@ -52,26 +51,16 @@
 			<th scope="row"><?php esc_html_e( 'Delete products', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<p class="description"><?php esc_html_e( 'Delete all products on Reviso. Note that you cannot delete a product that has been used on an Invoice.', 'wc-exporter-for-reviso' ); ?></p>
+				
+				<?php wcefr_go_premium(); ?>
+			
 			</td>
 		</tr>
 	</table>
 	
 	<p class="submit">
-		<input type="submit" class="button-primary wcefr red products" value="<?php esc_html_e( 'Delete from Reviso', 'wc-exporter-for-reviso' ); ?>" />
+		<input type="submit" class="button-primary wcefr red products" value="<?php esc_html_e( 'Delete from Reviso', 'wc-exporter-for-reviso' ); ?>" disabled />
 	</p>
 
 </form>
 
-<?php
-/*Nonce*/
-$export_products_nonce = wp_create_nonce( 'wcefr-export-products' );
-$delete_products_nonce = wp_create_nonce( 'wcefr-delete-products' );
-
-wp_localize_script(
-	'wcefr-js',
-	'wcefrProducts',
-	array(
-		'exportNonce' => $export_products_nonce,
-		'deleteNonce' => $delete_products_nonce,
-	)
-);

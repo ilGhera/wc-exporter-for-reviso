@@ -10,7 +10,7 @@
 ?>
 
 <!-- Reviso connection -->
-<form name="wcefr-settings" class="wcefr-form connection one-of"  method="post" action="">
+<form name="wcefr-settings" class="wcefr-form free connection one-of"  method="post" action="">
 
 	<table class="form-table">
 		<tr>

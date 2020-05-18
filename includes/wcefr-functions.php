@@ -12,8 +12,8 @@
  */
 function wcefr_go_premium() {
 
-	$title = __( 'This is a premium functionality, click here for more information', 'crm-in-cloud-for-wc' );
-	$output = '<span class="crmfwc label label-warning premium">';
+	$title = __( 'This is a premium functionality, click here for more information', 'wc-exporter-for-reviso' );
+	$output = '<span class="wcefr label label-warning premium">';
 		$output .= '<a href="https://www.ilghera.com/product/woocommerce-exporter-for-reviso-premium" target="_blank" title="' . esc_attr( $title ) . '">Premium</a>';
 	$output .= '</span>';
 

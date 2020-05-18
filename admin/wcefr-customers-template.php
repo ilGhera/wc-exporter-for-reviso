@@ -10,7 +10,7 @@
 ?>
 
 <!-- Export form -->
-<form name="wcefr-export-customers" class="wcefr-form"  method="post" action="">
+<form name="wcefr-export-customers" class="wcefr-form free"  method="post" action="">
 
 	<table class="form-table">
 		<tr>

@@ -9,7 +9,7 @@
  * Requires at least: 4.0
  * Tested up to: 5.4
  * WC tested up to: 4
- * Text Domain: wcefr
+ * Text Domain: wc-exporter-for-reviso
  */
 
 /**

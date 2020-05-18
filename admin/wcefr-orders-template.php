@@ -73,7 +73,7 @@ wp_localize_script(
 <!-- Settings form -->
 <form name="wcefr-orders-settings" class="wcefr-form"  method="post" action="">
 
-	<h2>Orders settings</h2>
+	<h2><?php esc_html_e( 'Orders settings', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<?php
 	$wcefr_export_orders   = get_option( 'wcefr-export-orders' );

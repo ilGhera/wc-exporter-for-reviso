@@ -1,4 +1,4 @@
-=== WooCommerce Exporter for Reviso ===
+=== WC Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
 Version: 0.9.0

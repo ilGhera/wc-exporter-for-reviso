@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-18 07:37+0200\n"
-"PO-Revision-Date: 2020-05-18 07:38+0200\n"
+"POT-Creation-Date: 2020-05-20 18:43+0200\n"
+"PO-Revision-Date: 2020-05-20 18:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -19,27 +19,27 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-2: libraries\n"
 "X-Poedit-SearchPathExcluded-3: css\n"
 
-#: admin/class-wcefr-admin.php:74
+#: admin/class-wcefr-admin.php:73
 msgid "It seems like you don't have permission to see this page"
 msgstr "Sembra che tu non abbia i permessi per visualizzare questa pagina"
 
-#: admin/class-wcefr-admin.php:86
+#: admin/class-wcefr-admin.php:85
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato"
 
-#: admin/class-wcefr-admin.php:95
+#: admin/class-wcefr-admin.php:94
 msgid "WooCommerce Exporter for Reviso - Premium"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:110
+#: admin/class-wcefr-admin.php:109
 msgid "Premium Key"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:111
+#: admin/class-wcefr-admin.php:110
 msgid "Add your Premium Key"
 msgstr "Aggiungi la tua Premium Key"
 
-#: admin/class-wcefr-admin.php:112
+#: admin/class-wcefr-admin.php:111
 msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Exporter for "
 "Reviso - Premium"
@@ -47,27 +47,27 @@ msgstr ""
 "Aggiungi la tua Premium Key e mantieni aggiornato WooCommerce for Reviso - "
 "Premium"
 
-#: admin/class-wcefr-admin.php:114 admin/wcefr-settings-template.php:166
+#: admin/class-wcefr-admin.php:113 admin/wcefr-settings-template.php:166
 msgid "Save"
 msgstr "Salva"
 
-#: admin/class-wcefr-admin.php:120
+#: admin/class-wcefr-admin.php:119
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: admin/class-wcefr-admin.php:121
+#: admin/class-wcefr-admin.php:120
 msgid "Suppliers"
 msgstr "Fornitori"
 
-#: admin/class-wcefr-admin.php:122
+#: admin/class-wcefr-admin.php:121
 msgid "Products"
 msgstr "Prodotti"
 
-#: admin/class-wcefr-admin.php:123
+#: admin/class-wcefr-admin.php:122
 msgid "Customers"
 msgstr "Clienti"
 
-#: admin/class-wcefr-admin.php:124
+#: admin/class-wcefr-admin.php:123
 msgid "Orders"
 msgstr "Ordini"
 
@@ -362,12 +362,16 @@ msgstr "ERRORE! Non ci sono ordini da cancellare"
 msgid "%d product(s) export process has begun"
 msgstr "Il processo di esportazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:664
+#: includes/class-wcefr-products.php:608
+msgid "ERROR! There are not products to export"
+msgstr "ERRORE! Non ci sono prodotti da esportare"
+
+#: includes/class-wcefr-products.php:672
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:671
+#: includes/class-wcefr-products.php:679
 msgid "ERROR! There are not products to delete"
 msgstr "ERRORE! Non ci sono prodotti da cancellare"
 

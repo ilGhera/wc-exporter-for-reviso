@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2020-05-18 07:38+0200\n"
+"POT-Creation-Date: 2020-05-20 18:43+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -20,53 +20,53 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: libraries\n"
 "X-Poedit-SearchPathExcluded-2: vendor\n"
 
-#: admin/class-wcefr-admin.php:74
+#: admin/class-wcefr-admin.php:73
 msgid "It seems like you don't have permission to see this page"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:86
+#: admin/class-wcefr-admin.php:85
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:95
+#: admin/class-wcefr-admin.php:94
 msgid "WooCommerce Exporter for Reviso - Premium"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:110
+#: admin/class-wcefr-admin.php:109
 msgid "Premium Key"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:111
+#: admin/class-wcefr-admin.php:110
 msgid "Add your Premium Key"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:112
+#: admin/class-wcefr-admin.php:111
 msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Exporter for "
 "Reviso - Premium"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:114 admin/wcefr-settings-template.php:166
+#: admin/class-wcefr-admin.php:113 admin/wcefr-settings-template.php:166
 msgid "Save"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:120
+#: admin/class-wcefr-admin.php:119
 msgid "Settings"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:121
+#: admin/class-wcefr-admin.php:120
 msgid "Suppliers"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:122
+#: admin/class-wcefr-admin.php:121
 msgid "Products"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:123
+#: admin/class-wcefr-admin.php:122
 msgid "Customers"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:124
+#: admin/class-wcefr-admin.php:123
 msgid "Orders"
 msgstr ""
 
@@ -355,12 +355,16 @@ msgstr ""
 msgid "%d product(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:664
+#: includes/class-wcefr-products.php:608
+msgid "ERROR! There are not products to export"
+msgstr ""
+
+#: includes/class-wcefr-products.php:672
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:671
+#: includes/class-wcefr-products.php:679
 msgid "ERROR! There are not products to delete"
 msgstr ""
 

@@ -293,14 +293,18 @@ var wcefrController = function() {
 
 				$.post(ajaxurl, data, function(response){
 
-					var result = JSON.parse(response);
+					if (response) {
 
-					for (var i = 0; i < result.length; i++) {
+						var result = JSON.parse(response);
 
-						var error = 'error' === result[i][0] ? true : false;
-						var update = 0 !== i ? true : false; 
+						for (var i = 0; i < result.length; i++) {
 
-						self.wcefr_response_message( result[i][1], error, false );
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, false );
+
+						}
 
 					}
 
@@ -343,7 +347,7 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
-						if ( response ) {
+						if (response) {
 
 							var result = JSON.parse(response);
 
@@ -393,15 +397,19 @@ var wcefrController = function() {
 				}
 
 				$.post(ajaxurl, data, function(response){
-										
-					var result = JSON.parse(response);
 
-					for (var i = 0; i < result.length; i++) {
+					if (response) {
 
-						var error = 'error' === result[i][0] ? true : false;
-						var update = 0 !== i ? true : false; 
+						var result = JSON.parse(response);
 
-						self.wcefr_response_message( result[i][1], error, false );
+						for (var i = 0; i < result.length; i++) {
+
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, false );
+
+						}
 
 					}
 
@@ -442,15 +450,19 @@ var wcefrController = function() {
 					$.post(ajaxurl, data, function(response){
 
 
-						var result = JSON.parse(response);
+						if (response) {
 
-						for (var i = 0; i < result.length; i++) {
+							var result = JSON.parse(response);
 
-							var error = 'error' === result[i][0] ? true : false;
-							var update = 0 !== i ? true : false; 
+							for (var i = 0; i < result.length; i++) {
 
-							self.wcefr_response_message( result[i][1], error, false );
-	
+								var error = 'error' === result[i][0] ? true : false;
+								var update = 0 !== i ? true : false; 
+
+								self.wcefr_response_message( result[i][1], error, false );
+		
+							}
+
 						}
 
 					})
@@ -480,22 +492,26 @@ var wcefrController = function() {
 
 			$.post(ajaxurl, data, function(response){
 
-				groups = JSON.parse(response);
+				if (response) {
 
-				if (typeof groups === 'object') {
+					groups = JSON.parse(response);
 
-					for (key in groups) {
-						$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
+					if (typeof groups === 'object') {
+
+						for (key in groups) {
+							$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
+						}
+
+					} else {
+
+						$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
+
 					}
 
-				} else {
-
-					$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
+					$('.wcefr-' + type + '-groups').addClass('wcefr-select');
+			        self.chosen(true);
 
 				}
-
-				$('.wcefr-' + type + '-groups').addClass('wcefr-select');
-		        self.chosen(true);
 
 			})
 
@@ -528,15 +544,19 @@ var wcefrController = function() {
 				}
 
 				$.post(ajaxurl, data, function(response){
-										
-					var result = JSON.parse(response);
 
-					for (var i = 0; i < result.length; i++) {
+					if (response) {
 
-						var error = 'error' === result[i][0] ? true : false;
-						var update = 0 !== i ? true : false; 
+						var result = JSON.parse(response);
 
-						self.wcefr_response_message( result[i][1], error, false );
+						for (var i = 0; i < result.length; i++) {
+
+							var error = 'error' === result[i][0] ? true : false;
+							var update = 0 !== i ? true : false; 
+
+							self.wcefr_response_message( result[i][1], error, false );
+
+						}
 
 					}
 
@@ -576,14 +596,18 @@ var wcefrController = function() {
 
 					$.post(ajaxurl, data, function(response){
 
-						var result = JSON.parse(response);
+						if (response) {
 
-						for (var i = 0; i < result.length; i++) {
+							var result = JSON.parse(response);
 
-							var error = 'error' === result[i][0] ? true : false;
-							var update = 0 !== i ? true : false; 
+							for (var i = 0; i < result.length; i++) {
 
-							self.wcefr_response_message( result[i][1], error, false );
+								var error = 'error' === result[i][0] ? true : false;
+								var update = 0 !== i ? true : false; 
+
+								self.wcefr_response_message( result[i][1], error, false );
+
+							}
 
 						}
 

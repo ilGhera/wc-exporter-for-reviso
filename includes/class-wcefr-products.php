@@ -600,9 +600,17 @@ class WCEFR_Products {
 					esc_html( sprintf( __( '%d product(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 				);
 
-				echo json_encode( $response );
 
+			} else {
+
+				$response[] = array(
+					'error',
+					esc_html( __( 'ERROR! There are not products to export', 'wc-exporter-for-reviso' ) ),
+				);
+			
 			}
+				
+			echo json_encode( $response );
 
 		}
 

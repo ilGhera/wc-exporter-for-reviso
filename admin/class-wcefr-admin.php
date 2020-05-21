@@ -148,7 +148,9 @@ class WCEFR_Admin {
 
 			echo '</div>';
 
-			echo '<div class="wrap-right"></div>';
+			echo '<div class="wrap-right">';
+				echo '<iframe width="300" height="900" scrolling="no" src="https://www.ilghera.com/images/wcefr-iframe.html"></iframe>';
+			echo '</div>';
 
 			echo '<div class="clear"></div>';
 

@@ -76,8 +76,9 @@ This plugin sends data to an external service, like the products bought by the u
 4. Select one or more WooCommerce orders statuses and export them
 5. Create invoices in real time (1) 
 6. Create invoices in real time (2)
-7. Check the activities in progress
-8. Invoice checkout fields
+7. View PDF Invoices directly in WordPress
+8. Check the activities in progress
+9. Invoice checkout fields
 
 
 == Changelog ==

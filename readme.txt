@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=== Exporter for Reviso ===
-=======
-=== WooCommerce Exporter for Reviso - Premium ===
->>>>>>> master
+=== WooCommerce Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
 Version: 0.9.0
@@ -20,11 +16,28 @@ Export suppliers, products, customers and orders from your Woocommerce store to 
 
 * Export WordPress users to Reviso.
 * Select one or more WordPress user level to export.
+* Export products to Reviso (Premium).
 * Export orders to Reviso (Premium).
 * Export new orders to Reviso in real time (Premium).
 * Delete all data in Reviso with a click.
 
 = Try Reviso for free! =
+[https://www.reviso.com/trial?src=hero](https://www.reviso.com/trial?src=hero)
+
+**ITALIANO**
+Esporta fornitori, prodotti, clienti e ordini dal tuo store WooCommerce a TeamSystem Reviso, ora rinominato per l'Italia in *Contabilità in Cloud*.
+Esporta nuovi ordini e crea fatture in tempo reale.
+
+**FUNZIONALITÀ DISPONIBILI**
+
+* Esporta utenti WordPress come clienti o fornitori verso Reviso
+* Seleziona uno o più livelli utente da esportare
+* Esporta prodotti WooCommerce in Reviso (Premium)
+* Esporta ordini WooCommerce in Reviso (Premium)
+* Esporta nuovi ordini in tempo reale (Premium)
+* Cancella dati in Reviso con un click
+
+= Prova Reviso gratuitamente! =
 [https://www.reviso.com/trial?src=hero](https://www.reviso.com/trial?src=hero)
 
 
@@ -57,11 +70,19 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Screenshots ==
+1. WordPress users as clients in TeamSystem Reviso
+2. WordPress users as suppliers in Reviso
+3. Export all your WooCommerce products to Reviso
+4. Select one or more WooCommerce orders statuses and export them
+5. Create invoices in real time (1) 
+6. Create invoices in real time (2)
+7. Check the activities in progress
+8. Invoice checkout fields
 
 
 == Changelog ==
 
 = 0.9.0 = 
-Release Date: 18 May 2020
+Release Date: 21 May 2020
 
 * First release

@@ -483,11 +483,12 @@ class WCEFR_Orders {
 
 		} else {
 
-			$user = get_user_by( 'email', $email );
+			$user    = get_user_by( 'email', $email );
+			$user_id = isset( $user->ID ) ? $user->ID : 0;
 
 			/*Add the new user in Reviso*/
 			$wcefr_users = new WCEFR_Users();
-			$new_user    = $wcefr_users->export_single_user( $user->ID, 'customers', $order );
+			$new_user    = $wcefr_users->export_single_user( $user_id, 'customers', $order );
 
 			return $new_user->customerNumber;
 

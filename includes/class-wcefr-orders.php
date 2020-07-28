@@ -280,7 +280,11 @@ class WCEFR_Orders {
 	 */
 	private function get_percentage( $value, $total ) {
 
-		return floatval( wc_format_decimal( ( $value / $total * 100 ), 0 ) );
+		if ( 0 !== $total ) {
+
+			return floatval( wc_format_decimal( ( $value / $total * 100 ), 0 ) );
+
+		}
 
 	}
 

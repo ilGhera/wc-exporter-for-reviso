@@ -39,7 +39,7 @@ class WCEFR_Users {
 	 */
 	private function get_province_number( $code ) {
 
-		$provinces = $this->wcefr_call->call( 'get', 'provinces/' . $code . '?pagesize=1000' );
+		$provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
 
 		if ( isset( $provinces->collection ) ) {
 
@@ -342,6 +342,8 @@ class WCEFR_Users {
 		if ( $public_entry_number ) {
 			$args['publicEntryNumber'] = $public_entry_number;
 		}
+
+		error_log( 'ARGS: ' . print_r( $args, true ) );
 
 		return $args;
 

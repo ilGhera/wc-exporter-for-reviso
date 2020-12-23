@@ -280,7 +280,7 @@ class WCEFR_Orders {
 	 */
 	private function get_percentage( $value, $total ) {
 
-		if ( 0 !== $total ) {
+		if ( 0 != $total ) {
 
 			return floatval( wc_format_decimal( ( $value / $total * 100 ), 0 ) );
 
@@ -691,11 +691,13 @@ class WCEFR_Orders {
 
 				if ( $invoice_details ) {
 
-					$number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
+					error_log( 'RESULT: ' . print_r( $result, true ) );
+
+					// $number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
 
 					return array(
 						'id'     => $id,
-						'number' => $number,
+						'number' => $result->number,
 						'status' => $key,
 					);
 
@@ -911,6 +913,8 @@ class WCEFR_Orders {
 				if ( isset( $output->errorCode ) && isset( $output->message ) ) {
 
 					error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message );
+
+					error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
 
 				}
 

@@ -79,7 +79,9 @@ class WCEFR_Products {
 
 		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
 
-		if ( ! $response || isset( $response->errorCode ) ) {
+		error_log( 'PRODUCT EXISTS: ' . print_r( $response, true ) );
+
+		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 
 			$output = false;
 
@@ -350,6 +352,8 @@ class WCEFR_Products {
 
 		$output = null;
 
+		error_log( 'PRODUCTS GROUPS: ' . print_r( $this->wcefr_call->call( 'get', 'product-groups/' ), true ) );
+
 		$remote_product_group = $this->wcefr_call->call( 'get', 'product-groups/' . $product_group_number );
 
 		if ( isset( $remote_product_group->productGroupNumber ) ) {
@@ -390,9 +394,11 @@ class WCEFR_Products {
 
 		$output = null;
 
+		$test = $this->get_remote_product_group( $tax_class );
+
 		if ( ! $taxable ) {
 
-			$output = 99;
+			$output = 99; //5;
 
 		} else {
 
@@ -511,7 +517,7 @@ class WCEFR_Products {
 
 					if ( $this->product_exists( $end ) ) {
 
-						$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args );
+						$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
 
 					} else {
 
@@ -523,6 +529,8 @@ class WCEFR_Products {
 					if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
 						error_log( 'WCEFR ERROR | Product ID ' . $product_id . ' | ' . $output->message );
+						error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
+						error_log( 'ARGS: ' . print_r( $args, true ) );
 
 					}
 

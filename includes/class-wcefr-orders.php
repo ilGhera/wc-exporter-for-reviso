@@ -807,10 +807,10 @@ class WCEFR_Orders {
 				'country' => $order->get_shipping_country(),
 				'zip'     => $order->get_shipping_postcode(),
 			),
-			'layout'                 => array( // temp.
-				'isDefault'    => false,
-				'layoutNumber' => 9,
-			),
+			// 'layout'                 => array( // temp.
+			// 	'isDefault'    => false,
+			// 	'layoutNumber' => 9,
+			// ),
 			'recipient'              => array(
 				'address'           => $order->get_billing_address_1(),
 				'city'              => $order->get_billing_city(),

@@ -34,7 +34,7 @@ class WCEFR_Products {
 	 *
 	 * @return array
 	 */
-	private function get_remote_products() {
+	private function get_remote_products() { 
 
 		$output = $this->wcefr_call->call( 'get', 'products?pagesize=1000' );
 

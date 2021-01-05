@@ -258,9 +258,9 @@ class WCEFR_Orders {
 
 			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
 
-			if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+			if ( isset( $response->name ) ) {
 
-				$output = $response->collection[0];
+				$output = $response;
 
 			}
 

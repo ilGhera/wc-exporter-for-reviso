@@ -400,11 +400,19 @@ class WCEFR_Products {
 
 			$output = $remote_product_group->productGroupNumber;
 
-		} else {
+        } else {
 
-			$wc_tax = $this->get_wc_tax_class( $product_group_number );
+            if ( 99 == $product_group_number ) {
 
-			$tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
+                $wc_tax        = null; 
+                $tax_rate_name = __( 'No VAT', 'wc-exporter-for-reviso' );
+
+            } else {
+
+                $wc_tax        = $this->get_wc_tax_class( $product_group_number );
+                $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
+
+            }
 
 			$remote_product_group = $this->add_remote_product_group( $product_group_number, $tax_rate_name );
 
@@ -434,19 +442,15 @@ class WCEFR_Products {
 
 		$output = null;
 
-		$test = $this->get_remote_product_group( $tax_class );
-
 		if ( ! $taxable ) {
 
-			$output = 99; //5;
+            $tax_class = 99; //5;
 
-		} else {
+        }
 
-			$tax_class = '' == $tax_class ? 22 : $tax_class;
+        $tax_class = '' == $tax_class ? 22 : $tax_class;
 
-			$output = $this->get_remote_product_group( $tax_class );
-
-		}
+        $output = $this->get_remote_product_group( $tax_class );
 
 		return $output;
 

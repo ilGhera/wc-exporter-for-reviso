@@ -331,7 +331,7 @@ class WCEFR_Products {
 						'vatZoneNumber' => 1,
 					),
 				),
-
+                /*
 				1 => array(
 					'salesAccount' => array(
 						'accountNumber' => '5805556',
@@ -357,7 +357,8 @@ class WCEFR_Products {
 					'vatZone' => array(
 						'vatZoneNumber' => 4,
 					),
-				),
+                ),
+                */
 
 			),
 

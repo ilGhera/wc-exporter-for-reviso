@@ -28,6 +28,40 @@ class WCEFR_Products {
 
 	}
 
+    /**
+     * Check if the inventory module is active
+     *
+     * @return bool
+     */
+    private function inventory_module() {
+
+        $output   = false;
+        $response = $this->wcefr_call->call( 'get', 'self' );
+
+        if ( is_array( $response ) && isset( $response['modules'] ) ) {
+
+            if ( is_array( $response['modules'] ) ) {
+                
+                foreach ( $response['modules'] as $module ) {
+
+                    if ( 'Lager' === $module->name ) {
+
+                        $output = true;
+
+                        continue;
+
+                    }
+
+                } 
+
+            }
+
+        }
+
+        return $output;
+
+    }
+
 
 	/**
 	 * Get all the products from Reviso
@@ -79,7 +113,7 @@ class WCEFR_Products {
 
 		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
 
-		error_log( 'PRODUCT EXISTS: ' . print_r( $response, true ) );
+		// error_log( 'PRODUCT EXISTS: ' . print_r( $response, true ) );
 
 		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 
@@ -287,12 +321,6 @@ class WCEFR_Products {
 		$args = array(
 			'productGroupNumber' => $product_group_number,
 			'name'               => $name,
-			'inventoryEnabled'   => true,
-			'inventory' => array(
-				'purchaseAccount' => array(
-					'accountNumber' => 6625005,
-				),
-			),
 			'salesAccountsList'  => array(
 
 				0 => array(
@@ -333,7 +361,18 @@ class WCEFR_Products {
 
 			),
 
-		);
+        );
+
+        /* Only with inventory module enabled */ 
+        if ( $this->inventory_module ) {
+        
+            $args['inventory'] =  array(
+				'purchaseAccount' => array(
+					'accountNumber' => 6625005,
+				),
+            ); 
+        
+        }
 
 		$output = $this->wcefr_call->call( 'post', 'product-groups/', $args );
 
@@ -352,7 +391,7 @@ class WCEFR_Products {
 
 		$output = null;
 
-		error_log( 'PRODUCTS GROUPS: ' . print_r( $this->wcefr_call->call( 'get', 'product-groups/' ), true ) );
+		// error_log( 'PRODUCTS GROUPS: ' . print_r( $this->wcefr_call->call( 'get', 'product-groups/' ), true ) );
 
 		$remote_product_group = $this->wcefr_call->call( 'get', 'product-groups/' . $product_group_number );
 
@@ -483,12 +522,18 @@ class WCEFR_Products {
 			'unit'             => array(
 				'unitNumber' => 1,
 			),
-			'inventory'        => array(
-				'packageVolume' => $volume,
-			),
 		);
 
-		return $output;
+        /* Only with inventory module enabled */ 
+        if ( $this->inventory_module ) {
+        
+            $output['inventory'] = array(
+				'packageVolume' => $volume,
+			);
+ 
+        } 
+        
+        return $output;
 
 	}
 
@@ -528,9 +573,9 @@ class WCEFR_Products {
 					/*Log the error*/
 					if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-						error_log( 'WCEFR ERROR | Product ID ' . $product_id . ' | ' . $output->message );
-						error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
-						error_log( 'ARGS: ' . print_r( $args, true ) );
+						// error_log( 'WCEFR ERROR | Product ID ' . $product_id . ' | ' . $output->message );
+						// error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
+						// error_log( 'ERROR error_log( 'ARGS: ' . print_r( $args, true ) );
 
 					}
 

@@ -213,10 +213,11 @@ class WCEFR_Products {
 				'accountNumber' => 2201,
 			),
 			'vatType' => array(
-				'name'          => 'Sales VAT',
+				'name'          => __( 'Sales VAT', 'wc-exporter-for-reviso' ),
 				'vatTypeNumber' => 1,
 			),
-			'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
+			//'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
+			'name'           => sprintf( __( '%n% VAT purchases', 'wc-exporter-for-reviso' ), $vat_rate );
 			'ratePercentage' => $vat_rate,
 			'vatReportSetup' => array(
 				'vatReportSetupNumber' => 24, // For reduced rates.
@@ -334,8 +335,7 @@ class WCEFR_Products {
 	private function add_remote_product_group( $product_group_number, $product_group_name ) {
 
 		$account_number = $this->get_remote_account_number( $product_group_number );
-
-		$name = $product_group_number === $product_group_name ? 'IVA al ' . $product_group_number . '%' : $product_group_name;
+		$name           = $product_group_number === $product_group_name ? sprintf( __( '%n% VAT', 'wc-exporter-for-reviso' ), $product_group_number ) : $product_group_name;
 
 		$args = array(
 			'productGroupNumber' => $product_group_number,

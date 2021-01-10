@@ -168,7 +168,8 @@ class WCEFR_Products {
 
 		global $wpdb;
 
-		$where = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
+        $tax_rate_class = 'standard' === $tax_rate_class ? null : $tax_rate_class;
+		$where          = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
 
 		$query = 'SELECT * FROM ' . $wpdb->prefix . 'woocommerce_tax_rates' . $where;
 
@@ -181,7 +182,25 @@ class WCEFR_Products {
 	}
 
 
-	/**
+   /**
+    * Get the standard tax rate
+    *
+    * @return int
+    */ 
+    private function get_standard_rate() {
+
+        $results = $this->get_wc_tax_class( 'standard' );
+
+        if ( is_array( $results ) && isset( $results[0]['tax_rate'] ) ) {
+            
+            return intval( $results[0]['tax_rate'] );
+
+        }
+
+    }
+    
+    
+    /**
 	 * Add a new vat account to Reviso
 	 *
 	 * @param  int $vat_rate the vat rate.
@@ -448,7 +467,7 @@ class WCEFR_Products {
 
         }
 
-        $tax_class = '' == $tax_class ? 22 : $tax_class;
+        $tax_class = '' == $tax_class ? $this->get_standard_rate() : $tax_class;
 
         $output = $this->get_remote_product_group( $tax_class );
 

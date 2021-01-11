@@ -113,6 +113,8 @@ class WCEFR_Products {
 
 		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
 
+		// error_log( 'PRODUCT EXISTS: ' . print_r( $response, true ) );
+
 		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 
 			$output = false;
@@ -189,6 +191,8 @@ class WCEFR_Products {
 
         $result = $this->get_wc_tax_class( 'standard' );
 
+        error_log( 'RESULT: ' . print_r( $result, true ) );
+
         if ( isset( $result->tax_rate ) ) {
 
             return intval( $result->tax_rate );
@@ -206,6 +210,8 @@ class WCEFR_Products {
 	 */
 	public function add_remote_vat_account( $vat_rate ) {
         
+        error_log( 'VAT RATE: ' . $vat_rate );
+
 		$args = array(
 			'account' => array(
 				'accountNumber' => 2201,
@@ -264,13 +270,15 @@ class WCEFR_Products {
 	/**
 	 * Add an account in Reviso
 	 *
-	 * @param  int $vat_rate used to create the account number.
+	 * @param  int $vat_rate used for create the account number.
 	 * @return int the number of the account created
 	 */
 	private function add_remote_account( $vat_rate ) {
 
 		/*Get the remote vat code*/
 		$vat_code = $this->get_remote_vat_code( $vat_rate ); // temp.
+
+        error_log( 'VAT RATE 2: ' . $vat_rate );
 
         $account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
 
@@ -279,12 +287,12 @@ class WCEFR_Products {
 				'description' => 'Sales of products',
 				'accountCategoryNumber' => 48,
 			),
-			'accountType'   => 'profitAndLoss',
-			'balance'       => 0,
-			'debitCredit'   => 'credit',
+			'accountType' => 'profitAndLoss',
+			'balance' => 0,
+			'debitCredit' => 'credit',
 			'accountNumber' => $account_number,
-			'name'          => __( 'Sale of goods VAT ' . $vat_rate, 'wc-exporter-for-reviso' ),
-			'vatAccount'    => array(
+			'name' => 'Merci c/vendite iva al ' . $vat_rate . '%',
+			'vatAccount' => array(
 				'vatCode' => $vat_code,
 			),
 		);
@@ -332,6 +340,8 @@ class WCEFR_Products {
 	 */
 	private function add_remote_product_group( $product_group_number, $product_group_name ) {
     
+        error_log( 'PRODUCT GROUP NUMBER: ' . $product_group_number );
+
 		$account_number = $this->get_remote_account_number( $product_group_number );
 		$name           = $product_group_number == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-exporter-for-reviso' ), $product_group_number ) : $product_group_name;
 
@@ -348,6 +358,34 @@ class WCEFR_Products {
 						'vatZoneNumber' => 1,
 					),
 				),
+                /*
+				1 => array(
+					'salesAccount' => array(
+						'accountNumber' => '5805556',
+					),
+					'vatZone' => array(
+						'vatZoneNumber' => 2,
+					),
+				),
+
+				2 => array(
+					'salesAccount' => array(
+						'accountNumber' => '5805550',
+					),
+					'vatZone' => array(
+						'vatZoneNumber' => 3,
+					),
+				),
+
+				3 => array(
+					'salesAccount' => array(
+						'accountNumber' => '5805599',
+					),
+					'vatZone' => array(
+						'vatZoneNumber' => 4,
+					),
+                ),
+                */
 
 			),
 
@@ -381,6 +419,8 @@ class WCEFR_Products {
 
 		$output = null;
 
+		// error_log( 'PRODUCTS GROUPS: ' . print_r( $this->wcefr_call->call( 'get', 'product-groups/' ), true ) );
+
 		$remote_product_group = $this->wcefr_call->call( 'get', 'product-groups/' . $product_group_number );
 
 		if ( isset( $remote_product_group->productGroupNumber ) ) {
@@ -399,6 +439,9 @@ class WCEFR_Products {
                 $wc_tax        = $this->get_wc_tax_class( $product_group_number );
                 $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
                 
+                error_log( 'WC TAX: ' . print_r( $wc_tax, true ) );
+                error_log( 'TAX RATE NAME: ' . $tax_rate_name );
+           
             }
 
 			$remote_product_group = $this->add_remote_product_group( $product_group_number, $tax_rate_name );
@@ -421,8 +464,8 @@ class WCEFR_Products {
 	 * This method get the WC tax class and passes the value to another function for searching the Reviso product group
 	 * The product group will be created if necessary
 	 *
-	 * @param  bool   $taxable   if not the Reviso product group 99 will be used.
-	 * @param  string $tax_class the WC tax class assigned to the product.
+	 * @param  bool $taxable   if not the Reviso product group 99 will be used.
+	 * @param  int  $tax_class the WC tax class assigned to the product.
 	 * @return int             the product group number
 	 */
 	private function get_product_group( $taxable, $tax_class = null ) {
@@ -435,21 +478,11 @@ class WCEFR_Products {
 
         }
 
-        if ( null == $tax_class ) {
-            
-            $tax_class = $this->get_standard_rate();
+        error_log( 'TAX CLASS 3: ' . $tax_class );
+        
+        $tax_class = null == $tax_class ? $this->get_standard_rate() : $tax_class;
 
-        } elseif ( ! is_numeric( $tax_class ) ) {
-
-            $tax_class_info = $this->get_wc_tax_class( $tax_class ); 
-
-            if ( isset( $tax_class_info->tax_rate ) ) {
-
-                $tax_class = intval( $tax_class_info->tax_rate );
-                
-            }
-
-        }
+        error_log( 'TAX CLASS 4: ' . $tax_class );
 
         $output = $this->get_remote_product_group( $tax_class );
 
@@ -494,7 +527,7 @@ class WCEFR_Products {
 	 */
 	private function prepare_product_data( $product ) {
 
-        $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+        $sku = $product->get_sku() ? $product->get_sku() : $product->get_id();
 
 		/*Sale price*/
 		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
@@ -518,7 +551,7 @@ class WCEFR_Products {
 		}
 
 		$output = array(
-			'productNumber'    => $this->avoid_length_exceed( $sku, 25 ),
+			'productNumber'    => $this->avoid_length_exceed( $product->get_sku(), 25 ),
 			'barred'           => false,
 			'name'             => $this->avoid_length_exceed( $product->get_name(), 300 ),
 			'description'      => $this->avoid_length_exceed( $description, 500 ),
@@ -540,7 +573,7 @@ class WCEFR_Products {
 			);
  
         } 
-
+        
         return $output;
 
 	}
@@ -557,7 +590,7 @@ class WCEFR_Products {
 
 		if ( $product ) {
 
-            $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+            $sku = $product->get_sku() ? $product->get_sku() : $product->get_id();
 
 			/*Avoid parent product export*/
 			if ( ! $product->is_type( 'variable' ) ) {
@@ -575,8 +608,17 @@ class WCEFR_Products {
 					} else {
 
 						$output = $this->wcefr_call->call( 'post', 'products', $args );
-                    
-                    }
+
+					}
+
+					/*Log the error*/
+					if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
+
+						// error_log( 'WCEFR ERROR | Product ID ' . $product_id . ' | ' . $output->message );
+						// error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
+						// error_log( 'ERROR error_log( 'ARGS: ' . print_r( $args, true ) );
+
+					}
 
 				}
 

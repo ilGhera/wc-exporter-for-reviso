@@ -691,8 +691,6 @@ class WCEFR_Orders {
 
 				if ( $invoice_details ) {
 
-					// error_log( 'RESULT: ' . print_r( $result, true ) );
-
 					// $number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
 
 					return array(
@@ -913,8 +911,6 @@ class WCEFR_Orders {
 				if ( isset( $output->errorCode ) && isset( $output->message ) ) {
 
 					error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message );
-
-					// error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
 
 				}
 

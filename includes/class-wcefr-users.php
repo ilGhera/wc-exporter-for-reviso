@@ -343,8 +343,6 @@ class WCEFR_Users {
 			$args['publicEntryNumber'] = $public_entry_number;
 		}
 
-	    // error_log( 'ARGS: ' . print_r( $args, true ) );
-
 		return $args;
 
 	}

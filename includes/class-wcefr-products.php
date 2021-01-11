@@ -195,7 +195,7 @@ class WCEFR_Products {
             
         } else {
     
-            return 0;
+            return 99;
 
         }
 
@@ -453,7 +453,7 @@ class WCEFR_Products {
                 
             } else {
                 
-                $tax_class = 0;
+                $tax_class = 99;
         
             }
 
@@ -571,14 +571,14 @@ class WCEFR_Products {
 			if ( ! $product->is_type( 'variable' ) ) {
 
 				$args = $this->prepare_product_data( $product );
-
+                
 				if ( $args ) {
 
 					$end = $this->format_sku( $sku );
 
 					if ( $this->product_exists( $end ) ) {
 
-						$output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
+                        $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
 
 					} else {
 

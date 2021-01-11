@@ -189,12 +189,14 @@ class WCEFR_Products {
     */ 
     private function get_standard_rate() {
 
-        $results = $this->get_wc_tax_class( 'standard' );
+        $result = $this->get_wc_tax_class( 'standard' );
 
-        if ( is_array( $results ) && isset( $results[0]['tax_rate'] ) ) {
+        error_log( 'RESULT: ' . print_r( $result, true ) );
+
+        if ( isset( $result->tax_rate ) ) {
+
+            return intval( $result->tax_rate );
             
-            return intval( $results[0]['tax_rate'] );
-
         }
 
     }
@@ -207,6 +209,8 @@ class WCEFR_Products {
 	 * @return int the vatCode
 	 */
 	public function add_remote_vat_account( $vat_rate ) {
+        
+        error_log( 'VAT RATE: ' . $vat_rate );
 
 		$args = array(
 			'account' => array(
@@ -217,7 +221,7 @@ class WCEFR_Products {
 				'vatTypeNumber' => 1,
 			),
 			//'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
-			'name'           => sprintf( __( '%n% VAT purchases', 'wc-exporter-for-reviso' ), $vat_rate );
+			'name'           => sprintf( __( '%d%% VAT purchases', 'wc-exporter-for-reviso' ), $vat_rate ),
 			'ratePercentage' => $vat_rate,
 			'vatReportSetup' => array(
 				'vatReportSetupNumber' => 24, // For reduced rates.
@@ -274,7 +278,9 @@ class WCEFR_Products {
 		/*Get the remote vat code*/
 		$vat_code = $this->get_remote_vat_code( $vat_rate ); // temp.
 
-		$account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
+        error_log( 'VAT RATE 2: ' . $vat_rate );
+
+        $account_number = $vat_rate < 10 ? 580550 . $vat_rate : 58055 . $vat_rate;
 
 		$args = array(
 			'accountCategory' => array(
@@ -333,9 +339,11 @@ class WCEFR_Products {
 	 * @return object the remote product group
 	 */
 	private function add_remote_product_group( $product_group_number, $product_group_name ) {
+    
+        error_log( 'PRODUCT GROUP NUMBER: ' . $product_group_number );
 
 		$account_number = $this->get_remote_account_number( $product_group_number );
-		$name           = $product_group_number === $product_group_name ? sprintf( __( '%n% VAT', 'wc-exporter-for-reviso' ), $product_group_number ) : $product_group_name;
+		$name           = $product_group_number == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-exporter-for-reviso' ), $product_group_number ) : $product_group_name;
 
 		$args = array(
 			'productGroupNumber' => $product_group_number,
@@ -384,7 +392,7 @@ class WCEFR_Products {
         );
 
         /* Only with inventory module enabled */ 
-        if ( $this->inventory_module ) {
+        if ( $this->inventory_module() ) {
         
             $args['inventory'] =  array(
 				'purchaseAccount' => array(
@@ -430,7 +438,10 @@ class WCEFR_Products {
 
                 $wc_tax        = $this->get_wc_tax_class( $product_group_number );
                 $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
-
+                
+                error_log( 'WC TAX: ' . print_r( $wc_tax, true ) );
+                error_log( 'TAX RATE NAME: ' . $tax_rate_name );
+           
             }
 
 			$remote_product_group = $this->add_remote_product_group( $product_group_number, $tax_rate_name );
@@ -457,7 +468,7 @@ class WCEFR_Products {
 	 * @param  int  $tax_class the WC tax class assigned to the product.
 	 * @return int             the product group number
 	 */
-	private function get_product_group( $taxable, $tax_class ) {
+	private function get_product_group( $taxable, $tax_class = null ) {
 
 		$output = null;
 
@@ -467,7 +478,11 @@ class WCEFR_Products {
 
         }
 
-        $tax_class = '' == $tax_class ? $this->get_standard_rate() : $tax_class;
+        error_log( 'TAX CLASS 3: ' . $tax_class );
+        
+        $tax_class = null == $tax_class ? $this->get_standard_rate() : $tax_class;
+
+        error_log( 'TAX CLASS 4: ' . $tax_class );
 
         $output = $this->get_remote_product_group( $tax_class );
 
@@ -549,7 +564,7 @@ class WCEFR_Products {
 		);
 
         /* Only with inventory module enabled */ 
-        if ( $this->inventory_module ) {
+        if ( $this->inventory_module() ) {
         
             $output['inventory'] = array(
 				'packageVolume' => $volume,

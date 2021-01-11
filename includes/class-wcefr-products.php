@@ -193,6 +193,10 @@ class WCEFR_Products {
 
             return intval( $result->tax_rate );
             
+        } else {
+    
+            return 0;
+
         }
 
     }
@@ -447,6 +451,10 @@ class WCEFR_Products {
 
                 $tax_class = intval( $tax_class_info->tax_rate );
                 
+            } else {
+                
+                $tax_class = 0;
+        
             }
 
         }

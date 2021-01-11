@@ -51,9 +51,10 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 = 0.9.2 = 
-Release Date: 9 January 2021
+Release Date: 11 January 2021
 
-* Enhancement: Now working even if Inventory module is not active in Reviso
+* Enhancement: Now working even if Inventory module is not activated in Reviso
+* Bug fix: Product without sku non exporterd 
 * Bug fix: Get province called even if country is not Italy
 * Bug fix: Get percentage error in case of value zero
 * Bug fix: Get document number from Reviso 

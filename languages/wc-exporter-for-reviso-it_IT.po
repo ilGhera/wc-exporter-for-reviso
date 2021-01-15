@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-05-20 18:43+0200\n"
-"PO-Revision-Date: 2020-05-20 18:43+0200\n"
+"POT-Creation-Date: 2021-01-10 16:39+0100\n"
+"PO-Revision-Date: 2021-01-10 16:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: _;__;_e;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
@@ -339,39 +339,55 @@ msgstr "Fatturazione elettronica"
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:407
+#: includes/class-wcefr-orders.php:411
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:1005
+#: includes/class-wcefr-orders.php:1014
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1075
+#: includes/class-wcefr-orders.php:1084
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1084
+#: includes/class-wcefr-orders.php:1093
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
-#: includes/class-wcefr-products.php:600
+#: includes/class-wcefr-products.php:216
+msgid "Sales VAT"
+msgstr "IVA vendite"
+
+#: includes/class-wcefr-products.php:220
+msgid "%n% VAT purchases"
+msgstr "Acquisti con IVA al %n%"
+
+#: includes/class-wcefr-products.php:338
+msgid "%n% VAT"
+msgstr "IVA al %n%"
+
+#: includes/class-wcefr-products.php:427
+msgid "No VAT"
+msgstr "Non soggetto a IVA"
+
+#: includes/class-wcefr-products.php:677
 #, php-format
 msgid "%d product(s) export process has begun"
 msgstr "Il processo di esportazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:608
+#: includes/class-wcefr-products.php:685
 msgid "ERROR! There are not products to export"
 msgstr "ERRORE! Non ci sono prodotti da esportare"
 
-#: includes/class-wcefr-products.php:672
+#: includes/class-wcefr-products.php:749
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:679
+#: includes/class-wcefr-products.php:756
 msgid "ERROR! There are not products to delete"
 msgstr "ERRORE! Non ci sono prodotti da cancellare"
 
@@ -379,17 +395,17 @@ msgstr "ERRORE! Non ci sono prodotti da cancellare"
 msgid "Connected"
 msgstr "Connesso"
 
-#: includes/class-wcefr-users.php:421
+#: includes/class-wcefr-users.php:441
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:489
+#: includes/class-wcefr-users.php:509
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:499
+#: includes/class-wcefr-users.php:519
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"

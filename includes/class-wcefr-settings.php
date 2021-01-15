@@ -100,7 +100,7 @@ class WCEFR_Settings {
 	public function check_connection_callback( $return = false ) {
 
 		$response = $this->wcefr_call->call( 'get', 'self' );
-
+        
 		if ( isset( $response->httpStatusCode ) && isset( $response->message ) ) {
 
 			echo false;

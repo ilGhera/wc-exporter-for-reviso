@@ -4,10 +4,11 @@
  * Plugin URI: https://www.ilghera.com/product/woocommerce-exporter-for-reviso-premium
  * Description: Connect your store to Reviso and export orders, products, customers and suppliers.
  * Author: ilGhera
- * Version: 0.9.0
+ * Version: 0.9.3
+ * 
  * Author URI: https://ilghera.com
  * Requires at least: 4.0
- * Tested up to: 5.4
+ * Tested up to: 5.6
  * WC tested up to: 4
  * Text Domain: wc-exporter-for-reviso
  */

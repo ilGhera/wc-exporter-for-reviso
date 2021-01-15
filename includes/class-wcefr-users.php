@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.0
+ * @since 0.9.1
  */
 class WCEFR_Users {
 
@@ -277,8 +277,19 @@ class WCEFR_Users {
 
 		}
 
+		/*Reviso VatZone based on user country */
+		$vat_zone = 'IT' === $country ? 1 : 3;
+
 		/*Reviso's group selected by the admin*/
-		$group = get_option( 'wcefr-' . $type . '-group' );
+		if ( $order ) {
+	
+			$group = 'IT' === $country ? 1 : 2;
+
+		} else {
+
+			$group = get_option( 'wcefr-' . $type . '-group' );
+
+		}
 
 		$args = array(
 			'name'                   => $name,
@@ -290,7 +301,7 @@ class WCEFR_Users {
 			'zip'                    => $postcode,
 			'phone'                  => $phone,
 			'vatZone' => array(
-				'vatZoneNumber' => 1,
+				'vatZoneNumber' => $vat_zone,
 			),
 			'paymentTerms'           => array(
 				'paymentTermsNumber' => 6,
@@ -298,16 +309,19 @@ class WCEFR_Users {
 			'countryCode'            => array(
 				'code' => $country,
 			),
-			'province'               => array(
-				'countryCode' => array(
-					'code' => $country,
-				),
-				'ProvinceNumber' => $this->get_province_number( $state ),
-			),
 			$type_singular . 'Group' => array(
 				$type_singular . 'GroupNumber' => intval( $group ),
 			),
 		);
+
+		if ( 'IT' === $country ) {
+			$args['province'] = array(
+				'countryCode' => array(
+					'code' => $country,
+				),
+				'ProvinceNumber' => $this->get_province_number( $state ),
+			);
+		}
 
 		if ( isset( $website ) ) {
 			$args['website'] = $website;
@@ -363,6 +377,10 @@ class WCEFR_Users {
 			if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
 				error_log( 'WCEFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
+
+			} else {
+
+				return $output;
 
 			}
 

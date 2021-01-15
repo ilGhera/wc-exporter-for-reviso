@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.2
+ * @since 0.9.3
  */
 class WCEFR_Orders {
 
@@ -321,6 +321,7 @@ class WCEFR_Orders {
 
 				$n++;
 				$product = $item->get_product();
+                $sku     = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
 
 				if ( $product ) {
 
@@ -347,8 +348,8 @@ class WCEFR_Orders {
 							),
 						),
 						'product'            => array(
-							'id'            => $product->get_sku(),
-							'productNumber' => $product->get_sku(),
+							'id'            => $sku,
+							'productNumber' => $sku,
 							'name'          => $item['name'],
 						),
 						'unit'              => array(
@@ -911,6 +912,7 @@ class WCEFR_Orders {
 				if ( isset( $output->errorCode ) && isset( $output->message ) ) {
 
 					error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message );
+                    error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
 
 				}
 

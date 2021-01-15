@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.2
+ * @since 0.9.3
  */
 class WCEFR_Products {
 
@@ -330,14 +330,15 @@ class WCEFR_Products {
 	/**
 	 * Add a product group in Reviso
 	 *
-	 * @param  int    $product_group_number the remote product goup.
-	 * @param  string $product_group_name   the remote product group name.
+     * @param  int    $vat_rate           the product group number to search.
+	 * @param  string $product_group_name the remote product group name.
 	 * @return object the remote product group
 	 */
-	private function add_remote_product_group( $product_group_number, $product_group_name ) {
-    
-		$account_number = $this->get_remote_account_number( $product_group_number );
-		$name           = $product_group_number == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-exporter-for-reviso' ), $product_group_number ) : $product_group_name;
+    private function add_remote_product_group( $vat_rate, $product_group_name ) {
+
+        $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
+		$account_number = $this->get_remote_account_number( $vat_rate );
+		$name           = $vat_rate == $product_group_name ? sprintf( __( '%d%% VAT', 'wc-exporter-for-reviso' ), $vat_rate ) : $product_group_name;
 
 		$args = array(
 			'productGroupNumber' => $product_group_number,
@@ -378,13 +379,14 @@ class WCEFR_Products {
 	/**
 	 * Get the number of a specific product group from Reviso
 	 *
-	 * @param  int $product_group_number the product group number to search.
+     * @param  int  $vat_rate the product group number to search.
+     * @param  bool $standard true for standard VAT rate product group.
 	 * @return int
 	 */
-	private function get_remote_product_group( $product_group_number ) {
+	private function get_remote_product_group( $vat_rate, $standard = false ) {
 
 		$output = null;
-
+        $product_group_number = 99 != $vat_rate ? ( intval( 100 + $vat_rate ) ) : $vat_rate;
 		$remote_product_group = $this->wcefr_call->call( 'get', 'product-groups/' . $product_group_number );
 
 		if ( isset( $remote_product_group->productGroupNumber ) ) {
@@ -400,12 +402,12 @@ class WCEFR_Products {
 
             } else {
 
-                $wc_tax        = $this->get_wc_tax_class( $product_group_number );
+                $wc_tax        = $standard ? $this->get_wc_tax_class( 'standard' ) : $this->get_wc_tax_class( $vat_rate );
                 $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
                 
             }
 
-			$remote_product_group = $this->add_remote_product_group( $product_group_number, $tax_rate_name );
+			$remote_product_group = $this->add_remote_product_group( $vat_rate, $tax_rate_name );
 
 			if ( isset( $remote_product_group->productGroupNumber ) ) {
 
@@ -431,7 +433,8 @@ class WCEFR_Products {
 	 */
 	private function get_product_group( $taxable, $tax_class = null ) {
 
-		$output = null;
+        $standard = false;
+		$output   = null;
 
 		if ( ! $taxable ) {
 
@@ -442,6 +445,7 @@ class WCEFR_Products {
         if ( null == $tax_class ) {
             
             $tax_class = $this->get_standard_rate();
+            $standard  = true;
 
         } elseif ( ! is_numeric( $tax_class ) ) {
 
@@ -459,9 +463,9 @@ class WCEFR_Products {
 
         }
 
-        $output = $this->get_remote_product_group( $tax_class );
+        $output = $this->get_remote_product_group( $tax_class, $standard );
 
-		return $output;
+        return $output;
 
 	}
 
@@ -582,7 +586,7 @@ class WCEFR_Products {
 
 					} else {
 
-						$output = $this->wcefr_call->call( 'post', 'products', $args );
+                        $output = $this->wcefr_call->call( 'post', 'products', $args );
                     
                     }
 

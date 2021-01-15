@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.0
+ * @since 0.9.3
  */
 class WCEFR_Call {
 
@@ -58,8 +58,10 @@ class WCEFR_Call {
 	 */
 	public function call( $method, $endpoint = '', $args = null, $decode = true ) {
 
-		$body = $args ? json_encode( $args ) : '';
+        ini_set( 'serialize_precision', -1 );
 
+		$body = $args ? json_encode( $args ) : '';
+        
 		$response = wp_remote_request(
 			$this->base_url . $endpoint,
 			array(

@@ -125,38 +125,6 @@ class WCEFR_Products {
 
 
 	/**
-	 * Returns the string passed less long than the limit specified
-	 *
-	 * @param  string $text  the full WC product description.
-	 * @param  int    $limit the string length limit.
-	 * @return string
-	 */
-	private function avoid_length_exceed( $text, $limit ) {
-
-		$output = $text;
-
-		if ( strlen( $text ) > $limit ) {
-
-			if ( 25 === intval( $limit ) ) {
-
-				/*Product number (sku)*/
-				$output = substr( $text, 0, $limit );
-
-			} else {
-
-				/*Product name and description*/
-				$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
-
-			}
-
-		}
-
-		return $output;
-
-	}
-
-
-	/**
 	 * Get WC tax class details
 	 *
 	 * @param  string $tax_rate_class set for a specific tax rate class.
@@ -530,10 +498,10 @@ class WCEFR_Products {
 		}
 
 		$output = array(
-			'productNumber'    => $this->avoid_length_exceed( $sku, 25 ),
+			'productNumber'    => avoid_length_exceed( $sku, 25 ),
 			'barred'           => false,
-			'name'             => $this->avoid_length_exceed( $product->get_name(), 300 ),
-			'description'      => $this->avoid_length_exceed( $description, 500 ),
+			'name'             => avoid_length_exceed( $product->get_name(), 300 ),
+			'description'      => avoid_length_exceed( $description, 500 ),
 			'salesPrice'       => floatval( wc_format_decimal( $sale_price, 2 ) ),
 			'productGroup'     => array(
 				'productGroupNumber' => $this->get_product_group( $product->is_taxable(), $product->get_tax_class() ),

@@ -246,7 +246,8 @@ class WCEFR_Orders {
 	 */
 	public function add_remote_payment_method( $payment_gateway ) {
 
-		$output = $this->payment_metod_exists( $payment_gateway );
+        $payment_gateway = avoid_length_exceed( $payment_gateway, 50 );
+		$output          = $this->payment_metod_exists( $payment_gateway );
 
 		if ( ! $output ) {
 
@@ -257,6 +258,8 @@ class WCEFR_Orders {
 			);
 
 			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
+
+            error_log( 'RESPONSE: ' . print_r( $response, true ) );
 
 			if ( isset( $response->name ) ) {
 
@@ -779,8 +782,11 @@ class WCEFR_Orders {
 		$order_completed        = 'completed' === $order->get_status() ? true : false;
 		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order );
 
-		/*Add the payment method if not already on Reviso*/
-		$payment_method = $this->add_remote_payment_method( $order->get_payment_method_title() );
+        /*Add the payment method if not already on Reviso*/
+        $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
+        $payment_method       = $this->add_remote_payment_method( $payment_method_title );
+
+        error_log( 'METOD ' . $order->get_id() . ': ' . print_r( $payment_method, true ) );
 
 		$output = array(
 			'currency'               => $order->get_currency(),
@@ -1116,3 +1122,4 @@ class WCEFR_Orders {
 
 }
 new WCEFR_Orders( true );
+

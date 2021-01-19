@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.3
+ * @since 0.9.1
  */
 class WCEFR_Orders {
 
@@ -69,3 +69,4 @@ class WCEFR_Orders {
 
 }
 new WCEFR_Orders( true );
+

@@ -1,7 +1,7 @@
 === WooCommerce Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 0.9.4
+Version: 0.9.1
 Requires at least: 4.0
 Tested up to: 5.6
 License: GPLv2
@@ -83,43 +83,19 @@ This plugin sends data to an external service, like the products bought by the u
 
 == Changelog ==
 
+= 0.9.1 = 
+Release Date: 20 June 2020
 
-= 0.9.4 = 
-Release Date: 18 January 2021
-
+* Enhancement: Now working even if Inventory module is not activated in Reviso
 * Enhancement: VIES VAT number validation
 * Enhancement: New option for mandatory fiscal code
 * Enhancement: New option for mandatory VAT code only in European Union countries
 * Bug fix: Company name field hidden with private invoice 
 * Bug fix: Impossible exporting payment methods with name longer than 50 
-
-
-= 0.9.3 = 
-Release Date: 15 January 2021
-
-* Bug fix: Orders with products without sku not exported 
-* Bug fix: Wrong number of decimals in serialized data exporting orders  
-
-
-= 0.9.2 = 
-Release Date: 11 January 2021
-
-* Enhancement: Now working even if Inventory module is not activated in Reviso
-* Bug fix: Product without sku non exporterd 
-* Bug fix: Get province called even if country is not Italy
-* Bug fix: Get percentage error in case of value zero
-* Bug fix: Get document number from Reviso 
-* Bug fix: Layout value removed exporting orders
-* Bug fix: Create new payment term in Reviso
-* Bug fix: Invoice preview link not working in Multisite
-
-
-= 0.9.1 = 
-Release Date: 20 June 2020
-
-* Bug fix: Error exporting orders made by guest users
 * Bug fix: Wrong customers group assigned to foreign users
 * Bug fix: Wrong IVA Zone assigned to foreign users
+* Bug fix: Get province called even if country is not Italy
+* Bug fix: Product without sku non exporterd 
 
 
 = 0.9.0 = 

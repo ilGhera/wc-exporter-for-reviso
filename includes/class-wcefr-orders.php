@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.4
+ * @since 0.9.5
  */
 class WCEFR_Orders {
 
@@ -259,8 +259,6 @@ class WCEFR_Orders {
 
 			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
 
-            error_log( 'RESPONSE: ' . print_r( $response, true ) );
-
 			if ( isset( $response->name ) ) {
 
 				$output = $response;
@@ -290,6 +288,31 @@ class WCEFR_Orders {
 		}
 
 	}
+
+
+   /*
+    * Get the total order discount
+    *
+    * @param object $order the order.
+    * @return float the discount percentage
+    */ 
+    private function get_order_discount_percentage( $order ) {
+    
+        $net_total = number_format(
+            (float)
+            $order->get_total()          -
+            $order->get_total_tax()      -
+            $order->get_total_shipping() -
+            $order->get_shipping_tax()   +
+            $order->get_total_discount(),
+            wc_get_price_decimals(),
+            '.',
+            ''
+        );
+
+        return $this->get_percentage( $order->get_total_discount(), $net_total );
+
+    }
 
 
 	/**
@@ -333,13 +356,13 @@ class WCEFR_Orders {
 					$total_gross_amount = floatval( wc_format_decimal( $order->get_line_total( $item, false, false ), 10 ) ) + floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$total_vat_amount   = floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$vat_rate           = $this->get_percentage( $total_vat_amount, $total_net_amount );
-
+                    
 					$output[] = array(
 
 						'lineNumber'         => $n,
 						'quantity'           => $qty,
 						'description'        => $item['name'],
-						'discountPercentage' => $this->get_percentage( $order->get_total_discount(), $total_net_amount ),
+						'discountPercentage' => $this->get_order_discount_percentage( $order ),
 						'quantity'           => wc_stock_amount( $item['qty'] ),
 						'totalNetAmount'     => $total_net_amount,
 						'totalGrossAmount'   => $total_gross_amount,
@@ -786,8 +809,6 @@ class WCEFR_Orders {
         $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
         $payment_method       = $this->add_remote_payment_method( $payment_method_title );
 
-        error_log( 'METOD ' . $order->get_id() . ': ' . print_r( $payment_method, true ) );
-
 		$output = array(
 			'currency'               => $order->get_currency(),
 			'date'                   => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
@@ -812,10 +833,6 @@ class WCEFR_Orders {
 				'country' => $order->get_shipping_country(),
 				'zip'     => $order->get_shipping_postcode(),
 			),
-			// 'layout'                 => array( // temp.
-			// 	'isDefault'    => false,
-			// 	'layoutNumber' => 9,
-			// ),
 			'recipient'              => array(
 				'address'           => $order->get_billing_address_1(),
 				'city'              => $order->get_billing_city(),
@@ -860,7 +877,7 @@ class WCEFR_Orders {
 			}
 
 		}
-
+        
 		return $output;
 
 	}

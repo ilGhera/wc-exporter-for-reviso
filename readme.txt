@@ -1,7 +1,7 @@
 === WooCommerce Exporter for Reviso - Premium ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 0.9.4
+Version: 0.9.5
 Requires at least: 4.0
 Tested up to: 5.6
 License: GPLv2
@@ -49,6 +49,12 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+
+= 0.9.5 = 
+Release Date: 23 January 2021
+
+* Bug fix: wrong discount percentage exporting orders
 
 
 = 0.9.4 = 

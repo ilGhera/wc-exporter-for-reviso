@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 0.9.0
+ * @since 0.9.5
  */
 
 ?>
@@ -76,12 +76,13 @@ wp_localize_script(
 	<h2><?php esc_html_e( 'Orders settings', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<?php
-	$wcefr_export_orders   = get_option( 'wcefr-export-orders' );
-	$wcefr_create_invoices = get_option( 'wcefr-create-invoices' );
-	$wcefr_issue_invoices  = get_option( 'wcefr-issue-invoices' );
-	$wcefr_send_invoices   = get_option( 'wcefr-send-invoices' );
-	$wcefr_book_invoices   = get_option( 'wcefr-book-invoices' );
-	$wcefr_number_series   = get_option( 'wcefr-number-series-prefix' );
+	$wcefr_export_orders          = get_option( 'wcefr-export-orders' );
+	$wcefr_create_invoices        = get_option( 'wcefr-create-invoices' );
+	$wcefr_issue_invoices         = get_option( 'wcefr-issue-invoices' );
+	$wcefr_send_invoices          = get_option( 'wcefr-send-invoices' );
+	$wcefr_book_invoices          = get_option( 'wcefr-book-invoices' );
+	$wcefr_number_series          = get_option( 'wcefr-number-series-prefix' );
+	$wcefr_number_series_receipts = get_option( 'wcefr-number-series-receipts-prefix' );
 
 	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-orders-settings-nonce'] ), 'wcefr-orders-settings' ) ) {
 
@@ -102,6 +103,9 @@ wp_localize_script(
 
 		$wcefr_number_series = isset( $_POST['wcefr-number-series'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-number-series'] ) ) : $wcefr_number_series;
 		update_option( 'wcefr-number-series-prefix', $wcefr_number_series );
+    
+        $wcefr_number_series_receipts = isset( $_POST['wcefr-number-series-receipts'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-number-series-receipts'] ) ) : $wcefr_number_series_receipts;
+		update_option( 'wcefr-number-series-receipts-prefix', $wcefr_number_series_receipts );
 	}
 	?>
 
@@ -143,28 +147,50 @@ wp_localize_script(
 		</tr>
 		<tr class="wcefr-number-series-field">
 			<th scope="row"><?php esc_html_e( 'Number series', 'wc-exporter-for-reviso' ); ?></th>
-			<td>
-				<?php
-				$class = new WCEFR_Orders();
-				$get_remote_series = $class->get_remote_number_series( null, 'customerInvoice' );
+            <td>
+                <div class="wcefr-number-series">
+                    <?php
+                    $class = new WCEFR_Orders();
+                    $get_remote_series = $class->get_remote_number_series( null, 'customerInvoice' );
 
-				if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
+                    if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
 
-					echo '<select name="wcefr-number-series" class="wcefr-select-large">';
+                        echo '<select name="wcefr-number-series" class="wcefr-select-large">';
 
-					foreach ( $get_remote_series as $single ) {
+                        foreach ( $get_remote_series as $single ) {
 
-						$checked = $single->prefix === $wcefr_number_series ? ' selected="selected"' : '';
+                            $checked = $single->prefix === $wcefr_number_series ? ' selected="selected"' : '';
 
-						echo '<option value="' . esc_attr( $single->prefix ) . '"' . esc_attr( $checked ) . '>' . esc_html( $single->prefix ) . ' - ' . esc_html( $single->name ) . '</option>';
+                            echo '<option value="' . esc_attr( $single->prefix ) . '"' . esc_attr( $checked ) . '>' . esc_html( $single->prefix ) . ' - ' . esc_html( $single->name ) . '</option>';
 
-					}
+                        }
 
-					echo '</select>';
+                        echo '</select>';
 
-				}
-				?>
-				<p class="description"><?php esc_html_e( 'Choose the series of numbers to use for invoices ', 'wc-exporter-for-reviso' ); ?></p>
+                    }
+                    ?>
+                    <p class="description"><?php echo wp_kses_post( __( 'Choose the series of numbers to use for <b>Invoices</b>', 'wc-exporter-for-reviso' ) ); ?></p>
+                </div>
+                <div class="wcefr-number-series-receipts">
+                    <?php
+                    if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
+
+                        echo '<select name="wcefr-number-series-receipts" class="wcefr-select-large">';
+
+                        foreach ( $get_remote_series as $single ) {
+
+                            $checked = $single->prefix === $wcefr_number_series_receipts ? ' selected="selected"' : '';
+
+                            echo '<option value="' . esc_attr( $single->prefix ) . '"' . esc_attr( $checked ) . '>' . esc_html( $single->prefix ) . ' - ' . esc_html( $single->name ) . '</option>';
+
+                        }
+
+                        echo '</select>';
+
+                    }
+                    ?>
+                    <p class="description"><?php echo wp_kses_post( __( 'Choose the series of numbers to use for <b>Receipts</b>', 'wc-exporter-for-reviso' ) ); ?></p>
+                </div>
 			</td>
 		</tr>
 	</table>

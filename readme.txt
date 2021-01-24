@@ -52,8 +52,9 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 = 0.9.5 = 
-Release Date: 23 January 2021
+Release Date: 25 January 2021
 
+* Enhancement: Choose a specific number series for receipts
 * Bug fix: wrong discount percentage exporting orders
 
 

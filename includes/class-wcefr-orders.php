@@ -17,12 +17,13 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$this->export_orders        = get_option( 'wcefr-export-orders' );
-			$this->create_invoices      = get_option( 'wcefr-create-invoices' );
-			$this->issue_invoices       = get_option( 'wcefr-issue-invoices' );
-			$this->send_invoices        = get_option( 'wcefr-send-invoices' );
-			$this->book_invoices        = get_option( 'wcefr-book-invoices' );
-			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
+			$this->export_orders                 = get_option( 'wcefr-export-orders' );
+			$this->create_invoices               = get_option( 'wcefr-create-invoices' );
+			$this->issue_invoices                = get_option( 'wcefr-issue-invoices' );
+			$this->send_invoices                 = get_option( 'wcefr-send-invoices' );
+			$this->book_invoices                 = get_option( 'wcefr-book-invoices' );
+			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
+			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' ); 
 			$this->init();
 
 			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
@@ -565,7 +566,7 @@ class WCEFR_Orders {
 
 
 	/**
-	 * Get a specific number sirie from Reviso
+	 * Get a specific number serie from Reviso
 	 *
 	 * @param  string $prefix     example are FVE, FVL, ecc.
 	 * @param  string $entry_type used to filter the number series.
@@ -640,7 +641,7 @@ class WCEFR_Orders {
 			'date'         => wp_date( 'Y-m-d' ),
 			'lines'        => $lines,
 			'numberSeries' => array(
-				'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
+				'numberSeriesNumber' => $this->get_remote_number_series( $this->get_order_ns_prefix( $order ), null, true ),
 			),
 		);
 
@@ -786,6 +787,27 @@ class WCEFR_Orders {
 	}
 
 
+   /**
+    * Get the number series prefix based on the order type
+    *
+    * @param object $order the order.
+    * @return string 
+    */ 
+    private function get_order_ns_prefix( $order ) {
+
+        if( 'private' ===  $order->get_meta( '_billing_wcefr_invoice_type' ) ) {
+           
+            return $this->number_series_prefix_receipts;
+            
+        } else {
+            
+            return $this->number_series_prefix; 
+
+        }
+
+    }
+
+
 	/**
 	 * Prepare order data to export to Reviso
 	 *
@@ -793,7 +815,7 @@ class WCEFR_Orders {
 	 * @return array
 	 */
 	private function prepare_order_data( $order ) {
-
+        
 		$company_name           = $order->get_billing_company();
 		$customer_name          = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
 		$client_name            = $company_name ? $company_name : $customer_name;
@@ -848,7 +870,7 @@ class WCEFR_Orders {
 				'text1' => 'WC-Order-' . $order->get_id(),
 			),
 			'numberSeries'          => array(
-				'numberSeriesNumber' => $this->get_remote_number_series( $this->number_series_prefix, null, true ),
+				'numberSeriesNumber' => $this->get_remote_number_series( $this->get_order_ns_prefix( $order ), null, true ),
 			),
 		);
 

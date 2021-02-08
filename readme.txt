@@ -86,6 +86,7 @@ This plugin sends data to an external service, like the products bought by the u
 = 0.9.2 =
 Release Date: 8 February 2021 
 
+* Enhancement: (Premium) Choose a specific number series for receipts
 * Bug fix: VIES check not working in some cases with italian VAT number
 * Bug fix: Billing information not required by the selected document type
 

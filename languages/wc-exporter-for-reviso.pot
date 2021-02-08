@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2021-01-23 07:33+0100\n"
+"POT-Creation-Date: 2021-02-08 13:00+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -242,29 +242,29 @@ msgstr ""
 msgid "Delete all suppliers on Reviso"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:88
+#: includes/class-wcefr-orders.php:89
 msgid "Invoice"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:438
+#: includes/class-wcefr-orders.php:439
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:809
+#: includes/class-wcefr-orders.php:831
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1035
+#: includes/class-wcefr-orders.php:1057
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1105
+#: includes/class-wcefr-orders.php:1127
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1114
+#: includes/class-wcefr-orders.php:1136
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
@@ -364,7 +364,7 @@ msgstr ""
 msgid "Documento fiscale"
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:329
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:383
 #, php-format
 msgid ""
 "Non hai inserito <strong>PEC</strong> o <strong>Codice destinatario</"
@@ -373,11 +373,23 @@ msgid ""
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:398
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:468
+msgid ""
+"ATTENZIONE! Sembra che il <strong>Codice Fiscale</strong> inserito non sia "
+"corretto."
+msgstr ""
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:412
+msgid ""
+"ATTENZIONE! Sembra che la <strong>Partita IVA</strong> inserita non sia "
+"corretta."
+msgstr ""
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:455
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:525
 msgid "Dati di fatturazione"
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:447
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:504
 msgid "Dati fatturazione"
 msgstr ""
 

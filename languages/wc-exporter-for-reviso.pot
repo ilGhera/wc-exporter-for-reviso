@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2021-02-08 13:00+0100\n"
+"POT-Creation-Date: 2021-02-08 14:45+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -328,11 +328,11 @@ msgid "ERROR! There are not %s to delete"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:66
-msgid "Partita IVA"
+msgid "VAT number"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:67
-msgid "Codice fiscale"
+msgid "Fiscal code"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:68
@@ -341,56 +341,44 @@ msgid "PEC"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:69
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:174
-msgid "Codice destinatario"
+msgid "Receiver code"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:92
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
-msgid "Privato ( Ricevuta )"
+msgid "Private (Receipt)"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:96
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:111
-msgid "Privato ( Fattura )"
+msgid "Private (Invoice)"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:100
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:105
-msgid "Azienda ( Fattura )"
+msgid "Company (Invoice)"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:111
-msgid "Documento fiscale"
+msgid "Fiscal document"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:383
 #, php-format
 msgid ""
-"Non hai inserito <strong>PEC</strong> o <strong>Codice destinatario</"
-"strong>, puoi utilizzare il Codice destinatario generico <strong><u>%s</u></"
-"strong>."
+"<strong>PEC</strong> field or <strong>Receiver Code</strong> field must be "
+"completed, you can use the generic code <strong><u>%s</u></strong>."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:398
-msgid ""
-"ATTENZIONE! Sembra che il <strong>Codice Fiscale</strong> inserito non sia "
-"corretto."
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:399
+msgid "WARNING! The <strong>Tax Code</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:412
-msgid ""
-"ATTENZIONE! Sembra che la <strong>Partita IVA</strong> inserita non sia "
-"corretta."
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:413
+msgid "WARNING! The <strong>VAT number</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:455
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:525
-msgid "Dati di fatturazione"
-msgstr ""
-
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:504
-msgid "Dati fatturazione"
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:456
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:505
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:526
+msgid "Electronic invoicing"
 msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:94
@@ -399,6 +387,18 @@ msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:100
 msgid "Documenti fiscali"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:105
+msgid "Azienda ( Fattura )"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:111
+msgid "Privato ( Fattura )"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
+msgid "Privato ( Ricevuta )"
 msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:120
@@ -459,6 +459,10 @@ msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:170
 msgid "Attiva il campo PEC per la fatturazione elettronica"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:174
+msgid "Codice destinatario"
 msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:179

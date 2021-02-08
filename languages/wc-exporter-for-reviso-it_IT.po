@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-01-23 07:33+0100\n"
-"PO-Revision-Date: 2021-01-23 07:34+0100\n"
+"POT-Creation-Date: 2021-02-08 14:57+0100\n"
+"PO-Revision-Date: 2021-02-08 14:59+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -247,29 +247,29 @@ msgstr "Cancella fornitori"
 msgid "Delete all suppliers on Reviso"
 msgstr "Cancella tutti i fornitori in Reviso"
 
-#: includes/class-wcefr-orders.php:88
+#: includes/class-wcefr-orders.php:89
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:438
+#: includes/class-wcefr-orders.php:439
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:809
+#: includes/class-wcefr-orders.php:831
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1035
+#: includes/class-wcefr-orders.php:1057
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1105
+#: includes/class-wcefr-orders.php:1127
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1114
+#: includes/class-wcefr-orders.php:1136
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
@@ -278,20 +278,16 @@ msgid "Sales VAT"
 msgstr "IVA vendite"
 
 #: includes/class-wcefr-products.php:190
-#, fuzzy, php-format
-#| msgid "%n% VAT purchases"
+#, php-format
 msgid "%d%% VAT purchases"
 msgstr "Acquisti con IVA al %n%"
 
 #: includes/class-wcefr-products.php:258
-#, fuzzy
-#| msgid "Sales VAT"
 msgid "Sale of goods VAT "
 msgstr "IVA vendite"
 
 #: includes/class-wcefr-products.php:309
-#, fuzzy, php-format
-#| msgid "%n% VAT"
+#, php-format
 msgid "%d%% VAT"
 msgstr "IVA al %n%"
 
@@ -337,12 +333,12 @@ msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:66
-msgid "Partita IVA"
-msgstr ""
+msgid "VAT number"
+msgstr "Partita IVA"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:67
-msgid "Codice fiscale"
-msgstr ""
+msgid "Fiscal code"
+msgstr "Codice Fiscale"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:68
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:165
@@ -350,47 +346,52 @@ msgid "PEC"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:69
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:174
-msgid "Codice destinatario"
-msgstr ""
+msgid "Receiver code"
+msgstr "Codice ricevente"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:92
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
-#, fuzzy
-#| msgid "Private (Receipt)"
-msgid "Privato ( Ricevuta )"
-msgstr "Privato (Ricevuta)"
+msgid "Private (Receipt)"
+msgstr "Privato (Fattura)"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:96
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:111
-msgid "Privato ( Fattura )"
-msgstr ""
+msgid "Private (Invoice)"
+msgstr "Privato (Fattura)"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:100
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:105
-msgid "Azienda ( Fattura )"
-msgstr ""
+msgid "Company (Invoice)"
+msgstr "Azienda (Fattura)"
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:111
-msgid "Documento fiscale"
-msgstr ""
+msgid "Fiscal document"
+msgstr "Documento fiscale"
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:329
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:383
 #, php-format
 msgid ""
-"Non hai inserito <strong>PEC</strong> o <strong>Codice destinatario</"
-"strong>, puoi utilizzare il Codice destinatario generico <strong><u>%s</u></"
+"<strong>PEC</strong> field or <strong>Receiver Code</strong> field must be "
+"completed, you can use the generic code <strong><u>%s</u></strong>."
+msgstr ""
+"Uno dei campi tra<strong> PEC </strong> e <strong> Codice Fiscale </strong> "
+"deve essere compilato, puoi utilizzare il campo generico <strong><u>%s</u></"
 "strong>."
-msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:398
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:468
-msgid "Dati di fatturazione"
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:399
+msgid "WARNING! The <strong>Tax Code</strong> entered is incorrect."
 msgstr ""
+"ATTENZIONE! Sembra che il <strong>Codice Fiscale</strong> inserito non sia "
+"corretto."
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:447
-msgid "Dati fatturazione"
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:413
+msgid "WARNING! The <strong>VAT number</strong> entered is incorrect."
 msgstr ""
+"ATTENZIONE! Sembra che la <strong>Partita IVA</strong> inserita non sia "
+"corretta."
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:456
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:505
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:526
+msgid "Electronic invoicing"
+msgstr "Fatturazione elettronica"
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:94
 msgid "Pagina di checkout"
@@ -400,6 +401,18 @@ msgstr ""
 msgid "Documenti fiscali"
 msgstr ""
 
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:105
+msgid "Azienda ( Fattura )"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:111
+msgid "Privato ( Fattura )"
+msgstr ""
+
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
+msgid "Privato ( Ricevuta )"
+msgstr "Privato (Ricevuta)"
+
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:120
 msgid ""
 "Attivando uno o più tipi di fattura, verranno visualizzati i campi P.IVA e "
@@ -407,8 +420,6 @@ msgid ""
 msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:124
-#, fuzzy
-#| msgid "Tax documents"
 msgid "Tipo documento"
 msgstr "Documento contabile"
 
@@ -462,6 +473,10 @@ msgstr ""
 msgid "Attiva il campo PEC per la fatturazione elettronica"
 msgstr ""
 
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:174
+msgid "Codice destinatario"
+msgstr ""
+
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:179
 msgid "Attiva il campo Codice destinatario per la fatturazione elettronica"
 msgstr ""
@@ -493,12 +508,6 @@ msgstr ""
 #~ msgid "Checkout page"
 #~ msgstr "Pagina di checkout"
 
-#~ msgid "Company (Invoice)"
-#~ msgstr "Azienda (Fattura)"
-
-#~ msgid "Private (Invoice)"
-#~ msgstr "Privato (Fattura)"
-
 #~ msgid ""
 #~ "By activating one or more types of invoice, the fields VAT and Tax Code "
 #~ "will be displayed when needed."
@@ -527,28 +536,6 @@ msgstr ""
 
 #~ msgid "Activate the Receiving Code field for electronic invoicing"
 #~ msgstr "Attiva il campo codice destinatario per la fatturazione elettronica"
-
-#~ msgid "VAT number"
-#~ msgstr "Partita IVA"
-
-#~ msgid "Fiscal code"
-#~ msgstr "Codice Fiscale"
-
-#~ msgid "Receiver code"
-#~ msgstr "Codice ricevente"
-
-#~ msgid "Fiscal document"
-#~ msgstr "Documento fiscale"
-
-#~ msgid ""
-#~ "The <strong> PEC </strong> field or the <strong> Receiver Code </strong> "
-#~ "field must be completed"
-#~ msgstr ""
-#~ "Uno dei campi tra<strong> PEC </strong> e <strong> Codice Fiscale </"
-#~ "strong> deve essere compilato"
-
-#~ msgid "Electronic invoicing"
-#~ msgstr "Fatturazione elettronica"
 
 #~ msgid "Save "
 #~ msgstr "Salva"

@@ -1,7 +1,7 @@
 === WooCommerce Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 0.9.1
+Version: 0.9.2
 Requires at least: 4.0
 Tested up to: 5.6
 License: GPLv2
@@ -82,6 +82,13 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+= 0.9.2 =
+Release Date: 8 February 2021 
+
+* Bug fix: VIES check not working in some cases with italian VAT number
+* Bug fix: Billing information not required by the selected document type
+
 
 = 0.9.1 = 
 Release Date: 20 June 2020

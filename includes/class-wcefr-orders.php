@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.0
+ * @since 0.9.2
  */
 class WCEFR_Orders {
 
@@ -17,7 +17,8 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$this->number_series_prefix = get_option( 'wcefr-number-series-prefix' );
+			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
+			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' ); 
 
 		}
 
@@ -27,7 +28,7 @@ class WCEFR_Orders {
 
 
 	/**
-	 * Get a specific number sirie from Reviso
+	 * Get a specific number serie from Reviso
 	 *
 	 * @param  string $prefix     example are FVE, FVL, ecc.
 	 * @param  string $entry_type used to filter the number series.

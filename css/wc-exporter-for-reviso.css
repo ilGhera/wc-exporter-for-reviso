@@ -3,7 +3,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/css
- * @version 0.0.9
+ * @version 0.9.2
  */
 
 .wcefr-admin {
@@ -269,6 +269,9 @@ h4.wcefr-connection-status {
 	display: none;
 }
 
+.wcefr-number-series-receipts {
+    margin-top: 20px;
+}
 
 @media screen and (max-width: 1000px) {
 

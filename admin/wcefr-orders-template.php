@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 0.9.0
+ * @since 0.9.2
  */
 
 ?>
@@ -102,29 +102,52 @@
 		</tr>
 		<tr class="wcefr-number-series-field">
 			<th scope="row"><?php esc_html_e( 'Number series', 'wc-exporter-for-reviso' ); ?></th>
-			<td>
-				<?php
-				$class = new WCEFR_Orders();
-				$get_remote_series = $class->get_remote_number_series( null, 'customerInvoice' );
+            <td>
+                <div class="wcefr-number-series">
+                    <?php
+                    $class = new WCEFR_Orders();
+                    $get_remote_series = $class->get_remote_number_series( null, 'customerInvoice' );
 
-				if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
+                    if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
 
-					echo '<select name="wcefr-number-series" class="wcefr-select-large">';
+                        echo '<select name="wcefr-number-series" class="wcefr-select-large">';
 
-					foreach ( $get_remote_series as $single ) {
+                        foreach ( $get_remote_series as $single ) {
 
 						echo '<option value="' . esc_attr( $single->prefix ) . '">' . esc_html( $single->prefix ) . ' - ' . esc_html( $single->name ) . '</option>';
 
-					}
+                        }
 
-					echo '</select>';
+                        echo '</select>';
 
-				}
-				?>
-				<p class="description"><?php esc_html_e( 'Choose the series of numbers to use for invoices ', 'wc-exporter-for-reviso' ); ?></p>
+                    }
+                    ?>
+                    <p class="description"><?php echo wp_kses_post( __( 'Choose the series of numbers to use for <b>Invoices</b>', 'wc-exporter-for-reviso' ) ); ?></p>
+
+                    <?php wcefr_go_premium(); ?>
+
+                </div>
+                <div class="wcefr-number-series-receipts">
+                    <?php
+                    if ( is_array( $get_remote_series ) && ! empty( $get_remote_series ) ) {
+
+                        echo '<select name="wcefr-number-series-receipts" class="wcefr-select-large">';
+
+                        foreach ( $get_remote_series as $single ) {
+
+                            echo '<option value="' . esc_attr( $single->prefix ) . '">' . esc_html( $single->prefix ) . ' - ' . esc_html( $single->name ) . '</option>';
+
+                        }
+
+                        echo '</select>';
+
+                    }
+                    ?>
+                    <p class="description"><?php echo wp_kses_post( __( 'Choose the series of numbers to use for <b>Receipts</b>', 'wc-exporter-for-reviso' ) ); ?></p>
 
 				<?php wcefr_go_premium(); ?>
 
+                </div>
 			</td>
 		</tr>
 	</table>

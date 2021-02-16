@@ -52,7 +52,7 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 = 0.9.7 =
-Release Date: 16 January 2021 
+Release Date: 16 February 2021 
 
 * Bug fix: Billing data entered not recognized 
 

@@ -120,7 +120,7 @@ class WCEFR_Admin {
 						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wc-exporter-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wc-exporter-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wc-exporter-for-reviso' ) ) . '</a>';
-						echo '<a href="#" data-link="wcefr-orders" class="nav-tab" onclick="return false;">' . esc_html( __( 'Orders', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-orders" class="nav-tab nav-tab-orders" onclick="return false;">' . esc_html( __( 'Orders', 'wc-exporter-for-reviso' ) ) . '</a>';
 					echo '</h2>';
 
 					/*Settings*/

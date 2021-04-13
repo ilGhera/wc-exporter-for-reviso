@@ -10,7 +10,7 @@
 ?>
 
 <!-- Export form -->
-<form name="wcefr-orders" class="wcefr-form"  method="post" action="">
+<form name="wcefr-orders" class="wcefr-form wcefr-orders-form"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -83,6 +83,7 @@ wp_localize_script(
 	$wcefr_book_invoices          = get_option( 'wcefr-book-invoices' );
 	$wcefr_number_series          = get_option( 'wcefr-number-series-prefix' );
 	$wcefr_number_series_receipts = get_option( 'wcefr-number-series-receipts-prefix' );
+	$wcefr_orders_customers_group = get_option( 'wcefr-orders-customers-group' );
 
 	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-orders-settings-nonce'] ), 'wcefr-orders-settings' ) ) {
 
@@ -106,6 +107,9 @@ wp_localize_script(
     
         $wcefr_number_series_receipts = isset( $_POST['wcefr-number-series-receipts'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-number-series-receipts'] ) ) : $wcefr_number_series_receipts;
 		update_option( 'wcefr-number-series-receipts-prefix', $wcefr_number_series_receipts );
+
+        $wcefr_orders_customers_group = isset( $_POST['wcefr-orders-customers-group'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-orders-customers-group'] ) ) : $wcefr_orders_customers_group;
+		update_option( 'wcefr-orders-customers-group', $wcefr_orders_customers_group );
 	}
 	?>
 
@@ -191,6 +195,15 @@ wp_localize_script(
                     ?>
                     <p class="description"><?php echo wp_kses_post( __( 'Choose the series of numbers to use for <b>Receipts</b>', 'wc-exporter-for-reviso' ) ); ?></p>
                 </div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Customers group', 'wc-exporter-for-reviso' ); ?></th>
+			<td>
+            <select data-group-selected="<?php echo esc_attr( $wcefr_orders_customers_group ); ?>" class="wcefr-customers-groups wcefr-orders-customers-group" name="wcefr-orders-customers-group">
+                    <option value="0"><?php esc_html_e( 'Auto', 'wc-exporter-for-reviso' ); ?></option>
+                </select>
+				<p class="description"><?php echo wp_kses_post( __( 'Select a specific group of Reviso customers or use <i>Auto</i> for national and foreign groups', 'wc-exporter-for-reviso' ) ); ?></p>
 			</td>
 		</tr>
 	</table>

@@ -299,7 +299,7 @@ class WCEFR_Users {
 			'city'                   => $city,
 			'address'                => $address,
 			'zip'                    => $postcode,
-			'phone'                  => $phone,
+			'telephoneAndFaxNumber'  => $phone,
 			'vatZone' => array(
 				'vatZoneNumber' => $vat_zone,
 			),

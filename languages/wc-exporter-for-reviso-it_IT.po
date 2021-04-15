@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-08 16:54+0100\n"
-"PO-Revision-Date: 2021-02-08 16:59+0100\n"
+"POT-Creation-Date: 2021-04-15 11:50+0200\n"
+"PO-Revision-Date: 2021-04-15 11:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -84,7 +84,7 @@ msgid "Group"
 msgstr "Gruppo"
 
 #: admin/wcefr-customers-template.php:40
-msgid "Select a Reviso customer group"
+msgid "Select a Reviso customers group"
 msgstr "Seleziona un gruppo clienti di Reviso"
 
 #: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
@@ -129,61 +129,77 @@ msgstr "Cancella tutti gli ordini in Reviso"
 msgid "Orders settings"
 msgstr "Impostazioni ordini"
 
-#: admin/wcefr-orders-template.php:114
+#: admin/wcefr-orders-template.php:118
 msgid "Export orders"
 msgstr "Esporta ordini"
 
-#: admin/wcefr-orders-template.php:117
+#: admin/wcefr-orders-template.php:121
 msgid "Export orders to Reviso automatically"
 msgstr "Easporta i nuovi ordini verso Reviso in automatico"
 
-#: admin/wcefr-orders-template.php:121
+#: admin/wcefr-orders-template.php:125
 msgid "Create invoices"
 msgstr "Crea fattura"
 
-#: admin/wcefr-orders-template.php:124
+#: admin/wcefr-orders-template.php:128
 msgid "Create invoices in Reviso for completed orders"
 msgstr "Crea la fattura in Reviso per gli ordini completati"
 
-#: admin/wcefr-orders-template.php:128
+#: admin/wcefr-orders-template.php:132
 msgid "Issue invoices"
 msgstr "Emetti fattura"
 
-#: admin/wcefr-orders-template.php:131
+#: admin/wcefr-orders-template.php:135
 msgid "Issue invoices created in Reviso directly "
 msgstr "Emetti direttamente la fattura creata in Reviso "
 
-#: admin/wcefr-orders-template.php:135
+#: admin/wcefr-orders-template.php:139
 msgid "Send invoices"
 msgstr "Invia fattura"
 
-#: admin/wcefr-orders-template.php:138
+#: admin/wcefr-orders-template.php:142
 msgid "Attach invoices to completed order notifications"
 msgstr "Allega fattura alla mail di conferma d'ordine"
 
-#: admin/wcefr-orders-template.php:142
+#: admin/wcefr-orders-template.php:146
 msgid "Book invoices"
 msgstr "Contabilizza fattura"
 
-#: admin/wcefr-orders-template.php:145
+#: admin/wcefr-orders-template.php:149
 msgid "Book invoices created in Reviso directly "
 msgstr "Contabilizza direttamente la fattura creata in Reviso "
 
-#: admin/wcefr-orders-template.php:149
+#: admin/wcefr-orders-template.php:153
 msgid "Number series"
 msgstr "Serie numeriche"
 
-#: admin/wcefr-orders-template.php:172
+#: admin/wcefr-orders-template.php:176
 msgid "Choose the series of numbers to use for <b>Invoices</b>"
 msgstr ""
 "Seleziona la serie numerica di Reviso da utilizzare per le <b>Fatture</b>"
 
-#: admin/wcefr-orders-template.php:192
+#: admin/wcefr-orders-template.php:196
 msgid "Choose the series of numbers to use for <b>Receipts</b>"
 msgstr ""
 "Seleziona la serie numerica di Reviso da utilizzare per le <b>Ricevute</b>"
 
 #: admin/wcefr-orders-template.php:201
+msgid "Customers group"
+msgstr "Gruppo clienti"
+
+#: admin/wcefr-orders-template.php:204
+msgid "Auto"
+msgstr ""
+
+#: admin/wcefr-orders-template.php:206
+msgid ""
+"Select a specific group of Reviso customers or use <i>Auto</i> for national "
+"and foreign groups"
+msgstr ""
+"Seleziona uno specifico gruppo clienti Reviso o <i>Auto</i> per utilizzare "
+"<i>Clienti nazionali</i> e <i>Clienti esteri</i>"
+
+#: admin/wcefr-orders-template.php:214
 msgid "Save options"
 msgstr "Salva impostazioni"
 
@@ -313,21 +329,21 @@ msgstr "Il processo di cancellazione di %d prodotti è iniziato"
 msgid "ERROR! There are not products to delete"
 msgstr "ERRORE! Non ci sono prodotti da cancellare"
 
-#: includes/class-wcefr-settings.php:116
+#: includes/class-wcefr-settings.php:120
 msgid "Connected"
 msgstr "Connesso"
 
-#: includes/class-wcefr-users.php:439
+#: includes/class-wcefr-users.php:454
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:507
+#: includes/class-wcefr-users.php:522
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:517
+#: includes/class-wcefr-users.php:532
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"

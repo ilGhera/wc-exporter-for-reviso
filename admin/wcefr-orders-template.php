@@ -4,13 +4,13 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 0.9.2
+ * @since 0.9.4
  */
 
 ?>
 
 <!-- Export form -->
-<form name="wcefr-orders" class="wcefr-form"  method="post" action="">
+<form name="wcefr-orders" class="wcefr-form wcefr-orders-form"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -148,6 +148,15 @@
 				<?php wcefr_go_premium(); ?>
 
                 </div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Customers group', 'wc-exporter-for-reviso' ); ?></th>
+			<td>
+            <select data-group-selected="<?php echo esc_attr( $wcefr_orders_customers_group ); ?>" class="wcefr-customers-groups wcefr-orders-customers-group" name="wcefr-orders-customers-group">
+                    <option value="0"><?php esc_html_e( 'Auto', 'wc-exporter-for-reviso' ); ?></option>
+                </select>
+				<p class="description"><?php echo wp_kses_post( __( 'Select a specific group of Reviso customers or use <i>Auto</i> for national and foreign groups', 'wc-exporter-for-reviso' ) ); ?></p>
 			</td>
 		</tr>
 	</table>

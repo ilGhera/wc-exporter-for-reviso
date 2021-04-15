@@ -3,7 +3,7 @@
  * 
  * @author ilGhera
  * @package wc-exporter-for-reviso/js
- * @since 0.9.0
+ * @since 0.9.8
  */
 
 var wcefrController = function() {
@@ -484,7 +484,12 @@ var wcefrController = function() {
 
 		jQuery(function($){
 
+            var optionSelected;
+            var isTabOrders;
+            var selectClass;
+            var selected;
 			var groups;
+
 			var data = {
 				'action': 'wcefr-get-' + type + '-groups',
 				'confirm': 'yes' 
@@ -496,20 +501,31 @@ var wcefrController = function() {
 
 					groups = JSON.parse(response);
 
-					if (typeof groups === 'object') {
+                    $('.wcefr-' + type + '-groups').each(function(){
 
-						for (key in groups) {
-							$('.wcefr-' + type + '-groups').append('<option value="' + key + '">' + groups[key] + '</option>');
-						}
+                        isTabOrders    = $(this).hasClass('wcefr-orders-customers-group') ? true : false;
+                        selectClass    = isTabOrders ? 'wcefr-select-large' : 'wcefr-select';
+                        optionSelected = $(this).attr('data-group-selected');
 
-					} else {
+                        if (typeof groups === 'object') {
 
-						$('.wcefr-' + type + '-groups').append('<option>' + groups + '</option>');
+                            for (key in groups) {
 
-					}
+                                selected = key == optionSelected ? ' selected="selected"' : false;
+                                $(this).append('<option value="' + key + '"' + selected + '>' + groups[key] + '</option>');
 
-					$('.wcefr-' + type + '-groups').addClass('wcefr-select');
-			        self.chosen(true);
+                            }
+
+                        } else {
+
+                            $(this).append('<option>' + groups + '</option>');
+
+                        }
+
+                        $(this).addClass(selectClass);
+                        self.chosen(true);
+
+                    })
 
 				}
 

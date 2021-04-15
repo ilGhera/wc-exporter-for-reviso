@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.1
+ * @since 0.9.8
  */
 class WCEFR_Users {
 
@@ -277,13 +277,28 @@ class WCEFR_Users {
 
 		}
 
+        $base_location = wc_get_base_location();
+        $shop_country  = is_array( $base_location ) && isset( $base_location['country'] ) ? $base_location['country'] : null;
+
 		/*Reviso VatZone based on user country */
-		$vat_zone = 'IT' === $country ? 1 : 3;
+		$vat_zone = $shop_country === $country ? 1 : 3;
 
 		/*Reviso's group selected by the admin*/
 		if ( $order ) {
 	
-			$group = 'IT' === $country ? 1 : 2;
+            $get_customers_groups = get_option( 'wcefr-orders-customers-group' );
+
+            if ( 0 === intval( $get_customers_groups ) ) {
+
+                /* By nationality */
+                $group = $shop_country === $country ? 1 : 2;
+
+            } else {
+
+                /* Custom group */
+                $group = $get_customers_groups;
+
+            }
 
 		} else {
 
@@ -299,7 +314,7 @@ class WCEFR_Users {
 			'city'                   => $city,
 			'address'                => $address,
 			'zip'                    => $postcode,
-			'phone'                  => $phone,
+			'telephoneAndFaxNumber'  => $phone,
 			'vatZone' => array(
 				'vatZoneNumber' => $vat_zone,
 			),

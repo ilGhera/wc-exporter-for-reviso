@@ -153,10 +153,13 @@
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Customers group', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-            <select data-group-selected="<?php echo esc_attr( $wcefr_orders_customers_group ); ?>" class="wcefr-customers-groups wcefr-orders-customers-group" name="wcefr-orders-customers-group">
+            <select class="wcefr-customers-groups wcefr-orders-customers-group" name="wcefr-orders-customers-group">
                     <option value="0"><?php esc_html_e( 'Auto', 'wc-exporter-for-reviso' ); ?></option>
                 </select>
 				<p class="description"><?php echo wp_kses_post( __( 'Select a specific group of Reviso customers or use <i>Auto</i> for national and foreign groups', 'wc-exporter-for-reviso' ) ); ?></p>
+
+                <?php wcefr_go_premium(); ?>
+
 			</td>
 		</tr>
 	</table>

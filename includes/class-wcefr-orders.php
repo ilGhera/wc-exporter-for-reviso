@@ -938,20 +938,24 @@ class WCEFR_Orders {
 				$output = $this->wcefr_call->call( 'post', $endpoint, $args );
 
 				/*An invoice for this order is ready on Reviso*/
-				if ( $invoice && $this->issue_invoices && isset( $output->id ) ) {
+				if ( $invoice && isset( $output->id ) ) {
 
-					$data = $output->voucher->voucherNumber->displayVoucherNumber;
+					update_post_meta( $order_id, 'wcefr-invoice', $output->id );
 
-					/*Book the invoise if set by the admin*/
-					if ( $this->book_invoices ) {
+                    if ( $this->issue_invoices ) {
 
-						$booked = $this->wcefr_call->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
+                        $data = $output->voucher->voucherNumber->displayVoucherNumber;
 
-						$data = $booked->displayInvoiceNumber;
+                        /*Book the invoise if set by the admin*/
+                        if ( $this->book_invoices ) {
 
-					}
+                            $booked = $this->wcefr_call->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
 
-					update_post_meta( $order_id, 'wcefr-invoice', $data );
+                            $data = $booked->displayInvoiceNumber;
+
+                        }
+
+                    }
 
 				}
 

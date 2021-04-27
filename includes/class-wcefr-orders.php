@@ -501,15 +501,17 @@ class WCEFR_Orders {
 	/**
 	 * Get the user from Reviso by email
 	 *
-	 * @param  string $email the user email.
-	 * @param  object $order the WC order to get the customer details.
+	 * @param  string $email  the user email.
+     * @param  object $order  the WC order to get the customer details.
+     * @param  bool   $update update user with true.
+     *
 	 * @return int the Reviso customer number
 	 */
-	private function get_remote_customer( $email, $order ) {
+	private function get_remote_customer( $email, $order, $update = false ) {
 
 		$response = $this->wcefr_call->call( 'get', 'customers?filter=email$eq:' . $email );
 
-		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+		if ( ! $update && isset( $response->collection ) && ! empty( $response->collection ) ) {
 
 			return $response->collection[0]->customerNumber;
 
@@ -825,7 +827,7 @@ class WCEFR_Orders {
 		$transport_vat_rate     = $this->get_percentage( $transport_vat_amount, $transport_amount );
 		$transport_gross_amount = $transport_amount + $transport_vat_amount;
 		$order_completed        = 'completed' === $order->get_status() ? true : false;
-		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order );
+		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order, true );
 
         /*Add the payment method if not already on Reviso*/
         $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 

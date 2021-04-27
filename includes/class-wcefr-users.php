@@ -376,6 +376,8 @@ class WCEFR_Users {
 		$args      = $this->prepare_user_data( $user_id, $type, $order );
 		$remote_id = $this->user_exists( $type, $args['email'] );
 
+        error_log( 'EXISTS: ' . $remote_id );
+
 		if ( $args ) {
 
 			if ( ! $remote_id ) {
@@ -385,6 +387,7 @@ class WCEFR_Users {
 			} else {
 
 				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
+                error_log( 'UPDATE USER: ' . print_r( $output, true ) );
 
 			}
 

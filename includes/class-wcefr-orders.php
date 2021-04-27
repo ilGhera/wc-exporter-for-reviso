@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.5
+ * @since 0.9.9
  */
 class WCEFR_Orders {
 

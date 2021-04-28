@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2021-04-15 11:50+0200\n"
+"POT-Creation-Date: 2021-04-28 14:31+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -264,21 +264,21 @@ msgstr ""
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:831
+#: includes/class-wcefr-orders.php:833
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1057
+#: includes/class-wcefr-orders.php:1063
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1127
+#: includes/class-wcefr-orders.php:1133
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1136
+#: includes/class-wcefr-orders.php:1142
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
@@ -375,24 +375,22 @@ msgstr ""
 msgid "Fiscal document"
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:383
-#, php-format
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:379
 msgid ""
-"<strong>PEC</strong> field or <strong>Recipient Code</strong> field must be "
-"completed, you can use the generic code <strong><u>%s</u></strong>."
+"WARNING! The <strong>PEC</strong> entered is not a valid email address."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:399
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:390
 msgid "WARNING! The <strong>Tax Code</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:413
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:404
 msgid "WARNING! The <strong>VAT number</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:456
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:505
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:526
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:458
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:507
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:528
 msgid "Electronic invoicing"
 msgstr ""
 

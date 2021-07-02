@@ -37,6 +37,8 @@ Esporta nuovi ordini e crea fatture in tempo reale.
 * Esporta nuovi ordini in tempo reale (Premium)
 * Cancella dati in Reviso con un click
 
+https://youtu.be/gtyhllUEqN4
+
 = Prova Reviso gratuitamente! =
 [https://www.reviso.com/trial?src=hero](https://www.reviso.com/trial?src=hero)
 

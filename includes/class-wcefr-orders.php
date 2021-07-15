@@ -320,13 +320,15 @@ class WCEFR_Orders {
 	 * Get a specific vat account from Reviso or create it necessary
 	 *
 	 * @param  int $vat_rate the vat rate.
+	 * @param  string $vat_code the vat code.
+     *
 	 * @return array  vat accounts available in Reviso
 	 */
-	private function get_remote_vat_code( $vat_rate ) {
+	private function get_remote_vat_code( $vat_rate, $vat_code = null ) {
 
 		$class = new WCEFR_Products();
 
-		return $class->get_remote_vat_code( $vat_rate );
+		return $class->get_remote_vat_code( $vat_rate, $vat_code );
 
 	}
 
@@ -341,26 +343,37 @@ class WCEFR_Orders {
 
 		$output = array();
 
+        /* Get order tax labels */
+        $tax_labels = array();
+
+        foreach( $order->get_items('tax') as $item ){
+
+            $tax_labels[ $item->get_rate_id() ] = $item->get_label();
+
+        }
+
+        /* Order items */
 		if ( $order->get_items() ) {
 
-			$n = 0;
+			$n = -1;
 			foreach ( $order->get_items() as $item_id => $item ) {
 
 				$n++;
-				$product = $item->get_product();
-                $sku     = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+                $item_data = $item->get_data();
+				$product   = $item->get_product();
 
 				if ( $product ) {
 
+                    $sku                = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
 					$qty                = wc_stock_amount( $item['qty'] );
 					$total_net_amount   = floatval( wc_format_decimal( $order->get_line_subtotal( $item, false, false ), 10 ) );
 					$total_gross_amount = floatval( wc_format_decimal( $order->get_line_total( $item, false, false ), 10 ) ) + floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$total_vat_amount   = floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$vat_rate           = $this->get_percentage( $total_vat_amount, $total_net_amount );
                     
-					$output[] = array(
+					$output[ $n ] = array(
 
-						'lineNumber'         => $n,
+						'lineNumber'         => $n + 1,
 						'quantity'           => $qty,
 						'description'        => $item['name'],
 						'discountPercentage' => $this->get_order_discount_percentage( $order ),
@@ -369,11 +382,6 @@ class WCEFR_Orders {
 						'totalGrossAmount'   => $total_gross_amount,
 						'unitNetPrice'       => floatval( wc_format_decimal( $total_net_amount / $qty, 10 ) ),
 						'totalVatAmount'     => $total_vat_amount,
-						'vatInfo'            => array(
-							'vatAccount' => array(
-								'vatCode' => $this->get_remote_vat_code( $vat_rate ),
-							),
-						),
 						'product'            => array(
 							'id'            => $sku,
 							'productNumber' => $sku,
@@ -387,6 +395,22 @@ class WCEFR_Orders {
 					);
 
 				}
+
+                /* Get the label tax of the specific order item */
+                $taxes = $item->get_taxes();
+
+                foreach( $taxes['subtotal'] as $rate_id => $tax ){
+
+                    $tax_label = $tax_labels[ $rate_id ];
+
+                    /* Add vatInfo to the item data */
+                    $output[ $n ]['vatInfo'] = array(
+                        'vatAccount' => array(
+                            'vatCode' => $this->get_remote_vat_code( $vat_rate, $tax_label ),
+                        ),
+                    );
+
+                }
 
 			}
 		}

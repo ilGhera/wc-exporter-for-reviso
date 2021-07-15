@@ -208,14 +208,24 @@ class WCEFR_Products {
 	/**
 	 * Get a specific vat account from Reviso or create it necessary
 	 *
-	 * @param  int $vat_rate the vat rate.
+	 * @param  int    $vat_rate the vat rate.
+	 * @param  string $vat_code the vat code.
+     *
 	 * @return array  vat accounts available in Reviso.
 	 */
-	public function get_remote_vat_code( $vat_rate ) {
+	public function get_remote_vat_code( $vat_rate, $vat_code = null ) {
 
-		$output = null;
+        $output = null;
 
-		$end = '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:' . $vat_rate;
+        if ( $vat_code ) {
+
+            $end = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code );
+
+        } else {
+
+            $end = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
+
+        }
 
 		$response = $this->wcefr_call->call( 'get', 'vat-accounts' . $end );
 

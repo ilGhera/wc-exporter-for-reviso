@@ -128,14 +128,25 @@ class WCEFR_Products {
 	 * Get WC tax class details
 	 *
 	 * @param  string $tax_rate_class set for a specific tax rate class.
+	 * @param  string $tax_rate       set for a specific tax rate class.
+     *
 	 * @return object
 	 */
-	private function get_wc_tax_class( $tax_rate_class = 'all' ) {
+	private function get_wc_tax_class( $tax_rate_class = 'all', $tax_rate = null ) {
 
 		global $wpdb;
 
         $tax_rate_class = 'standard' === $tax_rate_class ? null : $tax_rate_class;
-		$where          = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
+
+        if ( null == $tax_rate_class && $tax_rate ) {
+
+            $where = ' WHERE tax_rate = ' . number_format( $tax_rate, 4 );
+
+        } else {
+
+            $where = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
+
+        }
 
 		$query = 'SELECT * FROM ' . $wpdb->prefix . 'woocommerce_tax_rates' . $where;
 
@@ -182,7 +193,7 @@ class WCEFR_Products {
 			'account' => array(
 				'accountNumber' => 2201,
 			),
-			'vatType' => array(
+			'vatType' => aray(
 				'name'          => __( 'Sales VAT', 'wc-exporter-for-reviso' ),
 				'vatTypeNumber' => 1,
 			),
@@ -380,7 +391,7 @@ class WCEFR_Products {
 
             } else {
 
-                $wc_tax        = $standard ? $this->get_wc_tax_class( 'standard' ) : $this->get_wc_tax_class( $vat_rate );
+                $wc_tax        = $standard ? $this->get_wc_tax_class( 'standard' ) : $this->get_wc_tax_class( null, $vat_rate );
                 $tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
                 
             }
@@ -731,3 +742,4 @@ class WCEFR_Products {
 
 }
 new WCEFR_Products( true );
+

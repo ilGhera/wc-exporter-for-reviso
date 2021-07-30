@@ -193,7 +193,7 @@ class WCEFR_Products {
 			'account' => array(
 				'accountNumber' => 2201,
 			),
-			'vatType' => aray(
+			'vatType' => array(
 				'name'          => __( 'Sales VAT', 'wc-exporter-for-reviso' ),
 				'vatTypeNumber' => 1,
 			),

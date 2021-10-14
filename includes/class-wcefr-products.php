@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.12
+ * @since 0.9.13
  */
 class WCEFR_Products {
 
@@ -558,30 +558,24 @@ class WCEFR_Products {
 
 		if ( $product ) {
 
-            $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+            $sku  = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+            $args = $this->prepare_product_data( $product );
+            
+            if ( $args ) {
 
-			/*Avoid parent product export*/
-			if ( ! $product->is_type( 'variable' ) ) {
+                $end = $this->format_sku( $sku );
 
-				$args = $this->prepare_product_data( $product );
+                if ( $this->product_exists( $end ) ) {
+
+                    $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
+
+                } else {
+
+                    $output = $this->wcefr_call->call( 'post', 'products', $args );
                 
-				if ( $args ) {
+                }
 
-					$end = $this->format_sku( $sku );
-
-					if ( $this->product_exists( $end ) ) {
-
-                        $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
-
-					} else {
-
-                        $output = $this->wcefr_call->call( 'post', 'products', $args );
-                    
-                    }
-
-				}
-
-			}
+            }
 
 		}
 
@@ -602,7 +596,6 @@ class WCEFR_Products {
 			$args = array(
 				'post_type' => array(
 					'product',
-					'product_variation',
 				),
 				'post_status'    => 'publish',
 				'posts_per_page' => -1,
@@ -625,8 +618,7 @@ class WCEFR_Products {
 			update_option( 'wcefr-products-categories', $terms );
 
 			$response = array();
-
-			$posts = get_posts( $args );
+			$posts    = get_posts( $args );
 
 			if ( $posts ) {
 
@@ -636,14 +628,41 @@ class WCEFR_Products {
 
 					$n++;
 
-					/*Schedule single event*/
-					as_enqueue_async_action(
-						'wcefr_export_single_product_event',
-						array(
-							'product_id' => $post->ID,
-						),
-						'wcefr_export_single_product'
-					);
+                    $product = wc_get_product( $post->ID );
+
+                    if ( $product->is_type( 'variable' ) ) {
+
+                        $variations = $product->get_children();
+
+                        if ( is_array( $variations ) ) {
+
+                            foreach ( $variations as $var_id ) {
+
+                                /*Schedule single event*/
+                                as_enqueue_async_action(
+                                    'wcefr_export_single_product_event',
+                                    array(
+                                        'product_id' => $var_id,
+                                    ),
+                                    'wcefr_export_single_product'
+                                );
+
+                            }
+
+                        }
+
+                    } else {
+
+                        /*Schedule single event*/
+                        as_enqueue_async_action(
+                            'wcefr_export_single_product_event',
+                            array(
+                                'product_id' => $post->ID,
+                            ),
+                            'wcefr_export_single_product'
+                        );
+
+                    }
 
 				}
 

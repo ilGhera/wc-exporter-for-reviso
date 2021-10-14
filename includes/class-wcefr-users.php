@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.8
+ * @since 0.9.6
  */
 class WCEFR_Users {
 
@@ -222,12 +222,13 @@ class WCEFR_Users {
 	/**
 	 * Prepare the single user data to export to Reviso
 	 *
-	 * @param  int    $user_id the WP user id.
-	 * @param  string $type  customers or suppliers.
-	 * @param  object $order the WC order to get the customer details.
+	 * @param  int    $user_id   the WP user id.
+	 * @param  string $type      customers or suppliers.
+     * @param  object $order     the WC order to get the customer details.
+     * @param  bool   $attention return the contact data with true.
 	 * @return array
 	 */
-	public function prepare_user_data( $user_id, $type, $order = null ) {
+	public function prepare_user_data( $user_id, $type, $order = null, $attention = false ) {
 
 		$type_singular = substr( $type, 0, -1 );
 
@@ -242,7 +243,9 @@ class WCEFR_Users {
 				get_user_meta( $user_id )
 			);
 
-			$name                    = isset( $user_data['billing_first_name'], $user_data['billing_last_name'] ) ? $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'] : '';
+            $company                 = isset( $user_data['billing_company'] ) ? $user_data['billing_company'] : null;
+			$contact                 = isset( $user_data['billing_first_name'], $user_data['billing_last_name'] ) ? $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'] : '';
+            $name                    = $company ? $company : $contact;
 			$user_email              = isset( $user_data['billing_email'] ) ? $user_data['billing_email'] : '';
 			$country                 = isset( $user_data['billing_country'] ) ? $user_data['billing_country'] : '';
 			$city                    = isset( $user_data['billing_city'] ) ? $user_data['billing_city'] : '';
@@ -258,7 +261,9 @@ class WCEFR_Users {
 
 		} elseif ( $order ) {
 
-			$name                    = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+            $company                 = $order->get_billing_company();
+			$contact                 = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+            $name                    = $company ? $company : $contact;
 			$user_email              = $order->get_billing_email();
 			$country                 = $order->get_billing_country();
 			$city                    = $order->get_billing_city();
@@ -275,7 +280,14 @@ class WCEFR_Users {
 
 			return;
 
-		}
+        }
+
+        /* Customer contact */
+        if ( $attention ) {
+
+            return $company ? $contact : false;
+
+        }
 
         $base_location = wc_get_base_location();
         $shop_country  = is_array( $base_location ) && isset( $base_location['country'] ) ? $base_location['country'] : null;
@@ -363,6 +375,49 @@ class WCEFR_Users {
 	}
 
 
+    /**
+     * Get the customer contact number from Reviso or create it if necessary
+     *
+     * @param int    $remote_id the customer id in Reviso.
+     * @param string $contact_name the customer contact name.
+     *
+     * @return int  
+     */
+    public function get_customer_contact_number( $remote_id, $contact_name ) {
+
+        /* Get customer contacts */
+        $contacts       = $this->wcefr_call->call( 'get', 'customers/' . $remote_id . '/contacts' );
+
+        if ( isset( $contacts->collection ) && is_array( $contacts->collection ) ) {
+
+            foreach ( $contacts->collection as $contact ) {
+
+                if ( $contact_name === $contact->name ) {
+
+                    return $contact->customerContactNumber;
+
+                }
+            }
+
+            $args = array(
+                'customer' => array(
+                    'customerNumber' => $remote_id,
+                ),
+                'name' => $contact_name,
+            );
+
+            $contact = $this->wcefr_call->call( 'post', 'customers/' . $remote_id . '/contacts', $args );
+
+            if ( isset( $contact->customerContactNumber ) ) {
+
+                return $contact->customerContactNumber;
+
+            }
+        }
+
+    }
+
+
 	/**
 	 * Export single WP user to Reviso
 	 *
@@ -378,11 +433,49 @@ class WCEFR_Users {
 
 		if ( $args ) {
 
+            if ( 'customers' === $type ) {
+
+                $contact_name = $this->prepare_user_data( $user_id, $type, $order, true );
+
+            }
+
 			if ( ! $remote_id ) {
 
 				$output = $this->wcefr_call->call( 'post', $type . '/', $args );
 
+                if ( isset( $output->customerNumber ) ) {
+
+                    $remote_id = $output->customerNumber;
+
+                    /* Add the customer contact name in case of company */
+                    if ( $contact_name ) {
+
+                        $contact_number = $this->get_customer_contact_number( $remote_id, $contact_name );
+                        
+                        $args['attention'] = array(
+                            'customerContactNumber' => $contact_number,
+                        );
+
+                    }
+
+                    /* Update the customer */
+                    $output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
+
+                }
+
+
 			} else {
+
+                /* Add the customer contact name in case of company */
+                if ( $contact_name ) {
+
+                    $contact_number = $this->get_customer_contact_number( $remote_id, $contact_name );
+                    
+                    $args['attention'] = array(
+                        'customerContactNumber' => $contact_number,
+                    );
+
+                }
 
 				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
 

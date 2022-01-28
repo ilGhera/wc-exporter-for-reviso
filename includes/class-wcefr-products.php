@@ -124,6 +124,30 @@ class WCEFR_Products {
 	}
 
 
+    /**
+     * Get alle the remote departmental distributions
+     *
+     * @return array
+     */
+    public function get_remote_departmental_distributions() {
+
+        $response = $this->wcefr_call->call( 'get', 'departmental-distributions' );
+
+		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
+
+			$output = false;
+
+        } else {
+
+            $output = $response->collection;
+
+        }
+
+		return $output;
+
+    }
+
+
 	/**
 	 * Get WC tax class details
 	 *
@@ -497,6 +521,12 @@ class WCEFR_Products {
 
         $sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
 
+        /*Departmental distribution*/
+        $specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
+        $generic_dist  = get_option( 'wcefr-departmental-distribution' );
+        $dist          = $specific_dist ? $specific_dist : $generic_dist;
+        
+
 		/*Sale price*/
 		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
 		$description = utf8_encode( $product->get_description() );
@@ -531,6 +561,9 @@ class WCEFR_Products {
 			'unit'             => array(
 				'unitNumber' => 1,
 			),
+            'departmentalDistribution' => array(
+                'departmentalDistributionNumber' => $dist,
+            ),
 		);
 
         /* Only with inventory module enabled */ 
@@ -542,6 +575,7 @@ class WCEFR_Products {
  
         } 
 
+        error_log( 'DATA: ' . print_r( $output, true ) );
         return $output;
 
 	}
@@ -591,6 +625,7 @@ class WCEFR_Products {
 
 			$class    = new WCEFR_Orders();
 			$terms    = isset( $_POST['terms'] ) ? $class->sanitize_array( $_POST['terms'] ) : '';
+            $dist     = isset( $_POST['dist'] ) ? sanitize_text_field( wp_unslash( $_POST['dist'] ) ) : '';
 			$response = array();
 
 			$args = array(
@@ -616,6 +651,7 @@ class WCEFR_Products {
 
 			/*Update the db*/
 			update_option( 'wcefr-products-categories', $terms );
+			update_option( 'wcefr-departmental-distribution', $dist );
 
 			$response = array();
 			$posts    = get_posts( $args );

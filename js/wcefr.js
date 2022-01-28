@@ -389,11 +389,18 @@ var wcefrController = function() {
 				self.wcefr_response_scroll();
 
 				var terms = $('.wcefr-products-categories').val();
+				var dist  = $('.wcefr-departmental-distribution').val();
+                console.log( 'TERMS: ' + terms );
+                console.log( 'DIST: ' + dist );
+                $(dist).on('change', function(){
+                    console.log( 'DIST 2: ' + dist );
+                })
 
 				var data = {
 					'action': 'wcefr-export-products',
 					'wcefr-export-products-nonce': wcefrProducts.exportNonce,
-					'terms': terms
+					'terms': terms,
+                    'dist': dist
 				}
 
 				$.post(ajaxurl, data, function(response){

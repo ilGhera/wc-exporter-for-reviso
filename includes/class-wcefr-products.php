@@ -524,8 +524,7 @@ class WCEFR_Products {
         /*Departmental distribution*/
         $specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
         $generic_dist  = get_option( 'wcefr-departmental-distribution' );
-        $dist          = $specific_dist ? $specific_dist : $generic_dist;
-        
+        $dist          = '' !== $specific_dist ? $specific_dist : $generic_dist;
 
 		/*Sale price*/
 		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
@@ -561,10 +560,15 @@ class WCEFR_Products {
 			'unit'             => array(
 				'unitNumber' => 1,
 			),
-            'departmentalDistribution' => array(
-                'departmentalDistributionNumber' => $dist,
-            ),
 		);
+
+        /* Departmental distribution */
+        if ( $dist ) {
+            $output['departmentalDistribution'] = array(
+                'departmentalDistributionNumber' => $dist,
+            );
+
+        }
 
         /* Only with inventory module enabled */ 
         if ( $this->inventory_module() ) {
@@ -575,7 +579,6 @@ class WCEFR_Products {
  
         } 
 
-        error_log( 'DATA: ' . print_r( $output, true ) );
         return $output;
 
 	}

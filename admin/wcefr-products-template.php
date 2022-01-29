@@ -61,8 +61,7 @@
                     }    
                     ?>
 				</select>
-				<p class="description"><?php esc_html_e( 'Select a generic deparmental distribution to use for the products.', 'wc-exporter-for-reviso' ); ?></p>
-				<p class="description"><?php esc_html_e( 'You can specify a different value in every single product page.', 'wc-exporter-for-reviso' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Select a generic departmental distribution.', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
 	</table>

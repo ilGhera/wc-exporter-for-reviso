@@ -390,11 +390,6 @@ var wcefrController = function() {
 
 				var terms = $('.wcefr-products-categories').val();
 				var dist  = $('.wcefr-departmental-distribution').val();
-                console.log( 'TERMS: ' + terms );
-                console.log( 'DIST: ' + dist );
-                $(dist).on('change', function(){
-                    console.log( 'DIST 2: ' + dist );
-                })
 
 				var data = {
 					'action': 'wcefr-export-products',

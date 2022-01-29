@@ -45,6 +45,7 @@ function load_wc_exporter_for_reviso() {
 	require_once( WCEFR_INCLUDES . 'class-wcefr-settings.php' );
 	require_once( WCEFR_INCLUDES . 'class-wcefr-users.php' );
 	require_once( WCEFR_INCLUDES . 'class-wcefr-products.php' );
+	require_once( WCEFR_INCLUDES . 'class-wcefr-single-product.php' );
 	require_once( WCEFR_INCLUDES . 'class-wcefr-orders.php' );
 	require_once( WCEFR_INCLUDES . 'wcefr-invoice.php' );
 	require_once( WCEFR_INCLUDES . 'wc-checkout-fields/class-wcefr-checkout-fields.php' );

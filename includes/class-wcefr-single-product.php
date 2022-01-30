@@ -55,7 +55,7 @@ class WCEFR_Single_Product {
      */
     public function render_meta_box_content( $post ) {
  
-        wp_nonce_field( 'wcefd-meta-box', 'wcefd-meta-box-nonce' );
+        wp_nonce_field( 'wcefr-meta-box', 'wcefr-meta-box-nonce' );
  
         ?>
         <p>
@@ -99,13 +99,13 @@ class WCEFR_Single_Product {
      */
     public function save( $post_id ) {
  
-        if ( ! isset( $_POST['wcefd-meta-box-nonce'] ) ) {
+        if ( ! isset( $_POST['wcefr-meta-box-nonce'] ) ) {
             return $post_id;
         }
  
-        $nonce = $_POST['wcefd-meta-box-nonce'];
+        $nonce = $_POST['wcefr-meta-box-nonce'];
  
-        if ( ! wp_verify_nonce( $nonce, 'wcefd-meta-box' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'wcefr-meta-box' ) ) {
             return $post_id;
         }
  

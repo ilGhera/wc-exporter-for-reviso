@@ -229,9 +229,21 @@ class WCEFR_Orders {
 	 */
 	private function payment_metod_exists( $payment_gateway ) {
 
-		$response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $payment_gateway );
+        $transient = get_transient( 'wcefr-payment-methods' );
+
+        if ( $transient ) {
+
+            $response = $transient;
+
+        } else {
+
+            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $payment_gateway );
+            
+        }
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+            set_transient( 'wcefr-payment-methods', $response, DAY_IN_SECONDS );
 
 			return $response->collection[0];
 
@@ -251,6 +263,8 @@ class WCEFR_Orders {
 		$output          = $this->payment_metod_exists( $payment_gateway );
 
 		if ( ! $output ) {
+
+            delete_transient( 'wcefr-payment-methods' );
 
 			$args = array(
 				'name'             => $payment_gateway,
@@ -274,7 +288,7 @@ class WCEFR_Orders {
 
 
 	/**
-	 * Calculate the percentage between wo numbers
+	 * Calculate the percentage between two numbers
 	 *
 	 * @param  float $value the result of the percentage.
 	 * @param  float $total the total number.
@@ -428,11 +442,21 @@ class WCEFR_Orders {
 	 */
 	public function get_additional_expenses( $additional_expense_number = null ) {
 
-		$output = null;
+		$output    = null;
+		$endpoint  = $additional_expense_number ? '/' . $additional_expense_number : '';
 
-		$endpoint = $additional_expense_number ? '/' . $additional_expense_number : '';
+        /* Get transient */
+        $transient = get_transient( 'wcefr-additional-expenses' );
 
-		$response = $this->wcefr_call->call( 'get', 'additional-expenses' . $endpoint );
+        if ( $transient ) {
+
+            $response = $transient;
+
+        } else {
+
+            $response = $this->wcefr_call->call( 'get', 'additional-expenses' . $endpoint );
+            
+        }
 
 		if ( $endpoint ) {
 
@@ -441,6 +465,9 @@ class WCEFR_Orders {
 		} elseif ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
 			$output = $response->collection;
+
+            /* Add transient */
+            set_transient( 'wcefr-additional-expenses', $response, DAY_IN_SECONDS );
 
 		}
 
@@ -454,8 +481,11 @@ class WCEFR_Orders {
 	 *
 	 * @param boolean $transport with true create the additional expenses to use with WC Shipping.
 	 * @param mixed   $args      null or an array of arguments for the new additional expenses.
+     * @param int     $vat_rate  the vat rate.
+     *
+     * @return init
 	 */
-	public function add_additional_expenses( $transport = true, $args = null ) {
+	public function add_additional_expenses( $transport = true, $args = null, $vat_rate = null ) {
 
 		if ( $transport ) {
 
@@ -466,7 +496,7 @@ class WCEFR_Orders {
 				),
 				'additionalExpenseType' => 'transport',
 				'vatAccount'            => array(
-					'vatCode' => $this->get_remote_vat_code( 22 ),
+					'vatCode' => $this->get_remote_vat_code( $vat_rate ),
 				),
 			);
 
@@ -486,9 +516,11 @@ class WCEFR_Orders {
 	/**
 	 * Get additional expenses to use for transport or create it if doesn't exist
 	 *
+     * @param int $transport_vat_rate the transport vat rate used in the order.
+     *
 	 * @return object
 	 */
-	public function get_transport_additional_expenses() {
+	public function get_transport_additional_expenses( $transport_vat_rate ) {
 
 		$output = array();
 
@@ -513,7 +545,7 @@ class WCEFR_Orders {
 
 		} else {
 
-			$output = $this->add_additional_expenses( true );
+			$output = $this->add_additional_expenses( true, null, $transport_vat_rate );
 
 		}
 
@@ -546,7 +578,7 @@ class WCEFR_Orders {
 
 			/*Add the new user in Reviso*/
 			$wcefr_users = new WCEFR_Users();
-			$new_user    = $wcefr_users->export_single_user( $user_id, 'customers', $order );
+			$new_user    = $wcefr_users->export_single_user( $user_id, 'customers', $order, true );
 
 			return $new_user->customerNumber;
 
@@ -594,7 +626,7 @@ class WCEFR_Orders {
 	/**
 	 * Get a specific number serie from Reviso
 	 *
-	 * @param  string $prefix     example are FVE, FVL, ecc.
+	 * @param  string $prefix     examples are FVE, FVL, ecc.
 	 * @param  string $entry_type used to filter the number series.
 	 * @param  bool   $first      if true returns the numberSeriesNumber of the first result, otherwise all the array.
 	 * @return mixed
@@ -603,32 +635,54 @@ class WCEFR_Orders {
 
 		if ( $prefix ) {
 
-			/*Used for invoices*/
-			$response = $this->wcefr_call->call( 'get', 'number-series?filter=prefix$eq:' . $prefix );
+            $transient_name = 'wcefr-number-series-prefix';
+			$args           = '?filter=prefix$eq:' . $prefix;
 
 		} elseif ( $entry_type ) {
 
-			$response = $this->wcefr_call->call( 'get', 'number-series?filter=entryType$eq:' . $entry_type );
+            $transient_name = 'wcefr-number-series-type';
+			$args           = '?filter=entryType$eq:' . $entry_type;
 
 		} else {
 
-			$response = $this->wcefr_call->call( 'get', 'number-series' );
+            $transient_name = 'wcefr-number-series';
+			$args           = null;
 
 		}
 
-		if ( isset( $response->collection ) ) {
+        /* Get the transient */
+        $transient = get_transient( $transient_name );
 
-			if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
+        if ( $transient ) {
 
-				return $response->collection[0]->numberSeriesNumber;
+            $response = $transient;
 
-			} else {
+        } else {
 
-				return $response->collection;
+            $response  = $this->wcefr_call->call( 'get', 'number-series' . $args );
 
-			}
+        }
+            
+        if ( isset( $response->collection ) ) {
 
-		}
+            if ( ! $transient ) {
+
+                /* Set the transient */
+                set_transient( $transient_name, $response, DAY_IN_SECONDS );
+                
+            }
+
+            if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
+
+                return $response->collection[0]->numberSeriesNumber;
+
+            } else {
+
+                return $response->collection;
+
+            }
+
+        }
 
 	}
 
@@ -636,13 +690,19 @@ class WCEFR_Orders {
 	/**
 	 * Used for issuing an invoice
 	 *
-	 * @param  object $order the wc order.
+     * @param  object $order        the wc order.
+     * @param  int $customer_number the Reviso customer number.
 	 * @return object
 	 */
-	private function create_remote_voucher( $order ) {
+	private function create_remote_voucher( $order, $customer_number = null ) {
 
 		$lines = array();
-		$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+
+        if ( ! $customer_number ) {
+
+            $customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+
+        }
 
 		if ( $order->get_items() ) {
 
@@ -904,7 +964,7 @@ class WCEFR_Orders {
 
 			$output['additionalExpenseLines'] = array( // temp.
 				array(
-					'additionalExpense'     => $this->get_transport_additional_expenses(),
+					'additionalExpense'     => $this->get_transport_additional_expenses( $transport_vat_rate ),
 					'additionalExpenseType' => 'Transport',
 					'lineNumber'            => 1,
 					'amount'                => $transport_amount,
@@ -920,7 +980,7 @@ class WCEFR_Orders {
 
 			if ( $this->issue_invoices ) {
 
-				$output['voucher'] = $this->create_remote_voucher( $order );
+				$output['voucher'] = $this->create_remote_voucher( $order, $customer_number );
 
 			}
 

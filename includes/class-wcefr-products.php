@@ -35,24 +35,36 @@ class WCEFR_Products {
      */
     private function inventory_module() {
 
-        $output   = false;
-        $response = $this->wcefr_call->call( 'get', 'self' );
+        $output    = false;
+        $transient = get_transient( 'wcefr-inventory-module' );
 
-        if ( is_array( $response ) && isset( $response['modules'] ) ) {
+        if ( $transient ) {
 
-            if ( is_array( $response['modules'] ) ) {
-                
-                foreach ( $response['modules'] as $module ) {
+            $output = $transient;
 
-                    if ( 'Lager' === $module->name ) {
+        } else {
 
-                        $output = true;
+            $response  = $this->wcefr_call->call( 'get', 'self' );
 
-                        continue;
+            if ( is_array( $response ) && isset( $response['modules'] ) ) {
 
-                    }
+                if ( is_array( $response['modules'] ) ) {
+                    
+                    foreach ( $response['modules'] as $module ) {
 
-                } 
+                        if ( 'Lager' === $module->name ) {
+
+                            $output = true;
+
+                            continue;
+
+                        }
+
+                    } 
+
+                    set_transient( 'wcefr-inventory-module', $output, DAY_IN_SECONDS );
+
+                }
 
             }
 
@@ -131,16 +143,28 @@ class WCEFR_Products {
      */
     public function get_remote_departmental_distributions() {
 
-        $response = $this->wcefr_call->call( 'get', 'departmental-distributions' );
+        $transient = get_transient( 'wcefr-departmental-distribution' );
 
-		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
+        if ( $transient ) {
 
-			$output = false;
+            $output = $transient;
 
         } else {
 
-            $output = $response->collection;
+            $response = $this->wcefr_call->call( 'get', 'departmental-distributions' );
 
+            if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
+
+                $output = false;
+
+            } else {
+
+                set_transient( 'wcefr-departmental-distribution', $response->collection, DAY_IN_SECONDS );
+
+                $output = $response->collection;
+
+            }
+            
         }
 
 		return $output;
@@ -204,7 +228,35 @@ class WCEFR_Products {
 
     }
     
-    
+
+    /**
+     * Get details for the new vat account
+     *
+     * @param string $data the vat account data to return.
+     *
+     * $retunr int
+     */
+    public function get_remote_vat_account_info( $data ) {
+
+        $response  = $this->wcefr_call->call( 'get', 'vat-accounts?filter=vatType.vatTypeNumber$eq:1' );
+
+        if ( isset( $response->collection[0] ) && ! empty( $response->collection[0]) ) {
+
+            if ( 'account' === $data && isset( $response->collection[0]->account->accountNumber ) ) {
+
+                return  $response->collection[0]->account->accountNumber; 
+                
+            } elseif ( 'vatReportSetup' === $data && isset( $response->collection[0]->vatReportSetup->vatReportSetupNumber ) ) {
+
+                return $response->collection[0]->vatReportSetup->vatReportSetupNumber; 
+
+            }
+
+        }
+
+    }
+
+
     /**
 	 * Add a new vat account to Reviso
 	 *
@@ -215,18 +267,18 @@ class WCEFR_Products {
         
 		$args = array(
 			'account' => array(
-				'accountNumber' => 2201,
+				'accountNumber' => $this->get_remote_vat_account_info( 'account' ),
 			),
 			'vatType' => array(
 				'name'          => __( 'Sales VAT', 'wc-exporter-for-reviso' ),
 				'vatTypeNumber' => 1,
 			),
-			//'name' => 'Acquisti con IVA al ' . $vat_rate . '%',
 			'name'           => sprintf( __( '%d%% VAT purchases', 'wc-exporter-for-reviso' ), $vat_rate ),
 			'ratePercentage' => $vat_rate,
 			'vatReportSetup' => array(
-				'vatReportSetupNumber' => 24, // For reduced rates.
-			),
+				'vatReportSetupNumber' => $this->get_remote_vat_account_info( 'vatReportSetup' ), // For reduced rates.
+            ),
+            'vatCode'        => 'VAT' . $vat_rate,
 		);
 
 		$vat_account = $this->wcefr_call->call( 'post', 'vat-accounts', $args );
@@ -241,7 +293,7 @@ class WCEFR_Products {
 
 
 	/**
-	 * Get a specific vat account from Reviso or create it necessary
+	 * Get a specific vat account from Reviso or create it if necessary
 	 *
 	 * @param  int    $vat_rate the vat rate.
 	 * @param  string $vat_code the vat code.
@@ -254,21 +306,45 @@ class WCEFR_Products {
 
         if ( $vat_code ) {
 
-            $end = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code );
+            $transient_name = 'wcefr-vat-code';
+            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate ); // Temp.
+            /* $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code ); */
 
         } else {
 
-            $end = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
+            $transient_name = 'wcefr-vat-rate';
+            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
 
         }
 
-		$response = $this->wcefr_call->call( 'get', 'vat-accounts' . $end );
+        /* Get transient */
+        $transient = get_transient( $transient_name );
+
+        if ( $transient ) {
+
+            $response = $transient;
+            
+        } else {
+
+            $response  = $this->wcefr_call->call( 'get', 'vat-accounts' . $end );
+
+        }
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+            if ( ! $transient ) {
+
+                /* Set the transient */
+                set_transient( $transient_name, $response, DAY_IN_SECONDS );
+
+            }
 
 			$output = $response->collection[0]->vatCode;
 
 		} else {
+
+            /* Delete transient */
+            delete_transient( $transient_name );
 
 			$output = $this->add_remote_vat_account( $vat_rate );
 

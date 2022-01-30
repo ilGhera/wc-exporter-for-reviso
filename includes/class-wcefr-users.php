@@ -198,7 +198,20 @@ class WCEFR_Users {
 	 */
 	public function get_suppliers_groups() {
 
-		$output = $this->get_user_groups( 'suppliers' );
+        $transient = get_transient( 'wcefd-suppliers-groups' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $output = $this->get_user_groups( 'suppliers' );
+
+            set_transient( 'wcefd-suppliers-groups', $output, DAY_IN_SECONDS );
+            
+        }
+
 		echo json_encode( $output );
 
 		exit;
@@ -211,7 +224,20 @@ class WCEFR_Users {
 	 */
 	public function get_customers_groups() {
 
-		$output = $this->get_user_groups( 'customers' );
+        $transient = get_transient( 'wcefd-customers-groups' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $output = $this->get_user_groups( 'customers' );
+
+            set_transient( 'wcefd-customers-groups', $output, DAY_IN_SECONDS );
+            
+        }
+
 		echo json_encode( $output );
 
 		exit;
@@ -424,12 +450,23 @@ class WCEFR_Users {
 	 * @param  int    $user_id the WP user.
 	 * @param  string $type    customer or supplier.
 	 * @param  object $order   the WC order to get the customer details.
+     * @param  bool   $new     with true the remote user doesn't exist.
 	 * @return void
 	 */
-	public function export_single_user( $user_id, $type, $order = null ) {
+	public function export_single_user( $user_id, $type, $order = null, $new = false ) {
 
-		$args      = $this->prepare_user_data( $user_id, $type, $order );
-		$remote_id = $this->user_exists( $type, $args['email'] );
+        $args = $this->prepare_user_data( $user_id, $type, $order );
+
+        if ( $new ) {
+
+            $remote_id = false;
+
+        } else {
+
+            /* Check if the remote user exists if $new is not specified */
+            $remote_id = $this->user_exists( $type, $args['email'] );
+        
+        }
 
 		if ( $args ) {
 

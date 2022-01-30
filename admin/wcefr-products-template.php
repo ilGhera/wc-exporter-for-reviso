@@ -48,7 +48,6 @@
 
 					/*Get the value from the db*/
 					$saved_distribution = get_option( 'wcefr-departmental-distribution' );
-                    error_log( 'DATE SAVED: ' . $saved_distribution );
 
                     if ( is_array( $distributions ) ) {
 

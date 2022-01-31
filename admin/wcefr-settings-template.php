@@ -43,7 +43,7 @@ i * @since 0.9.4
 			<th scope="row"><?php esc_html_e( 'Temporary data', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
 				<input type="hidden" name="wcefr-clear-cache" value="1">
-                <input type="submit" class="button-primary wcefr-button wcefr-clear-cache" value="<?php esc_html_e( 'Clear the cache' ); ?>">
+                <input type="submit" class="button-primary wcefr-button wcefr-clear-cache" value="<?php esc_html_e( 'Clear the cache', 'wc-exporter-for-reviso' ); ?>">
 				<p class="description"><?php esc_html_e( 'Remove all the data saved in cache', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>

@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.13
+ * @since 1.0.0
  */
 class WCEFR_Users {
 

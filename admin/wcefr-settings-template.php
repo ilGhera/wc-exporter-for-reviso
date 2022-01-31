@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
-i * @since 0.9.4
+ * @since 1.0.0
  */
 
 ?>

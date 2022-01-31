@@ -3,7 +3,7 @@
  * 
  * @author ilGhera
  * @package wc-exporter-for-reviso/js
- * @since 0.9.8
+ * @since 1.0.0
  */
 
 var wcefrController = function() {

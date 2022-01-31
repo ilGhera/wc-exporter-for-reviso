@@ -59,7 +59,7 @@ class WCEFR_Call {
 	public function call( $method, $endpoint = '', $args = null, $decode = true ) {
 
         ini_set( 'serialize_precision', -1 );
-        error_log( 'ENPOINT: ' . $endpoint );
+        /* error_log( 'ENPOINT: ' . $endpoint ); */
 
 		$body = $args ? json_encode( $args ) : '';
         

@@ -198,7 +198,7 @@ class WCEFR_Users {
 	 */
 	public function get_suppliers_groups() {
 
-        $transient = get_transient( 'wcefd-suppliers-groups' );
+        $transient = get_transient( 'wcefr-suppliers-groups' );
 
         if ( $transient ) {
 
@@ -208,7 +208,7 @@ class WCEFR_Users {
 
             $output = $this->get_user_groups( 'suppliers' );
 
-            set_transient( 'wcefd-suppliers-groups', $output, DAY_IN_SECONDS );
+            set_transient( 'wcefr-suppliers-groups', $output, DAY_IN_SECONDS );
             
         }
 
@@ -224,7 +224,7 @@ class WCEFR_Users {
 	 */
 	public function get_customers_groups() {
 
-        $transient = get_transient( 'wcefd-customers-groups' );
+        $transient = get_transient( 'wcefr-customers-groups' );
 
         if ( $transient ) {
 
@@ -234,7 +234,7 @@ class WCEFR_Users {
 
             $output = $this->get_user_groups( 'customers' );
 
-            set_transient( 'wcefd-customers-groups', $output, DAY_IN_SECONDS );
+            set_transient( 'wcefr-customers-groups', $output, DAY_IN_SECONDS );
             
         }
 

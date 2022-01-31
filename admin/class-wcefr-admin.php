@@ -117,6 +117,7 @@ class WCEFR_Admin {
 					echo '<div class="icon32 icon32-woocommerce-settings" id="icon-woocommerce"><br /></div>';
 					echo '<h2 id="wcefr-admin-menu" class="nav-tab-wrapper woo-nav-tab-wrapper">';
 						echo '<a href="#" data-link="wcefr-settings" class="nav-tab nav-tab-active" onclick="return false;">' . esc_html( __( 'Settings', 'wc-exporter-for-reviso' ) ) . '</a>';
+						echo '<a href="#" data-link="wcefr-checkout" class="nav-tab nav-tab" onclick="return false;">' . esc_html( __( 'Checkout', 'wc-exporter-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcefr-suppliers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Suppliers', 'wc-exporter-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcefr-products" class="nav-tab" onclick="return false;">' . esc_html( __( 'Products', 'wc-exporter-for-reviso' ) ) . '</a>';
 						echo '<a href="#" data-link="wcefr-customers" class="nav-tab" onclick="return false;">' . esc_html( __( 'Customers', 'wc-exporter-for-reviso' ) ) . '</a>';
@@ -127,6 +128,13 @@ class WCEFR_Admin {
 					echo '<div id="wcefr-settings" class="wcefr-admin" style="display: block;">';
 
 						include( WCEFR_ADMIN . 'wcefr-settings-template.php' );
+
+					echo '</div>';
+
+					/*Checkout*/
+					echo '<div id="wcefr-checkout" class="wcefr-admin">';
+
+                        include( WCEFR_INCLUDES . 'wc-checkout-fields/templates/wcefr-checkout-template.php' );
 
 					echo '</div>';
 

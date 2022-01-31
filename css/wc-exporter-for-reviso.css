@@ -196,6 +196,13 @@ select.wcefr {
 	width: 180px;
 }
 
+.wcefr-button {
+    min-width: 172px;
+    display: block;
+    padding: 10px;
+    text-align: center;
+}
+
 .button-primary.wcefr-connect,
 .button-primary.wcefr-disconnect {
 	display: inline-block;

@@ -24,6 +24,7 @@ var wcefrController = function() {
 		self.wcefr_disconnect();
 		self.book_invoice();
 		self.wcefr_check_connection();
+        self.clear_the_cache();
 	}
 
 
@@ -717,6 +718,48 @@ var wcefrController = function() {
 		})
 
 	}
+
+
+    /**
+     * Clear the cache
+     */
+    self.clear_the_cache = function() {
+
+        jQuery(function($) {
+
+            $('.wcefr-clear-cache').on('click', function(e) {
+
+                e.preventDefault();
+
+				self.delete_messages();
+				self.wcefr_response_loading();
+				self.wcefr_response_scroll();
+
+                var data = {
+                    'action': 'wcefr-clear-cache',
+                    'wcefr-clear-cache-nonce': wcefrSettings.clearCacheNonce 
+                }
+
+                $.post(ajaxurl, data, function(response){
+                    
+                    var result = JSON.parse(response);
+
+                    for (var i = 0; i < result.length; i++) {
+
+                        var error = 'error' === result[i][0] ? true : false;
+                        var update = 0 !== i ? true : false; 
+
+                        self.wcefr_response_message( result[i][1], error, false );
+
+                    }
+
+                })
+
+            })
+
+        })
+            
+    }
 
 
 	/**

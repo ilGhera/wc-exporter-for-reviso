@@ -39,9 +39,25 @@ class WCEFR_Users {
 	 */
 	private function get_province_number( $code ) {
 
-		$provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
+        $transient = get_transient( 'wcefr-provinces' );
+
+        if ( $transient ) {
+
+            $provinces = $transient;
+        
+        } else {
+
+            $provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
+
+        }
 
 		if ( isset( $provinces->collection ) ) {
+
+            if ( ! $transient ) {
+
+                set_transient( 'wcefr-provinces', $provinces, DAY_IN_SECONDS );
+
+            }
 
 			foreach ( $provinces->collection as $prov ) {
 
@@ -372,7 +388,7 @@ class WCEFR_Users {
 				'countryCode' => array(
 					'code' => $country,
 				),
-				'ProvinceNumber' => $this->get_province_number( $state ),
+				'provinceNumber' => $this->get_province_number( $state ),
 			);
 		}
 
@@ -447,13 +463,15 @@ class WCEFR_Users {
 	/**
 	 * Export single WP user to Reviso
 	 *
-	 * @param  int    $user_id the WP user.
-	 * @param  string $type    customer or supplier.
-	 * @param  object $order   the WC order to get the customer details.
-     * @param  bool   $new     with true the remote user doesn't exist.
+	 * @param  int    $user_id   the WP user.
+	 * @param  string $type      customer or supplier.
+	 * @param  object $order     the WC order to get the customer details.
+     * @param  bool   $new       with true the remote user doesn't exist.
+     * @param  bool   $remote_id the remote id of the Reviso customer.
+     * 
 	 * @return void
 	 */
-	public function export_single_user( $user_id, $type, $order = null, $new = false ) {
+	public function export_single_user( $user_id, $type, $order = null, $new = false, $remote_id = null ) {
 
         $args = $this->prepare_user_data( $user_id, $type, $order );
 
@@ -464,7 +482,7 @@ class WCEFR_Users {
         } else {
 
             /* Check if the remote user exists if $new is not specified */
-            $remote_id = $this->user_exists( $type, $args['email'] );
+            $remote_id = $remote_id ? $remote_id : $this->user_exists( $type, $args['email'] );
         
         }
 

@@ -567,18 +567,31 @@ class WCEFR_Orders {
 
 		$response = $this->wcefr_call->call( 'get', 'customers?filter=email$eq:' . $email );
 
-		if ( ! $update && isset( $response->collection ) && ! empty( $response->collection ) ) {
+        /*Add the new user in Reviso*/
+        $wcefr_users = new WCEFR_Users();
 
-			return $response->collection[0]->customerNumber;
+        $user    = get_user_by( 'email', $email );
+        $user_id = isset( $user->ID ) ? $user->ID : 0;
+
+		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+            $customer_number = $response->collection[0]->customerNumber;
+
+            if ( ! $update ) {
+
+                return $customer_number;
+
+            } else {
+
+                $user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
+
+                return $user->customerNumber;
+
+            }
 
 		} else {
 
-			$user    = get_user_by( 'email', $email );
-			$user_id = isset( $user->ID ) ? $user->ID : 0;
-
-			/*Add the new user in Reviso*/
-			$wcefr_users = new WCEFR_Users();
-			$new_user    = $wcefr_users->export_single_user( $user_id, 'customers', $order, true );
+			$new_user = $wcefr_users->export_single_user( $user_id, 'customers', $order, true );
 
 			return $new_user->customerNumber;
 

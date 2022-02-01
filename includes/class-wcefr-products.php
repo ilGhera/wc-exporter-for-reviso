@@ -306,13 +306,13 @@ class WCEFR_Products {
 
         if ( $vat_code ) {
 
-            $transient_name = 'wcefr-vat-code';
+            $transient_name = 'wcefr-vat-code-' . $vat_code;
             $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate ); // Temp.
             /* $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code ); */
 
         } else {
 
-            $transient_name = 'wcefr-vat-rate';
+            $transient_name = 'wcefr-vat-rate-' . $vat_rate;
             $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
 
         }
@@ -351,6 +351,7 @@ class WCEFR_Products {
 		}
 
 		return $output;
+
 	}
 
 

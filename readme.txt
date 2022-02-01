@@ -59,6 +59,8 @@ Release Date: 31 January 2022
 * Enhancement: New tool to delete temporary data
 * Enhancement: Now is possible set a generic Departmental distribution for all the products
 * Enhancement: Set a specific Departmental distribution in every single product page
+* Enhancement: Plugin Update checker library updated 
+* Enhancement: Action Scheduler library updated 
 * Bug fix: Bug creating a new vat account 
 * Bug fix: Bug creating a new additional expense 
 

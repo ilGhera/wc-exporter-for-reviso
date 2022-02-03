@@ -7,14 +7,14 @@
  * @since 0.9.0
  */
 
-if ( isset( $_GET['preview'] ) ) {
+if ( isset( $_GET['wcefr-preview'] ) ) {
 
 	$order_id = isset( $_GET['order-id'] ) ? sanitize_text_field( wp_unslash( $_GET['order-id'] ) ) : '';
 
 	$class = new WCEFR_Orders();
 	$invoice = $class->document_exists( $order_id, true, true );
 
-	if ( $invoice['id'] && $invoice['status'] ) {
+	if ( $invoice && $invoice['id'] && $invoice['status'] ) {
 
 		$file = $class->wcefr_call->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false );
 		$filename = 'Invoice-' . $invoice['id'] . '.pdf';

@@ -109,7 +109,7 @@ class WCEFR_Orders {
 
 				$icon = WCEFR_URI . 'images/pdf.png';
 
-				echo '<a href="?preview=true&order-id=' . esc_attr( $order_id ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+				echo '<a href="?wcefr-preview=true&order-id=' . esc_attr( $order_id ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 
 			}
 

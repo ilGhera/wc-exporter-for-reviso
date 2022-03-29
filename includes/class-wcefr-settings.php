@@ -144,6 +144,9 @@ class WCEFR_Settings {
             'wcefr-departmental-distribution',
             'wcefr-vat-code',
             'wcefr-vat-rate',
+            'wcefr-number-series-prefix',
+            'wcefr-number-series-type',
+            'wcefr-number-series',
         );
 
         foreach ( $transients as $transient ) {

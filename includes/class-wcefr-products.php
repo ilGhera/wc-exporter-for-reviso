@@ -307,8 +307,7 @@ class WCEFR_Products {
         if ( $vat_code ) {
 
             $transient_name = 'wcefr-vat-code-' . $vat_code;
-            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate ); // Temp.
-            /* $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code ); */
+            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:vatCode$eq:%s', $vat_code );
 
         } else {
 

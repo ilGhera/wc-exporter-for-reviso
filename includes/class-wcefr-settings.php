@@ -141,6 +141,7 @@ class WCEFR_Settings {
             'wcefr-payment-methods',
             'wcefr-additional-expenses',
             'wcefr-inventory-module',
+            'wcefr-dimension-module',
             'wcefr-departmental-distribution',
             'wcefr-vat-code',
             'wcefr-vat-rate',

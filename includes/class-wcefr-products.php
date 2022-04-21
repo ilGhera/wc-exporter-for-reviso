@@ -46,11 +46,11 @@ class WCEFR_Products {
 
             $response  = $this->wcefr_call->call( 'get', 'self' );
 
-            if ( is_array( $response ) && isset( $response['modules'] ) ) {
+            if ( is_object( $response ) && isset( $response->modules ) ) {
 
-                if ( is_array( $response['modules'] ) ) {
+                if ( is_array( $response->modules ) ) {
                     
-                    foreach ( $response['modules'] as $module ) {
+                    foreach ( $response->modules as $module ) {
 
                         if ( 'Lager' === $module->name ) {
 
@@ -63,6 +63,53 @@ class WCEFR_Products {
                     } 
 
                     set_transient( 'wcefr-inventory-module', $output, DAY_IN_SECONDS );
+
+                }
+
+            }
+
+        }
+
+        return $output;
+
+    }
+
+
+    /**
+     * Check if the dimension module is active
+     *
+     * @return bool
+     */
+    public function dimension_module() {
+
+        $output    = false;
+        $transient = get_transient( 'wcefr-dimension-module' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $response  = $this->wcefr_call->call( 'get', 'self' );
+
+            if ( is_object( $response ) && isset( $response->modules ) ) {
+
+                if ( is_array( $response->modules ) ) {
+                    
+                    foreach ( $response->modules as $module ) {
+
+                        if ( 0 === strpos( $module->name, 'Dimension' ) ) {
+
+                            $output = true;
+
+                            continue;
+
+                        }
+
+                    } 
+
+                    set_transient( 'wcefr-dimension-module', $output, DAY_IN_SECONDS );
 
                 }
 
@@ -639,7 +686,7 @@ class WCEFR_Products {
 		);
 
         /* Departmental distribution */
-        if ( $dist ) {
+        if ( $this->dimension_module() && $dist ) {
             $output['departmentalDistribution'] = array(
                 'departmentalDistributionNumber' => $dist,
             );
@@ -673,7 +720,7 @@ class WCEFR_Products {
 
             $sku  = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
             $args = $this->prepare_product_data( $product );
-            
+
             if ( $args ) {
 
                 $end = $this->format_sku( $sku );
@@ -686,6 +733,13 @@ class WCEFR_Products {
 
                     $output = $this->wcefr_call->call( 'post', 'products', $args );
                 
+                }
+
+                /*Log the error*/
+                if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
+
+                    error_log( 'WCEFR ERROR | Reviso product ' . $product_id . ' | ' . $output->message );
+
                 }
 
             }
@@ -819,7 +873,7 @@ class WCEFR_Products {
 		/*Log the error*/
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
-			error_log( 'WCEFR ERROR | Reviso product ' . $product_number . ' | ' . $output->message );
+			error_log( 'WCEFR ERROR | Reviso delete product ' . $product_number . ' | ' . $output->message );
 
 		}
 

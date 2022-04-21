@@ -16,8 +16,15 @@ class WCEFR_Single_Product {
      */
     public function __construct() {
 
-        add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-        add_action( 'save_post',      array( $this, 'save' ) );
+        $class = new WCEFR_Products();
+
+        /* Only if dimension module was activated in Reviso */
+        if ( $class->dimension_module() ) {
+
+            add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+            add_action( 'save_post',      array( $this, 'save' ) );
+
+        }
 
     }
 

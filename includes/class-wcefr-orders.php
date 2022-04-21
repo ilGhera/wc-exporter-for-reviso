@@ -298,7 +298,7 @@ class WCEFR_Orders {
 
 		if ( 0 != $total ) {
 
-			return floatval( wc_format_decimal( ( $value / $total * 100 ), 0 ) );
+			return floatval( wc_format_decimal( ( $value / $total * 100 ), 2 ) );
 
 		}
 
@@ -320,7 +320,8 @@ class WCEFR_Orders {
             $order->get_total_shipping() -
             $order->get_shipping_tax()   +
             $order->get_total_discount(),
-            wc_get_price_decimals(),
+            /* wc_get_price_decimals(), */
+            10,
             '.',
             ''
         );
@@ -925,6 +926,7 @@ class WCEFR_Orders {
 		$transport_gross_amount = $transport_amount + $transport_vat_amount;
 		$order_completed        = 'completed' === $order->get_status() ? true : false;
 		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order, true );
+        $vat_included           = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? 1 : 0;
 
         /*Add the payment method if not already on Reviso*/
         $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
@@ -942,7 +944,7 @@ class WCEFR_Orders {
 			'roundingAmount'         => 0.00,
 			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'vatAmount'              => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
-			'vatIncluded'            => false,
+			'vatIncluded'            => $vat_included,
 			'lines'                  => $this->order_items_data( $order ),
 			'customer'               => array(
 				'splitPayment'   => false,
@@ -998,7 +1000,7 @@ class WCEFR_Orders {
 			}
 
 		}
-        
+
 		return $output;
 
 	}

@@ -160,7 +160,7 @@ class WCEFR_Settings {
         $response[] = array(
             'ok',
             /* translators: Transients deleted */
-            esc_html__( 'Temporary data were deleted' ),
+            esc_html__( 'Temporary data were deleted', 'wc-exporter-for-reviso' ),
         );
 
         echo json_encode( $response );

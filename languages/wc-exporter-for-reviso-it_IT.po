@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-01-31 12:13+0100\n"
-"PO-Revision-Date: 2022-01-31 12:21+0100\n"
+"POT-Creation-Date: 2022-04-21 18:55+0200\n"
+"PO-Revision-Date: 2022-04-21 18:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -92,7 +92,7 @@ msgid "Select a Reviso customers group"
 msgstr "Seleziona un gruppo clienti di Reviso"
 
 #: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
-#: admin/wcefr-products-template.php:68 admin/wcefr-suppliers-template.php:46
+#: admin/wcefr-products-template.php:76 admin/wcefr-suppliers-template.php:46
 msgid "Export to Reviso"
 msgstr "Esporta verso Reviso"
 
@@ -105,7 +105,7 @@ msgid "Delete all customers on Reviso"
 msgstr "Cancella tutti i clienti in Reviso"
 
 #: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
-#: admin/wcefr-products-template.php:86 admin/wcefr-suppliers-template.php:65
+#: admin/wcefr-products-template.php:94 admin/wcefr-suppliers-template.php:65
 msgid "Delete from Reviso"
 msgstr "Cancella da Reviso"
 
@@ -219,19 +219,24 @@ msgstr "Tutte le categorie"
 msgid "Select which categories to send to Reviso."
 msgstr "Seleziona la/ le categorie di prodotti da inviare a Reviso."
 
-#: admin/wcefr-products-template.php:41
+#: admin/wcefr-products-template.php:47
 msgid "Departmental distribution"
 msgstr "Centro di responsabilità"
 
-#: admin/wcefr-products-template.php:63
+#: admin/wcefr-products-template.php:50
+#: includes/class-wcefr-single-product.php:74
+msgid "Select"
+msgstr "Seleziona"
+
+#: admin/wcefr-products-template.php:68
 msgid "Select a generic departmental distribution."
 msgstr "Seleziona un centro di responsabilità generico."
 
-#: admin/wcefr-products-template.php:78
+#: admin/wcefr-products-template.php:86
 msgid "Delete products"
 msgstr "Cancella prodotti"
 
-#: admin/wcefr-products-template.php:80
+#: admin/wcefr-products-template.php:88
 msgid ""
 "Delete all products on Reviso. Note that you cannot delete a product that "
 "has been used on an Invoice."
@@ -291,65 +296,65 @@ msgstr "Cancella tutti i fornitori in Reviso"
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:493
+#: includes/class-wcefr-orders.php:494
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:917
+#: includes/class-wcefr-orders.php:932
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1147
+#: includes/class-wcefr-orders.php:1162
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1217
+#: includes/class-wcefr-orders.php:1232
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1226
+#: includes/class-wcefr-orders.php:1241
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
-#: includes/class-wcefr-products.php:273
+#: includes/class-wcefr-products.php:320
 msgid "Sales VAT"
 msgstr "IVA vendite"
 
-#: includes/class-wcefr-products.php:276
+#: includes/class-wcefr-products.php:323
 #, php-format
 msgid "%d%% VAT purchases"
 msgstr "Acquisti con IVA al %d%%"
 
-#: includes/class-wcefr-products.php:379
+#: includes/class-wcefr-products.php:426
 msgid "Sale of goods VAT "
 msgstr "IVA vendite "
 
-#: includes/class-wcefr-products.php:430
+#: includes/class-wcefr-products.php:477
 #, php-format
 msgid "%d%% VAT"
 msgstr "IVA al %d%%"
 
-#: includes/class-wcefr-products.php:490
+#: includes/class-wcefr-products.php:537
 msgid "No VAT"
 msgstr "Non soggetto a IVA"
 
-#: includes/class-wcefr-products.php:787
+#: includes/class-wcefr-products.php:841
 #, php-format
 msgid "%d product(s) export process has begun"
 msgstr "Il processo di esportazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:795
+#: includes/class-wcefr-products.php:849
 msgid "ERROR! There are not products to export"
 msgstr "ERRORE! Non ci sono prodotti da esportare"
 
-#: includes/class-wcefr-products.php:859
+#: includes/class-wcefr-products.php:913
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d prodotti è iniziato"
 
-#: includes/class-wcefr-products.php:866
+#: includes/class-wcefr-products.php:920
 msgid "ERROR! There are not products to delete"
 msgstr "ERRORE! Non ci sono prodotti da cancellare"
 
@@ -357,37 +362,33 @@ msgstr "ERRORE! Non ci sono prodotti da cancellare"
 msgid "Connected"
 msgstr "Connesso"
 
-#: includes/class-wcefr-settings.php:159
+#: includes/class-wcefr-settings.php:163
 msgid "Temporary data were deleted"
 msgstr "I dati temporanei sono stati eliminati"
 
-#: includes/class-wcefr-single-product.php:38
+#: includes/class-wcefr-single-product.php:45
 msgid "Reviso"
 msgstr ""
 
-#: includes/class-wcefr-single-product.php:63
+#: includes/class-wcefr-single-product.php:70
 msgid "<i>Departmental distribution</i>"
 msgstr "<i>Centro di responsabilità</i>"
 
-#: includes/class-wcefr-single-product.php:67
-msgid "Select"
-msgstr "Seleziona"
-
-#: includes/class-wcefr-single-product.php:88
+#: includes/class-wcefr-single-product.php:95
 msgid "Set a specific departmental distribution for this product"
 msgstr "Seleziona un centro di responsabilità specifico per questo prodotto"
 
-#: includes/class-wcefr-users.php:584
+#: includes/class-wcefr-users.php:602
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:652
+#: includes/class-wcefr-users.php:670
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:662
+#: includes/class-wcefr-users.php:680
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"

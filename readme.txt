@@ -1,9 +1,9 @@
 === WooCommerce Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 0.9.6
+Version: 1.0.0
 Requires at least: 4.0
-Tested up to: 5.8
+Tested up to: 5.9
 License: GPLv2
 
 Export suppliers, products, customers and orders from your Woocommerce store to Reviso. Export new orders and create invoices in real time.
@@ -84,6 +84,17 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+= 1.0.0
+Release Date: 22 April 2022
+
+* Bug fix: Impossible delete Number Series transient
+* Bug fix: Possible error getting the remote VAT code
+* Bug fix: Departmental distribution options available even with Dimension module disabled
+* Bug fix: Bad discount percentage because decimal numbers were missed
+* Bug fix: VatIncluded value not dynamic
+* Bug fix: Product volume not exported to Reviso
+
 
 = 0.9.6
 Release Date: 14 October 2021

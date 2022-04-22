@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.8
+ * @since 1.0.2
  */
 class WCEFR_Settings {
 
@@ -20,6 +20,7 @@ class WCEFR_Settings {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 			add_action( 'wp_ajax_wcefr-check-connection', array( $this, 'check_connection_callback' ) );
 			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
+			add_action( 'wp_ajax_wcefr-clear-cache', array( $this, 'clear_cache' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 
 		}
@@ -127,5 +128,46 @@ class WCEFR_Settings {
 
 	}
 
+    /**
+     * Clear the temporary date saved in the db
+     *
+     * @return void
+     */
+    public function clear_cache() {
+
+        $transients = array( 
+            'wcefr-suppliers-groups',
+            'wcefr-customers-groups',
+            'wcefr-payment-methods',
+            'wcefr-additional-expenses',
+            'wcefr-inventory-module',
+            'wcefr-dimension-module',
+            'wcefr-departmental-distribution',
+            'wcefr-vat-code',
+            'wcefr-vat-rate',
+            'wcefr-number-series-prefix',
+            'wcefr-number-series-type',
+            'wcefr-number-series',
+        );
+
+        foreach ( $transients as $transient ) {
+
+            delete_transient( $transient );
+
+        }
+
+        /* Response message */
+        $response[] = array(
+            'ok',
+            /* translators: Transients deleted */
+            esc_html__( 'Temporary data were deleted', 'wc-exporter-for-reviso' ),
+        );
+
+        echo json_encode( $response );
+
+        exit;
+    } 
+
 }
 new WCEFR_Settings( true );
+

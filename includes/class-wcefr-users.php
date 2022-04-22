@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.6
+ * @since 1.0.0
  */
 class WCEFR_Users {
 
@@ -39,9 +39,25 @@ class WCEFR_Users {
 	 */
 	private function get_province_number( $code ) {
 
-		$provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
+        $transient = get_transient( 'wcefr-provinces' );
+
+        if ( $transient ) {
+
+            $provinces = $transient;
+        
+        } else {
+
+            $provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
+
+        }
 
 		if ( isset( $provinces->collection ) ) {
+
+            if ( ! $transient ) {
+
+                set_transient( 'wcefr-provinces', $provinces, DAY_IN_SECONDS );
+
+            }
 
 			foreach ( $provinces->collection as $prov ) {
 
@@ -198,7 +214,20 @@ class WCEFR_Users {
 	 */
 	public function get_suppliers_groups() {
 
-		$output = $this->get_user_groups( 'suppliers' );
+        $transient = get_transient( 'wcefr-suppliers-groups' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $output = $this->get_user_groups( 'suppliers' );
+
+            set_transient( 'wcefr-suppliers-groups', $output, DAY_IN_SECONDS );
+            
+        }
+
 		echo json_encode( $output );
 
 		exit;
@@ -211,7 +240,20 @@ class WCEFR_Users {
 	 */
 	public function get_customers_groups() {
 
-		$output = $this->get_user_groups( 'customers' );
+        $transient = get_transient( 'wcefr-customers-groups' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $output = $this->get_user_groups( 'customers' );
+
+            set_transient( 'wcefr-customers-groups', $output, DAY_IN_SECONDS );
+            
+        }
+
 		echo json_encode( $output );
 
 		exit;
@@ -346,7 +388,7 @@ class WCEFR_Users {
 				'countryCode' => array(
 					'code' => $country,
 				),
-				'ProvinceNumber' => $this->get_province_number( $state ),
+				'provinceNumber' => $this->get_province_number( $state ),
 			);
 		}
 
@@ -421,15 +463,28 @@ class WCEFR_Users {
 	/**
 	 * Export single WP user to Reviso
 	 *
-	 * @param  int    $user_id the WP user.
-	 * @param  string $type    customer or supplier.
-	 * @param  object $order   the WC order to get the customer details.
+	 * @param  int    $user_id   the WP user.
+	 * @param  string $type      customer or supplier.
+	 * @param  object $order     the WC order to get the customer details.
+     * @param  bool   $new       with true the remote user doesn't exist.
+     * @param  bool   $remote_id the remote id of the Reviso customer.
+     * 
 	 * @return void
 	 */
-	public function export_single_user( $user_id, $type, $order = null ) {
+	public function export_single_user( $user_id, $type, $order = null, $new = false, $remote_id = null ) {
 
-		$args      = $this->prepare_user_data( $user_id, $type, $order );
-		$remote_id = $this->user_exists( $type, $args['email'] );
+        $args = $this->prepare_user_data( $user_id, $type, $order );
+
+        if ( $new ) {
+
+            $remote_id = false;
+
+        } else {
+
+            /* Check if the remote user exists if $new is not specified */
+            $remote_id = $remote_id ? $remote_id : $this->user_exists( $type, $args['email'] );
+        
+        }
 
 		if ( $args ) {
 

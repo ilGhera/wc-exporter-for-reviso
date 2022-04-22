@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.5
+ * @since 1.0.0
  */
 class WCEFR_Orders {
 
@@ -30,7 +30,7 @@ class WCEFR_Orders {
 	/**
 	 * Get a specific number serie from Reviso
 	 *
-	 * @param  string $prefix     example are FVE, FVL, ecc.
+	 * @param  string $prefix     examples are FVE, FVL, ecc.
 	 * @param  string $entry_type used to filter the number series.
 	 * @param  bool   $first      if true returns the numberSeriesNumber of the first result, otherwise all the array.
 	 * @return mixed
@@ -39,32 +39,54 @@ class WCEFR_Orders {
 
 		if ( $prefix ) {
 
-			/*Used for invoices*/
-			$response = $this->wcefr_call->call( 'get', 'number-series?filter=prefix$eq:' . $prefix );
+            $transient_name = 'wcefr-number-series-prefix';
+			$args           = '?filter=prefix$eq:' . $prefix;
 
 		} elseif ( $entry_type ) {
 
-			$response = $this->wcefr_call->call( 'get', 'number-series?filter=entryType$eq:' . $entry_type );
+            $transient_name = 'wcefr-number-series-type';
+			$args           = '?filter=entryType$eq:' . $entry_type;
 
 		} else {
 
-			$response = $this->wcefr_call->call( 'get', 'number-series' );
+            $transient_name = 'wcefr-number-series';
+			$args           = null;
 
 		}
 
-		if ( isset( $response->collection ) ) {
+        /* Get the transient */
+        $transient = get_transient( $transient_name );
 
-			if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
+        if ( $transient ) {
 
-				return $response->collection[0]->numberSeriesNumber;
+            $response = $transient;
 
-			} else {
+        } else {
 
-				return $response->collection;
+            $response  = $this->wcefr_call->call( 'get', 'number-series' . $args );
 
-			}
+        }
+            
+        if ( isset( $response->collection ) ) {
 
-		}
+            if ( ! $transient ) {
+
+                /* Set the transient */
+                set_transient( $transient_name, $response, DAY_IN_SECONDS );
+                
+            }
+
+            if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
+
+                return $response->collection[0]->numberSeriesNumber;
+
+            } else {
+
+                return $response->collection;
+
+            }
+
+        }
 
 	}
 

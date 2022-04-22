@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2021-04-28 14:31+0200\n"
+"POT-Creation-Date: 2022-04-21 18:55+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -55,18 +55,22 @@ msgid "Settings"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:120
-msgid "Suppliers"
+msgid "Checkout"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:121
-msgid "Products"
+msgid "Suppliers"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:122
-msgid "Customers"
+msgid "Products"
 msgstr ""
 
 #: admin/class-wcefr-admin.php:123
+msgid "Customers"
+msgstr ""
+
+#: admin/class-wcefr-admin.php:124
 msgid "Orders"
 msgstr ""
 
@@ -87,7 +91,7 @@ msgid "Select a Reviso customers group"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
-#: admin/wcefr-products-template.php:42 admin/wcefr-suppliers-template.php:46
+#: admin/wcefr-products-template.php:76 admin/wcefr-suppliers-template.php:46
 msgid "Export to Reviso"
 msgstr ""
 
@@ -100,7 +104,7 @@ msgid "Delete all customers on Reviso"
 msgstr ""
 
 #: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
-#: admin/wcefr-products-template.php:60 admin/wcefr-suppliers-template.php:65
+#: admin/wcefr-products-template.php:94 admin/wcefr-suppliers-template.php:65
 msgid "Delete from Reviso"
 msgstr ""
 
@@ -207,14 +211,27 @@ msgid "All categories"
 msgstr ""
 
 #: admin/wcefr-products-template.php:37
-msgid "Select which categories to send to Reviso"
+msgid "Select which categories to send to Reviso."
 msgstr ""
 
-#: admin/wcefr-products-template.php:52
+#: admin/wcefr-products-template.php:47
+msgid "Departmental distribution"
+msgstr ""
+
+#: admin/wcefr-products-template.php:50
+#: includes/class-wcefr-single-product.php:74
+msgid "Select"
+msgstr ""
+
+#: admin/wcefr-products-template.php:68
+msgid "Select a generic departmental distribution."
+msgstr ""
+
+#: admin/wcefr-products-template.php:86
 msgid "Delete products"
 msgstr ""
 
-#: admin/wcefr-products-template.php:54
+#: admin/wcefr-products-template.php:88
 msgid ""
 "Delete all products on Reviso. Note that you cannot delete a product that "
 "has been used on an Invoice."
@@ -232,12 +249,24 @@ msgstr ""
 msgid "Connect with your Reviso credentials"
 msgstr ""
 
-#: admin/wcefr-settings-template.php:29
+#: admin/wcefr-settings-template.php:30
 msgid "Connect to Reviso"
 msgstr ""
 
-#: admin/wcefr-settings-template.php:30
+#: admin/wcefr-settings-template.php:31
 msgid "Disconnect from Reviso"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:43
+msgid "Temporary data"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:46
+msgid "Clear the cache"
+msgstr ""
+
+#: admin/wcefr-settings-template.php:47
+msgid "Remove all the data saved in cache"
 msgstr ""
 
 #: admin/wcefr-suppliers-template.php:32
@@ -260,83 +289,99 @@ msgstr ""
 msgid "Invoice"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:439
+#: includes/class-wcefr-orders.php:494
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:833
+#: includes/class-wcefr-orders.php:932
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1063
+#: includes/class-wcefr-orders.php:1162
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1133
+#: includes/class-wcefr-orders.php:1232
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1142
+#: includes/class-wcefr-orders.php:1241
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
-#: includes/class-wcefr-products.php:186
+#: includes/class-wcefr-products.php:320
 msgid "Sales VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:190
+#: includes/class-wcefr-products.php:323
 #, php-format
 msgid "%d%% VAT purchases"
 msgstr ""
 
-#: includes/class-wcefr-products.php:258
+#: includes/class-wcefr-products.php:426
 msgid "Sale of goods VAT "
 msgstr ""
 
-#: includes/class-wcefr-products.php:309
+#: includes/class-wcefr-products.php:477
 #, php-format
 msgid "%d%% VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:369
+#: includes/class-wcefr-products.php:537
 msgid "No VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:632
+#: includes/class-wcefr-products.php:841
 #, php-format
 msgid "%d product(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:640
+#: includes/class-wcefr-products.php:849
 msgid "ERROR! There are not products to export"
 msgstr ""
 
-#: includes/class-wcefr-products.php:704
+#: includes/class-wcefr-products.php:913
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:711
+#: includes/class-wcefr-products.php:920
 msgid "ERROR! There are not products to delete"
 msgstr ""
 
-#: includes/class-wcefr-settings.php:120
+#: includes/class-wcefr-settings.php:121
 msgid "Connected"
 msgstr ""
 
-#: includes/class-wcefr-users.php:454
+#: includes/class-wcefr-settings.php:163
+msgid "Temporary data were deleted"
+msgstr ""
+
+#: includes/class-wcefr-single-product.php:45
+msgid "Reviso"
+msgstr ""
+
+#: includes/class-wcefr-single-product.php:70
+msgid "<i>Departmental distribution</i>"
+msgstr ""
+
+#: includes/class-wcefr-single-product.php:95
+msgid "Set a specific departmental distribution for this product"
+msgstr ""
+
+#: includes/class-wcefr-users.php:602
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:522
+#: includes/class-wcefr-users.php:670
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:532
+#: includes/class-wcefr-users.php:680
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr ""
@@ -350,12 +395,12 @@ msgid "Fiscal code"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:68
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:165
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:162
 msgid "PEC"
 msgstr ""
 
 #: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:69
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:174
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:171
 msgid "Recipient code"
 msgstr ""
 
@@ -394,110 +439,106 @@ msgstr ""
 msgid "Electronic invoicing"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:94
-msgid "Checkout page"
-msgstr ""
-
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:100
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:97
 msgid "Tax documents"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:105
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:102
 msgid "Company ( Invoice )"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:111
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:108
 msgid "Private ( Invoice )"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:114
 msgid "Private ( Receipt )"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:120
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:117
 msgid ""
 "By activating one or more types of invoice, the fields VAT and Tax Code "
 "will be displayed when needed."
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:124
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:121
 msgid "Document type"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:129
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:126
 msgid "Put the document type selector on the top of the form"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:133
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:130
 msgid "Tax Code required"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:137
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:134
 msgid "Never"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:138
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:135
 msgid "Only with receipts"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:139
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:136
 msgid "Only with invoices"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:140
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:137
 msgid "Always"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:143
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:140
 msgid "Make the Tax Code field mandatory"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:147
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:144
 msgid "Tax Code validation"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:152
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:149
 msgid "Activate the Tax Code validity check"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:156
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:153
 msgid "VIES validation"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:161
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:158
 msgid ""
 "Activate the VIES validity check for the VAT Number <i>( SOAP activated on "
 "server is required )</i>"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:170
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:167
 msgid "Activate the PEC field for eletronic invoicing"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:179
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:176
 msgid "Activate the Recipient Code field for electronic invoicing"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:183
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:180
 msgid "Only EU"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:188
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:185
 msgid "Make VAT Number field mandatory only for European Union countries "
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:192
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:189
 msgid "Only Italy"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:197
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:194
 msgid "Show PEC and Recipient Code fields only to Italian customers"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:206
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:203
 msgid "Show the tax code field only to Italian customers"
 msgstr ""
 
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:215
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:212
 msgid "Save settings"
 msgstr ""

@@ -22,7 +22,6 @@ class WCEFR_Single_Product {
         if ( $class->dimension_module() ) {
 
             add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-            add_action( 'save_post',      array( $this, 'save' ) );
 
         }
 
@@ -94,35 +93,7 @@ class WCEFR_Single_Product {
         </select>
         <p class="howto"><?php esc_html_e( 'Set a specific departmental distribution for this product', 'wc-exporter-for-reviso' ); ?></p>
         <?php
-    }
-
-
-    /**
-     * Save the meta when the post is saved.
-     *
-     * @param int $post_id The ID of the post being saved.
-     *
-     * return mixed
-     */
-    public function save( $post_id ) {
- 
-        if ( ! isset( $_POST['wcefr-meta-box-nonce'] ) ) {
-            return $post_id;
-        }
- 
-        $nonce = $_POST['wcefr-meta-box-nonce'];
- 
-        if ( ! wp_verify_nonce( $nonce, 'wcefr-meta-box' ) ) {
-            return $post_id;
-        }
- 
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-            return $post_id;
-        }
- 
-        $dist = sanitize_text_field( $_POST['wcefr-departmental-distribution'] );
- 
-        update_post_meta( $post_id, 'wcefr-departmental-distribution', $dist );
+        wcefr_go_premium();
     }
 
 

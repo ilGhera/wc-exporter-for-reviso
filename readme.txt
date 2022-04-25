@@ -86,7 +86,7 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 = 1.0.0
-Release Date: 22 April 2022
+Release Date: 25 April 2022
 
 * Bug fix: Impossible delete Number Series transient
 * Bug fix: Possible error getting the remote VAT code

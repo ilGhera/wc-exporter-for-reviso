@@ -647,7 +647,7 @@ class WCEFR_Products {
         /*Departmental distribution*/
         $specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
         $generic_dist  = get_option( 'wcefr-departmental-distribution' );
-        $dist          = '' !== $specific_dist ? $specific_dist : $generic_dist;
+        $dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
 
 		/*Sale price*/
 		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();

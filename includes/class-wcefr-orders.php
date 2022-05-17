@@ -357,6 +357,7 @@ class WCEFR_Orders {
 	private function order_items_data( $order ) {
 
 		$output = array();
+		$class  = new WCEFR_Products();
 
         /* Get order tax labels */
         $tax_labels = array();
@@ -408,6 +409,23 @@ class WCEFR_Orders {
 						),
 
 					);
+
+                    /*Departmental distribution*/
+                    if ( $class->dimension_module() ) {
+
+                        $specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
+                        $generic_dist  = get_option( 'wcefr-departmental-distribution' );
+                        $dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
+
+                        if ( $dist ) {
+
+                            $output[ $n ]['departmentalDistribution'] = array(
+                                'departmentalDistributionNumber' => $dist,
+                            );
+
+                        }
+                        
+                    }
 
 				}
 

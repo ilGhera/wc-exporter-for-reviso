@@ -8,6 +8,14 @@
  */
 class WCEFR_Products {
 
+    /**
+     * Synchronize products in real time
+     *
+     * @var bool
+     */
+    private $synchronize_products;
+
+
 	/**
 	 * Class constructor
 	 *
@@ -17,16 +25,51 @@ class WCEFR_Products {
 
 		if ( $init ) {
 
+            /* Get options */
+            $this->synchronize_products       = get_option( 'wcefr-synchronize-products' );
+
+            /* Hooks */
+            add_action( 'admin_init', array( $this, 'products_settings' ), 10 );
 			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
 			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ) );
 			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
+
+            /* Conditionals hooks */
+            if ( $this->synchronize_products ) {
+
+                add_action( 'woocommerce_update_product', array( $this, 'export_single_product' ), 10, 1 );
+                add_action( 'trashed_post', array( $this, 'export_single_product' ), 10, 1 );
+                add_action( 'untrashed_post', array( $this, 'export_single_product' ), 10, 1 );
+
+            }
 
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
 
 	}
+
+
+    /**
+     * User synchronization options 
+     *
+     * @return void 
+     */
+    public function products_settings() {
+
+
+		if ( isset( $_POST['wcefr-products-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-products-settings-nonce'] ), 'wcefr-products-settings' ) ) {
+
+            $synchronize_products = isset( $_POST['wcefr-synchronize-products'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-synchronize-products'] ) ) : 0;
+
+            /*Save to the db*/
+            update_option( 'wcefr-synchronize-products', $synchronize_products );
+
+        }
+
+    }
+
 
     /**
      * Check if the inventory module is active
@@ -710,35 +753,55 @@ class WCEFR_Products {
 	/**
 	 * Export single product to Reviso
 	 *
-	 * @param  int $product_id the product id.
+	 * @param  int $post_id the post ID.
 	 */
-	public function export_single_product( $product_id ) {
+	public function export_single_product( $post_id ) {
 
-		$product = wc_get_product( $product_id );
+        if ( wp_is_post_autosave( $post_id ) ) {
 
-		if ( $product ) {
+            return;
 
-            $sku  = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
-            $args = $this->prepare_product_data( $product );
+        }
 
-            if ( $args ) {
+		$product = wc_get_product( $post_id );
 
-                $end = $this->format_sku( $sku );
+        if ( ! is_object( $product ) ) {
+            
+            return;
 
-                if ( $this->product_exists( $end ) ) {
+        } elseif ( $product ) {
 
-                    $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
+            $sku    = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+            $end    = $this->format_sku( $sku );
+            $exists = $this->product_exists( $end ); 
 
-                } else {
+            if ( $exists && 'trash' === $product->get_status() ) {
 
-                    $output = $this->wcefr_call->call( 'post', 'products', $args );
-                
-                }
+                /* Delete remote product */
+                $this->delete_remote_single_product( $end );
 
-                /*Log the error*/
-                if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
+            } else {
 
-                    error_log( 'WCEFR ERROR | Reviso product ' . $product_id . ' | ' . $output->message );
+                $args   = $this->prepare_product_data( $product );
+
+                if ( $args ) {
+
+                    if ( $exists ) {
+
+                        $output = $this->wcefr_call->call( 'put', 'products/' . $end, $args ); // temp.
+
+                    } else {
+
+                        $output = $this->wcefr_call->call( 'post', 'products', $args );
+                    
+                    }
+
+                    /*Log the error*/
+                    if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
+
+                        error_log( 'WCEFR ERROR | Reviso product ' . $post_id . ' | ' . $output->message );
+
+                    }
 
                 }
 

@@ -17,7 +17,7 @@ $synchronize_suppliers  = get_option( 'wcefr-synchronize-suppliers' ) ? get_opti
 		<tr>
 			<th scope="row"><?php esc_html_e( 'User role', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<select class="wcefr-suppliers-role wcefr-select" name="wcefr-suppliers-role">
+				<select class="wcefr-users-role wcefr-suppliers-role wcefr-select" name="wcefr-suppliers-role">
 					<?php
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -30,6 +30,7 @@ $synchronize_suppliers  = get_option( 'wcefr-synchronize-suppliers' ) ? get_opti
 					}
 					?>
 				</select>
+                <span class="wcefr-role-response suppliers"></span>
 				<p class="description"><?php esc_html_e( 'Select your suppliers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>
@@ -51,7 +52,7 @@ $synchronize_suppliers  = get_option( 'wcefr-synchronize-suppliers' ) ? get_opti
 
 
 <!-- Delete form -->
-<form name="wcefr-delete-suppliers" class="wcefr-form"  method="post" action="">
+<form name="wcefr-delete-suppliers" class="wcefr-form one-of"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -93,13 +94,15 @@ $synchronize_suppliers  = get_option( 'wcefr-synchronize-suppliers' ) ? get_opti
 <?php
 /*Nonce*/
 $export_users_nonce = wp_create_nonce( 'wcefr-export-users' );
+$users_role_nonce   = wp_create_nonce( 'wcefr-users-role' );
 $delete_users_nonce = wp_create_nonce( 'wcefr-delete-users' );
 
 wp_localize_script(
 	'wcefr-js',
 	'wcefrUsers',
 	array(
-		'exportNonce' => $export_users_nonce,
-		'deleteNonce' => $delete_users_nonce,
+		'exportNonce'    => $export_users_nonce,
+		'usersRoleNonce' => $users_role_nonce,
+		'deleteNonce'    => $delete_users_nonce,
 	)
 );

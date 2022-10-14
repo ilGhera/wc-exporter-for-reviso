@@ -17,7 +17,7 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 		<tr>
 			<th scope="row"><?php echo esc_html_e( 'User role', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<select class="wcefr-customers-role wcefr-select" name="wcefr-customers-role">
+				<select class="wcefr-users-role wcefr-customers-role wcefr-select" name="wcefr-customers-role">
 					<?php
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -30,6 +30,7 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 					}
 					?>
 				</select>
+                <span class="wcefr-role-response customers"></span>
 				<p class="description"><?php esc_html_e( 'Select your customers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>

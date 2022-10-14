@@ -13,6 +13,7 @@ var wcefrController = function() {
 	self.onLoad = function() {
 	    self.wcefr_pagination();
 		self.tzCheckbox();
+        self.wcefr_update_user_role();
 	    self.wcefr_export_users();
 	    self.wcefr_delete_remote_users();
 		self.get_user_groups('customers');
@@ -263,6 +264,44 @@ var wcefrController = function() {
 		})
 
 	}
+
+
+    /**
+     * Save role for suppliers and customers in Ajax
+     */
+    self.wcefr_update_user_role = function() {
+
+		jQuery(function($){
+
+            $('.wcefr-users-role').on('change', function(){
+
+                var type = $(this).hasClass('wcefr-customers-role') ? 'customers' : 'suppliers';
+
+                var data = {
+                    'action': 'wcefr-update-users-role',
+					'wcefr-users-role-nonce': wcefrUsers.usersRoleNonce,
+                    'type': type,
+                    'role': $(this).val()
+                }
+
+                console.log( 'DATA: ' + JSON.stringify(data) );
+
+                $.post(ajaxurl, data, function(response){
+                    
+                    $('.wcefr-role-response.' + type).html(response);
+                    $('.wcefr-role-response.' + type).show();
+
+                    setTimeout(function() {
+                        $('.wcefr-role-response.' + type).hide();
+                    }, 1000);
+
+                    
+                })
+
+            })
+        })
+
+    }
 
 
 	/**

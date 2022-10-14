@@ -56,6 +56,7 @@ class WCEFR_Users {
             $this->synchronize_customers = get_option( 'wcefr-synchronize-customers' );
 
             add_action( 'admin_init', array( $this, 'users_settings' ), 10 );
+			add_action( 'wp_ajax_wcefr-update-users-role', array( $this, 'update_users_role' ) );
 			add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
 			add_action( 'wp_ajax_wcefr-get-customers-groups', array( $this, 'get_customers_groups' ) );
@@ -679,6 +680,34 @@ class WCEFR_Users {
 	}
 
 
+    /**
+     * Update users role for suppliers and customers with Ajax
+     *
+     * @return void
+     */
+    public function update_users_role() {
+
+		if ( isset( $_POST['wcefr-users-role-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-users-role-nonce'] ), 'wcefr-users-role' ) ) {
+
+			$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
+			$role  = isset( $_POST['role'] ) ? sanitize_text_field( wp_unslash( $_POST['role'] ) ) : '';
+
+			/* Save in the DB */
+			$output = update_option( 'wcefr-' . $type . '-role', $role );
+
+            if ( $output ) {
+
+                echo __( 'Saved!', 'wc-exporter-for-reviso' );
+
+            }
+
+        }
+
+        exit;
+
+    }
+
+
 	/**
 	 * Export WP users as customers/ suppliers in Reviso
 	 *
@@ -693,7 +722,6 @@ class WCEFR_Users {
 			$group = isset( $_POST['group'] ) ? sanitize_text_field( wp_unslash( $_POST['group'] ) ) : '';
 
 			/* Save in the DB */
-			update_option( 'wcefr-' . $type . '-role', $role );
 			update_option( 'wcefr-' . $type . '-group', $group );
 
 			$args     = array( 'role' => $role );

@@ -252,6 +252,12 @@ h4.wcefr-connection-status {
     margin-top: 20px;
 }
 
+span.wcefr-role-response {
+    display: none;
+    padding-left: 5px;
+    color: green;
+}
+
 @media screen and (max-width: 1000px) {
 
 	.wrap-left {

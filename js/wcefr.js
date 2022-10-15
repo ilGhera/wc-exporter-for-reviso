@@ -284,8 +284,6 @@ var wcefrController = function() {
                     'role': $(this).val()
                 }
 
-                console.log( 'DATA: ' + JSON.stringify(data) );
-
                 $.post(ajaxurl, data, function(response){
                     
                     $('.wcefr-role-response.' + type).html(response);

@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 0.9.8
+ * @since 1.1.0
  */
 
 $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;

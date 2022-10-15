@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.0.2
+ * @since 1.1.0
  */
 
 /*Get value from the db*/

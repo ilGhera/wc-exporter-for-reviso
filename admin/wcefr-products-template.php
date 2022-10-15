@@ -4,9 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.0.0
+ * @since 1.1.0
  */
 
+/*Get value from the db*/
+$synchronize_products       = get_option( 'wcefr-synchronize-products' );
 ?>
 
 <!-- Export form -->
@@ -78,7 +80,7 @@
 
 
 <!-- Delete form -->
-<form name="wcefr-delete-products" id="wcefr-delete-products" class="wcefr-form"  method="post" action="">
+<form name="wcefr-delete-products" id="wcefr-delete-products" class="wcefr-form one-of"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -97,4 +99,40 @@
 	</p>
 
 </form>
+
+<!-- Settings form -->
+<form name="wcefr-products-settings" class="wcefr-form"  method="post" action="">
+
+    <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
+
+	<table class="form-table">
+		<tr class="synchronize-products">
+			<th scope="row"><?php esc_html_e( 'Products', 'wc-exporter-for-reviso' ); ?></th>
+			<td>
+				<input type="checkbox" name="wcefr-synchronize-products" value="1"<?php echo 1 == $synchronize_products ? ' checked="checked"' : ''; ?>>
+				<p class="description"><?php esc_html_e( 'Update products in Reviso in real time', 'wc-exporter-for-reviso' ); ?></p>
+			</td>
+		</tr>
+        <?php wp_nonce_field( 'wcefr-products-settings', 'wcefr-products-settings-nonce' ); ?>
+	</table>
+
+	<p class="submit">
+		<input type="submit" class="button-primary wcefr products-settings" value="<?php esc_html_e( 'Save settings', 'wc-exporter-for-reviso' ); ?>" />
+	</p>
+
+</form>
+
+<?php
+/*Nonce*/
+$export_products_nonce = wp_create_nonce( 'wcefr-export-products' );
+$delete_products_nonce = wp_create_nonce( 'wcefr-delete-products' );
+
+wp_localize_script(
+	'wcefr-js',
+	'wcefrProducts',
+	array(
+		'exportNonce' => $export_products_nonce,
+		'deleteNonce' => $delete_products_nonce,
+	)
+);
 

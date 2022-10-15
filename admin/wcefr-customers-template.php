@@ -4,9 +4,10 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 0.9.8
+ * @since 1.1.0
  */
 
+$synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;
 ?>
 
 <!-- Export form -->
@@ -16,7 +17,7 @@
 		<tr>
 			<th scope="row"><?php echo esc_html_e( 'User role', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<select class="wcefr-customers-role wcefr-select" name="wcefr-customers-role">
+				<select class="wcefr-users-role wcefr-customers-role wcefr-select" name="wcefr-customers-role">
 					<?php
 					global $wp_roles;
 					$roles = $wp_roles->get_names();
@@ -29,6 +30,7 @@
 					}
 					?>
 				</select>
+                <span class="wcefr-role-response customers"></span>
 				<p class="description"><?php esc_html_e( 'Select your customers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>
@@ -50,7 +52,7 @@
 
 
 <!-- Delete form -->
-<form name="wcefr-delete-customers" class="wcefr-form"  method="post" action="">
+<form name="wcefr-delete-customers" class="wcefr-form one-of"  method="post" action="">
 
 	<table class="form-table">
 		<tr>
@@ -66,3 +68,26 @@
 	</p>
 
 </form>
+
+<!-- Settings form -->
+<form name="wcefr-customers-settings" class="wcefr-form"  method="post" action="">
+
+    <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
+
+	<table class="form-table">
+		<tr class="synchronize-customers">
+			<th scope="row"><?php esc_html_e( 'Customers', 'wc-exporter-for-reviso' ); ?></th>
+			<td>
+				<input type="checkbox" name="wcefr-synchronize-customers" value="1"<?php echo 1 == $synchronize_customers ? ' checked="checked"' : ''; ?>>
+				<p class="description"><?php esc_html_e( 'Update customers in Reviso in real time', 'wc-exporter-for-reviso' ); ?></p>
+			</td>
+		</tr>
+        <?php wp_nonce_field( 'wcefr-customers-settings', 'wcefr-customers-settings-nonce' ); ?>
+	</table>
+
+	<p class="submit">
+		<input type="submit" class="button-primary wcefr customers-settings" value="<?php esc_html_e( 'Save settings', 'wc-exporter-for-reviso' ); ?>" />
+	</p>
+
+</form>
+

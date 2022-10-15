@@ -3,7 +3,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/css
- * @since 1.0.0
+ * @since 1.1.0
  */
 
 .wcefr-admin {
@@ -278,6 +278,12 @@ h4.wcefr-connection-status {
 
 .wcefr-number-series-receipts {
     margin-top: 20px;
+}
+
+span.wcefr-role-response {
+    display: none;
+    padding-left: 5px;
+    color: green;
 }
 
 @media screen and (max-width: 1000px) {

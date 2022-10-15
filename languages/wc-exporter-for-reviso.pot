@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2022-04-21 18:55+0200\n"
+"POT-Creation-Date: 2022-10-14 18:50+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -10,9 +10,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -58,15 +58,15 @@ msgstr ""
 msgid "Checkout"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:121
+#: admin/class-wcefr-admin.php:121 admin/wcefr-suppliers-template.php:79
 msgid "Suppliers"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:122
+#: admin/class-wcefr-admin.php:122 admin/wcefr-products-template.php:108
 msgid "Products"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:123
+#: admin/class-wcefr-admin.php:123 admin/wcefr-customers-template.php:79
 msgid "Customers"
 msgstr ""
 
@@ -74,38 +74,53 @@ msgstr ""
 msgid "Orders"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:17 admin/wcefr-suppliers-template.php:17
+#: admin/wcefr-customers-template.php:18 admin/wcefr-suppliers-template.php:18
 msgid "User role"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:32
+#: admin/wcefr-customers-template.php:34
 msgid "Select your customers user role"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:37 admin/wcefr-suppliers-template.php:37
+#: admin/wcefr-customers-template.php:39 admin/wcefr-suppliers-template.php:39
 msgid "Group"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:40
+#: admin/wcefr-customers-template.php:42
 msgid "Select a Reviso customers group"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:46 admin/wcefr-orders-template.php:35
-#: admin/wcefr-products-template.php:76 admin/wcefr-suppliers-template.php:46
+#: admin/wcefr-customers-template.php:48 admin/wcefr-orders-template.php:35
+#: admin/wcefr-products-template.php:78 admin/wcefr-suppliers-template.php:48
 msgid "Export to Reviso"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:57
+#: admin/wcefr-customers-template.php:59
 msgid "Delete customers"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:59
+#: admin/wcefr-customers-template.php:61
 msgid "Delete all customers on Reviso"
 msgstr ""
 
-#: admin/wcefr-customers-template.php:65 admin/wcefr-orders-template.php:53
-#: admin/wcefr-products-template.php:94 admin/wcefr-suppliers-template.php:65
+#: admin/wcefr-customers-template.php:67 admin/wcefr-orders-template.php:53
+#: admin/wcefr-products-template.php:96 admin/wcefr-suppliers-template.php:67
 msgid "Delete from Reviso"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:75 admin/wcefr-orders-template.php:76
+#: admin/wcefr-products-template.php:104 admin/wcefr-suppliers-template.php:75
+msgid "Synchronization options"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:82
+msgid "Update customers in Reviso in real time"
+msgstr ""
+
+#: admin/wcefr-customers-template.php:89 admin/wcefr-products-template.php:118
+#: admin/wcefr-suppliers-template.php:89
+#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:212
+msgid "Save settings"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:17
@@ -126,10 +141,6 @@ msgstr ""
 
 #: admin/wcefr-orders-template.php:47
 msgid "Delete all orders on Reviso"
-msgstr ""
-
-#: admin/wcefr-orders-template.php:76
-msgid "Orders settings"
 msgstr ""
 
 #: admin/wcefr-orders-template.php:118
@@ -202,39 +213,43 @@ msgstr ""
 msgid "Save options"
 msgstr ""
 
-#: admin/wcefr-products-template.php:17
+#: admin/wcefr-products-template.php:19
 msgid "Products categories"
 msgstr ""
 
-#: admin/wcefr-products-template.php:19
+#: admin/wcefr-products-template.php:21
 msgid "All categories"
 msgstr ""
 
-#: admin/wcefr-products-template.php:37
+#: admin/wcefr-products-template.php:39
 msgid "Select which categories to send to Reviso."
 msgstr ""
 
-#: admin/wcefr-products-template.php:47
+#: admin/wcefr-products-template.php:49
 msgid "Departmental distribution"
 msgstr ""
 
-#: admin/wcefr-products-template.php:50
+#: admin/wcefr-products-template.php:52
 #: includes/class-wcefr-single-product.php:74
 msgid "Select"
 msgstr ""
 
-#: admin/wcefr-products-template.php:68
+#: admin/wcefr-products-template.php:70
 msgid "Select a generic departmental distribution."
 msgstr ""
 
-#: admin/wcefr-products-template.php:86
+#: admin/wcefr-products-template.php:88
 msgid "Delete products"
 msgstr ""
 
-#: admin/wcefr-products-template.php:88
+#: admin/wcefr-products-template.php:90
 msgid ""
 "Delete all products on Reviso. Note that you cannot delete a product that "
 "has been used on an Invoice."
+msgstr ""
+
+#: admin/wcefr-products-template.php:111
+msgid "Update products in Reviso in real time"
 msgstr ""
 
 #: admin/wcefr-settings-template.php:17
@@ -269,85 +284,89 @@ msgstr ""
 msgid "Remove all the data saved in cache"
 msgstr ""
 
-#: admin/wcefr-suppliers-template.php:32
+#: admin/wcefr-suppliers-template.php:34
 msgid "Select your suppliers user role"
 msgstr ""
 
-#: admin/wcefr-suppliers-template.php:40
+#: admin/wcefr-suppliers-template.php:42
 msgid "Select a Reviso suppliers group"
 msgstr ""
 
-#: admin/wcefr-suppliers-template.php:57
+#: admin/wcefr-suppliers-template.php:59
 msgid "Delete suppliers"
 msgstr ""
 
-#: admin/wcefr-suppliers-template.php:59
+#: admin/wcefr-suppliers-template.php:61
 msgid "Delete all suppliers on Reviso"
+msgstr ""
+
+#: admin/wcefr-suppliers-template.php:82
+msgid "Update suppliers in Reviso in real time"
 msgstr ""
 
 #: includes/class-wcefr-orders.php:89
 msgid "Invoice"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:494
+#: includes/class-wcefr-orders.php:512
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:932
+#: includes/class-wcefr-orders.php:950
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1162
+#: includes/class-wcefr-orders.php:1180
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1232
+#: includes/class-wcefr-orders.php:1250
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1241
+#: includes/class-wcefr-orders.php:1259
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
-#: includes/class-wcefr-products.php:320
+#: includes/class-wcefr-products.php:363
 msgid "Sales VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:323
+#: includes/class-wcefr-products.php:366
 #, php-format
 msgid "%d%% VAT purchases"
 msgstr ""
 
-#: includes/class-wcefr-products.php:426
+#: includes/class-wcefr-products.php:469
 msgid "Sale of goods VAT "
 msgstr ""
 
-#: includes/class-wcefr-products.php:477
+#: includes/class-wcefr-products.php:520
 #, php-format
 msgid "%d%% VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:537
+#: includes/class-wcefr-products.php:580
 msgid "No VAT"
 msgstr ""
 
-#: includes/class-wcefr-products.php:841
+#: includes/class-wcefr-products.php:904
 #, php-format
 msgid "%d product(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:849
+#: includes/class-wcefr-products.php:912
 msgid "ERROR! There are not products to export"
 msgstr ""
 
-#: includes/class-wcefr-products.php:913
+#: includes/class-wcefr-products.php:976
 #, php-format
 msgid "%d product(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-products.php:920
+#: includes/class-wcefr-products.php:983
 msgid "ERROR! There are not products to delete"
 msgstr ""
 
@@ -371,17 +390,21 @@ msgstr ""
 msgid "Set a specific departmental distribution for this product"
 msgstr ""
 
-#: includes/class-wcefr-users.php:602
+#: includes/class-wcefr-users.php:700
+msgid "Saved!"
+msgstr ""
+
+#: includes/class-wcefr-users.php:757
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:670
+#: includes/class-wcefr-users.php:877
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:680
+#: includes/class-wcefr-users.php:887
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr ""
@@ -537,8 +560,4 @@ msgstr ""
 
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:203
 msgid "Show the tax code field only to Italian customers"
-msgstr ""
-
-#: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:212
-msgid "Save settings"
 msgstr ""

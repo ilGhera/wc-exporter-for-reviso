@@ -8,7 +8,7 @@
  * 
  * Author URI: https://ilghera.com
  * Requires at least: 4.0
- * Tested up to: 5.9
+ * Tested up to: 6.0
  * WC tested up to: 6
  * Text Domain: wc-exporter-for-reviso
  */

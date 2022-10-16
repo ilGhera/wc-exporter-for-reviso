@@ -165,6 +165,67 @@ class WCEFR_Products {
     }
 
 
+	/**
+	 * Get all the products from Reviso
+	 *
+	 * @return array
+	 */
+	private function get_remote_products() { 
+
+		$output = $this->wcefr_call->call( 'get', 'products?pagesize=1000' );
+
+		$results = isset( $output->pagination->results ) ? $output->pagination->results : '';
+
+		if ( 1000 < $results ) {
+
+			$limit = $results / 1000;
+
+			for ( $i = 1; $i < $limit; $i++ ) {
+
+				$get_products = $this->wcefr_call->call( 'get', 'products?skippages=' . $i . '&pagesize=1000' );
+
+				if ( isset( $get_products->collection ) && ! empty( $get_products->collection ) ) {
+
+					$output->collection = array_merge( $output->collection, $get_products->collection );
+
+				} else {
+
+					continue;
+
+				}
+
+			}
+
+		}
+
+		return $output;
+
+	}
+
+
+	/**
+	 * Check if a specific product exists in Reviso
+	 *
+	 * @param  string $sku_ready the WC product sku already formatted for Reviso endpoint.
+	 * @return bool
+	 */
+	private function product_exists( $sku_ready ) {
+
+		$output = true;
+
+		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
+
+		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
+
+			$output = false;
+
+		}
+
+		return $output;
+
+	}
+
+
     /**
      * Get alle the remote departmental distributions
      *

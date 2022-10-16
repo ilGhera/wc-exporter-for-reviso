@@ -7,7 +7,6 @@
  * @since 1.1.0
  */
 
-$synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;
 ?>
 
 <!-- Export form -->
@@ -43,7 +42,6 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 			</td>
 		</tr>
 	</table>
-	
 	<p class="submit">
 		<input type="submit" name="download_csv" class="button-primary wcefr export-users customers" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
@@ -78,15 +76,15 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 		<tr class="synchronize-customers">
 			<th scope="row"><?php esc_html_e( 'Customers', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" name="wcefr-synchronize-customers" value="1"<?php echo 1 == $synchronize_customers ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" name="wcefr-synchronize-customers" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Update customers in Reviso in real time', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
-        <?php wp_nonce_field( 'wcefr-customers-settings', 'wcefr-customers-settings-nonce' ); ?>
 	</table>
 
 	<p class="submit">
-		<input type="submit" class="button-primary wcefr customers-settings" value="<?php esc_html_e( 'Save settings', 'wc-exporter-for-reviso' ); ?>" />
+		<input type="submit" class="button-primary wcefr customers-settings" value="<?php esc_html_e( 'Save settings', 'wc-exporter-for-reviso' ); ?>" disabled="disabled"/>
 	</p>
 
 </form>

@@ -29,46 +29,16 @@ class WCEFR_Products {
             $this->synchronize_products       = get_option( 'wcefr-synchronize-products' );
 
             /* Hooks */
-            add_action( 'admin_init', array( $this, 'products_settings' ), 10 );
 			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
 			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ) );
 			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
-
-            /* Conditionals hooks */
-            if ( $this->synchronize_products ) {
-
-                add_action( 'woocommerce_update_product', array( $this, 'export_single_product' ), 10, 1 );
-                add_action( 'trashed_post', array( $this, 'export_single_product' ), 10, 1 );
-                add_action( 'untrashed_post', array( $this, 'export_single_product' ), 10, 1 );
-
-            }
 
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
 
 	}
-
-
-    /**
-     * User synchronization options 
-     *
-     * @return void 
-     */
-    public function products_settings() {
-
-
-		if ( isset( $_POST['wcefr-products-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-products-settings-nonce'] ), 'wcefr-products-settings' ) ) {
-
-            $synchronize_products = isset( $_POST['wcefr-synchronize-products'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-synchronize-products'] ) ) : 0;
-
-            /*Save to the db*/
-            update_option( 'wcefr-synchronize-products', $synchronize_products );
-
-        }
-
-    }
 
 
     /**

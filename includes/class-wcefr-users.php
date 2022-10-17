@@ -24,22 +24,6 @@ class WCEFR_Users {
     private $customers_role;
 
 
-    /**
-     * Synchronize suppliers in real time
-     *
-     * @var bool
-     */
-    private $synchronize_suppliers;
-
-
-    /**
-     * Synchronize customers in real time
-     *
-     * @var bool
-     */
-    private $synchronize_customers;
-
-
 	/**
 	 * Class constructor
 	 *
@@ -52,10 +36,7 @@ class WCEFR_Users {
             /* Get options */
 			$this->suppliers_role        = get_option( 'wcefr-suppliers-role' );
 			$this->customers_role        = get_option( 'wcefr-customers-role' );
-            $this->synchronize_suppliers = get_option( 'wcefr-synchronize-suppliers' );
-            $this->synchronize_customers = get_option( 'wcefr-synchronize-customers' );
 
-            add_action( 'admin_init', array( $this, 'users_settings' ), 10 );
 			add_action( 'wp_ajax_wcefr-update-users-role', array( $this, 'update_users_role' ) );
 			add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
@@ -64,57 +45,11 @@ class WCEFR_Users {
 			add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
 			add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 
-            /* Conditional hooks */
-            if ( $this->synchronize_suppliers ) {
-
-                add_action( 'user_register', array( $this, 'update_remote_supplier' ), 10 );
-                add_action( 'profile_update', array( $this, 'update_remote_supplier' ), 10 );
-                add_action( 'delete_user', array( $this, 'delete_remote_supplier' ), 10, 3 );
-
-            }
-
-            if ( $this->synchronize_customers ) {
-
-                add_action( 'user_register', array( $this, 'update_remote_customer' ), 10 );
-                add_action( 'profile_update', array( $this, 'update_remote_customer' ), 10 );
-                add_action( 'delete_user', array( $this, 'delete_remote_customer' ), 10, 3 );
-
-            }
-
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
 
 	}
-
-
-    /**
-     * Users synchronization options 
-     *
-     * @return void 
-     */
-    public function users_settings() {
-
-
-		if ( isset( $_POST['wcefr-suppliers-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-suppliers-settings-nonce'] ), 'wcefr-suppliers-settings' ) ) {
-
-            $synchronize_suppliers = isset( $_POST['wcefr-synchronize-suppliers'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-synchronize-suppliers'] ) ) : 0;
-
-            /*Save to the db*/
-            update_option( 'wcefr-synchronize-suppliers', $synchronize_suppliers );
-
-        }
-
-		if ( isset( $_POST['wcefr-customers-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-customers-settings-nonce'] ), 'wcefr-customers-settings' ) ) {
-
-            $synchronize_customers = isset( $_POST['wcefr-synchronize-customers'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-synchronize-customers'] ) ) : 0;
-
-            /*Save to the db*/
-            update_option( 'wcefr-synchronize-customers', $synchronize_customers );
-
-        }
-
-    }
 
 
 	/**
@@ -546,46 +481,6 @@ class WCEFR_Users {
     }
 
 
-    /**
-     * Update remote supplier in real time
-     *
-     * @param int $user_id the WP user ID.
-     *
-     * @return void
-     */
-    public function update_remote_supplier( $user_id ) {
-
-        $user_data = get_userdata( $user_id );
-
-        if ( is_array( $user_data->roles ) && in_array( $this->suppliers_role, $user_data->roles  ) ) {
-
-            $this->export_single_user( $user_id, 'suppliers', null, false, null );
-
-        }
-
-    }
-
-
-    /**
-     * Update remote customer in real time
-     *
-     * @param int $user_id the WP user ID.
-     *
-     * @return void
-     */
-    public function update_remote_customer( $user_id ) {
-
-        $user_data = get_userdata( $user_id );
-
-        if ( is_array( $user_data->roles ) && in_array( $this->customers_role, $user_data->roles  ) ) {
-
-            $this->export_single_user( $user_id, 'customers', null, false, null );
-
-        }
-
-    }
-
-
 	/**
 	 * Export single WP user to Reviso
 	 *
@@ -763,58 +658,6 @@ class WCEFR_Users {
 
 		exit;
 	}
-
-
-    /**
-     * Delete remote supplier in real time
-     *
-     * @param int    $user_id  the WP user ID.
-     * @param int    $reassign ID of the user to reassign posts and links to. 
-     * @param object $user     WP_User object of the user to delete.
-     *
-     * @return void
-     */
-    public function delete_remote_supplier(  $user_id, $reassign, $user  ) {
-
-        if ( isset( $user->user_email ) ) {
-
-            $remote_id = $this->user_exists( 'suppliers', $user->user_email );
-
-            if ( $remote_id ) {
-
-                $this->delete_remote_single_user( $remote_id, 'suppliers' );
-
-            }
-
-        }
-
-    }
-
-
-    /**
-     * Delete remote customer in real time
-     *
-     * @param int    $user_id  the WP user ID.
-     * @param int    $reassign ID of the user to reassign posts and links to. 
-     * @param object $user     WP_User object of the user to delete.
-     *
-     * @return void
-     */
-    public function delete_remote_customer(  $user_id, $reassign, $user  ) {
-
-        if ( isset( $user->user_email ) ) {
-
-            $remote_id = $this->user_exists( 'customers', $user->user_email );
-
-            if ( $remote_id ) {
-
-                $this->delete_remote_single_user( $remote_id, 'customers' );
-
-            }
-
-        }
-
-    }
 
 
 	/**

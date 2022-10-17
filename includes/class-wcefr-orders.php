@@ -90,6 +90,30 @@ class WCEFR_Orders {
 
 	}
 
+	/**
+	 * Sanitize every single array element
+	 *
+	 * @param  array $array the array to sanitize.
+	 * @return array        the sanitized array.
+	 */
+	public function sanitize_array( $array ) {
+
+		$output = array();
+
+		if ( is_array( $array ) && ! empty( $array ) ) {
+
+			foreach ( $array as $key => $value ) {
+
+				$output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
+
+			}
+
+		}
+
+		return $output;
+
+	}
+
 }
 new WCEFR_Orders( true );
 

@@ -8,13 +8,6 @@
  */
 class WCEFR_Products {
 
-    /**
-     * Synchronize products in real time
-     *
-     * @var bool
-     */
-    private $synchronize_products;
-
 
 	/**
 	 * Class constructor
@@ -24,9 +17,6 @@ class WCEFR_Products {
 	public function __construct( $init = false ) {
 
 		if ( $init ) {
-
-            /* Get options */
-            $this->synchronize_products       = get_option( 'wcefr-synchronize-products' );
 
             /* Hooks */
 			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );

@@ -106,8 +106,8 @@ Release Date: 18 October 2022
 * Enhancement: Export and update products in real time (Premium)
 * Enhancement: Export and update suppliers in real time (Premium)
 * Enhancement: Export and update clients in real time (Premium)
-* Upadate: Plugin Update Checker (Premium)
-* Update: Action Scheduler (Premium)
+* Update: Action Scheduler
+* Update: Plugin Update Checker (Premium)
 * Bug fix: Departmental distribution missed in new orders exported
 
 

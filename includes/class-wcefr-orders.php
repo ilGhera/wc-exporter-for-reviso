@@ -17,14 +17,12 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$this->export_orders                 = get_option( 'wcefr-export-orders' );
 			$this->create_invoices               = get_option( 'wcefr-create-invoices' );
 			$this->issue_invoices                = get_option( 'wcefr-issue-invoices' );
 			$this->send_invoices                 = get_option( 'wcefr-send-invoices' );
 			$this->book_invoices                 = get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
 			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' ); 
-			$this->init();
 
 			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
@@ -39,30 +37,6 @@ class WCEFR_Orders {
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
-	}
-
-
-	/**
-	 * Check the administrator settings to automatically export orders to Reviso
-	 *
-	 * @return void
-	 */
-	public function init() {
-
-		/*Export orders automatically to Reviso*/
-		if ( $this->export_orders ) {
-
-			add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
-
-		}
-
-		/*Create invoices in Reviso with WC completed orders */
-		if ( $this->create_invoices ) {
-
-			add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) );
-
-		}
 
 	}
 

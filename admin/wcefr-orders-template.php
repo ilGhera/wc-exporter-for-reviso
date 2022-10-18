@@ -76,7 +76,6 @@ wp_localize_script(
     <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<?php
-	$wcefr_export_orders          = get_option( 'wcefr-export-orders' );
 	$wcefr_create_invoices        = get_option( 'wcefr-create-invoices' );
 	$wcefr_issue_invoices         = get_option( 'wcefr-issue-invoices' );
 	$wcefr_send_invoices          = get_option( 'wcefr-send-invoices' );
@@ -86,9 +85,6 @@ wp_localize_script(
 	$wcefr_orders_customers_group = get_option( 'wcefr-orders-customers-group' );
 
 	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-orders-settings-nonce'] ), 'wcefr-orders-settings' ) ) {
-
-		$wcefr_export_orders = isset( $_POST['wcefr-export-orders'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-export-orders'] ) ) : 0;
-		update_option( 'wcefr-export-orders', $wcefr_export_orders );
 
 		$wcefr_create_invoices = isset( $_POST['wcefr-create-invoices'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-create-invoices'] ) ) : 0;
 		update_option( 'wcefr-create-invoices', $wcefr_create_invoices );
@@ -117,8 +113,9 @@ wp_localize_script(
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Export orders', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" name="wcefr-export-orders" value="1"<?php echo 1 == $wcefr_export_orders ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" name="wcefr-export-orders" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Export orders to Reviso automatically', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
 		<tr class="wcefr-create-invoices-field">

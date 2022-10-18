@@ -20,8 +20,10 @@ Export suppliers, products, customers and orders from your Woocommerce store to 
 * Export products to Reviso.
 * Select one or more product categories to export.
 * Update products in Reviso in real time (Premium).
-* Export orders to Reviso (Premium).
+* Export orders to Reviso.
 * Export new orders to Reviso in real time (Premium).
+* Create invoices in Reviso with completed orders (Premium).
+* Send PDF invoice to the customer attached to the order's email (Premium).
 * Add specific fields for electronic invoicing to the checkout form.
 * Delete all data in Reviso with a click.
 
@@ -40,8 +42,10 @@ Esporta nuovi ordini e crea fatture in tempo reale.
 * Esporta prodotti WooCommerce in Reviso (Premium).
 * Seleziona una o più categorie di prodotti da esportare.
 * Aggiorna prodotti in Reviso in tempo reale (Premium).
-* Esporta ordini WooCommerce in Reviso (Premium)
+* Esporta ordini WooCommerce in Reviso
 * Esporta nuovi ordini in tempo reale (Premium)
+* Crea le fatture in Reviso per gli ordini completati (Premium).
+* Invia la fattura PDF al cliente come allegato della mail di conferma d'ordine.
 * Aggiungi campi specifici per la fatturazione elettronica alla pagina di checkout.
 * Cancella dati in Reviso con un click
 
@@ -94,12 +98,14 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 = 1.1.0
-Release Date: 15 October 2022
+Release Date: 18 October 2022
 
+* Enhancement: Export WC orders to Reviso 
+* Enhancement: Export WC products to Reviso 
+* Enhancement: Save users role for clients and suppliers with Ajax 
 * Enhancement: Export and update products in real time (Premium)
 * Enhancement: Export and update suppliers in real time (Premium)
 * Enhancement: Export and update clients in real time (Premium)
-* Enhancement: Save users role for clients and suppliers with Ajax 
 * Upadate: Plugin Update Checker (Premium)
 * Update: Action Scheduler (Premium)
 * Bug fix: Departmental distribution missed in new orders exported

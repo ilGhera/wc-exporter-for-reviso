@@ -17,10 +17,6 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$this->create_invoices               = get_option( 'wcefr-create-invoices' );
-			$this->issue_invoices                = get_option( 'wcefr-issue-invoices' );
-			$this->send_invoices                 = get_option( 'wcefr-send-invoices' );
-			$this->book_invoices                 = get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
 			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' ); 
 
@@ -32,7 +28,6 @@ class WCEFR_Orders {
 			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
 
 			add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
-			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 		}
 
@@ -832,53 +827,6 @@ class WCEFR_Orders {
 	}
 
 
-	/**
-	 * Attach Reviso invoice to the WC completed order and custome invoice email
-	 *
-	 * @param  array  $attachments the WC mail attachments.
-	 * @param  string $status      the order status.
-	 * @param  object $order       the WC order.
-	 */
-	public function email_attachments( $attachments, $status, $order ) {
-
-		if ( $this->issue_invoices && $this->send_invoices ) {
-
-			$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
-
-			if ( isset( $status ) && in_array( $status, $allowed_statuses ) ) {
-
-				$invoice = $this->document_exists( $order->get_id(), true, true );
-
-				if ( isset( $invoice['id'] ) && isset( $invoice['status'] ) ) {
-
-					$filename = 'Invoice-' . $invoice['number'] . '-';
-
-					$pdf  = tempnam( sys_get_temp_dir(), $filename );
-
-					rename( $pdf, $pdf .= '.pdf' );
-
-					$file = $this->wcefr_call->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false );
-
-					$handle = fopen( $pdf, 'w' );
-
-					fwrite( $handle, $file );
-
-					$attachments[] = $pdf;
-
-					fclose( $handle );
-					/*unlink( $pdf );*/
-
-				}
-
-			}
-
-		}
-
-		return $attachments;
-
-	}
-
-
    /**
     * Get the number series prefix based on the order type
     *
@@ -967,32 +915,6 @@ class WCEFR_Orders {
 			),
 		);
 
-		if ( $order_completed && $this->create_invoices ) {
-
-			$output['additionalExpenseLines'] = array( // temp.
-				array(
-					'additionalExpense'     => $this->get_transport_additional_expenses( $transport_vat_rate ),
-					'additionalExpenseType' => 'Transport',
-					'lineNumber'            => 1,
-					'amount'                => $transport_amount,
-					'vatAccount'            => array(
-						'vatCode' => $this->get_remote_vat_code( $transport_vat_rate ),
-					),
-					// 'grossAmount'           => $transport_gross_amount,
-					// 'isExcluded'            => false,
-					// 'vatAmount'             => $transport_vat_amount,
-					// 'vatRate'               => $transport_vat_rate,
-				),
-			);
-
-			if ( $this->issue_invoices ) {
-
-				$output['voucher'] = $this->create_remote_voucher( $order, $customer_number );
-
-			}
-
-		}
-
 		return $output;
 
 	}
@@ -1007,16 +929,8 @@ class WCEFR_Orders {
 	public function export_single_order( $order_id, $invoice = false ) {
 
         $order          = new WC_Order( $order_id );
-        $invoice        = 'completed' === $order->get_status() ? true : $invoice;
 		$order_exists   = $this->document_exists( $order_id );
 		$invoice_exists = $this->document_exists( $order_id, true, true );
-
-		if ( $invoice && $order_exists ) {
-
-			$this->delete_remote_orders( $order_exists );
-			$order_exists = false;
-
-		}
 
 		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
@@ -1033,21 +947,6 @@ class WCEFR_Orders {
 				if ( $invoice && isset( $output->id ) ) {
 
 					update_post_meta( $order_id, 'wcefr-invoice', $output->id );
-
-                    if ( $this->issue_invoices ) {
-
-                        $data = $output->voucher->voucherNumber->displayVoucherNumber;
-
-                        /*Book the invoise if set by the admin*/
-                        if ( $this->book_invoices ) {
-
-                            $booked = $this->wcefr_call->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
-
-                            $data = $booked->displayInvoiceNumber;
-
-                        }
-
-                    }
 
 				}
 

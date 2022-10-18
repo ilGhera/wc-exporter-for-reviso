@@ -76,27 +76,11 @@ wp_localize_script(
     <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<?php
-	$wcefr_create_invoices        = get_option( 'wcefr-create-invoices' );
-	$wcefr_issue_invoices         = get_option( 'wcefr-issue-invoices' );
-	$wcefr_send_invoices          = get_option( 'wcefr-send-invoices' );
-	$wcefr_book_invoices          = get_option( 'wcefr-book-invoices' );
 	$wcefr_number_series          = get_option( 'wcefr-number-series-prefix' );
 	$wcefr_number_series_receipts = get_option( 'wcefr-number-series-receipts-prefix' );
 	$wcefr_orders_customers_group = get_option( 'wcefr-orders-customers-group' );
 
 	if ( isset( $_POST['wcefr-orders-settings-sent'], $_POST['wcefr-orders-settings-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-orders-settings-nonce'] ), 'wcefr-orders-settings' ) ) {
-
-		$wcefr_create_invoices = isset( $_POST['wcefr-create-invoices'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-create-invoices'] ) ) : 0;
-		update_option( 'wcefr-create-invoices', $wcefr_create_invoices );
-
-		$wcefr_issue_invoices = isset( $_POST['wcefr-issue-invoices'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-issue-invoices'] ) ) : 0;
-		update_option( 'wcefr-issue-invoices', $wcefr_issue_invoices );
-
-		$wcefr_send_invoices = isset( $_POST['wcefr-send-invoices'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-send-invoices'] ) ) : 0;
-		update_option( 'wcefr-send-invoices', $wcefr_send_invoices );
-
-		$wcefr_book_invoices = isset( $_POST['wcefr-book-invoices'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-book-invoices'] ) ) : 0;
-		update_option( 'wcefr-book-invoices', $wcefr_book_invoices );
 
 		$wcefr_number_series = isset( $_POST['wcefr-number-series'] ) ? sanitize_text_field( wp_unslash( $_POST['wcefr-number-series'] ) ) : $wcefr_number_series;
 		update_option( 'wcefr-number-series-prefix', $wcefr_number_series );
@@ -121,29 +105,33 @@ wp_localize_script(
 		<tr class="wcefr-create-invoices-field">
 			<th scope="row"><?php esc_html_e( 'Create invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" name="wcefr-create-invoices" value="1"<?php echo 1 == $wcefr_create_invoices ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" name="wcefr-create-invoices" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Create invoices in Reviso for completed orders', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-issue-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Issue invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" class="wcefr-issue-invoices" name="wcefr-issue-invoices" value="1"<?php echo 1 == $wcefr_issue_invoices ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" class="wcefr-issue-invoices" name="wcefr-issue-invoices" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Issue invoices created in Reviso directly ', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-send-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Send invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="1"<?php echo 1 == $wcefr_send_invoices ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" class="wcefr-send-invoices" name="wcefr-send-invoices" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Attach invoices to completed order notifications', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
 		<tr class="wcefr-invoices-field wcefr-book-invoices-field" style="display: none;">
 			<th scope="row"><?php esc_html_e( 'Book invoices', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" name="wcefr-book-invoices" value="1"<?php echo 1 == $wcefr_book_invoices ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" name="wcefr-book-invoices" value="" disabled="disabled">
 				<p class="description"><?php esc_html_e( 'Book invoices created in Reviso directly ', 'wc-exporter-for-reviso' ); ?></p>
+				<?php wcefr_go_premium(); ?>
 			</td>
 		</tr>
 		<tr class="wcefr-number-series-field">

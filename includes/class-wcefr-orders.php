@@ -1032,6 +1032,8 @@ class WCEFR_Orders {
 	 */
 	public function export_single_order( $order_id, $invoice = false ) {
 
+        $order          = new WC_Order( $order_id );
+        $invoice        = 'completed' === $order->get_status() ? true : $invoice;
 		$order_exists   = $this->document_exists( $order_id );
 		$invoice_exists = $this->document_exists( $order_id, true, true );
 
@@ -1044,7 +1046,6 @@ class WCEFR_Orders {
 
 		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
-			$order           = new WC_Order( $order_id );
 			$args            = $this->prepare_order_data( $order );
 			$order_completed = 'completed' === $order->get_status() ? true : false;
 			$invoice         = $order_completed ? $order_completed : $invoice;

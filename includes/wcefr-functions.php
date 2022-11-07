@@ -43,8 +43,9 @@ function avoid_length_exceed( $text, $limit ) {
  * Update checker
  */
 require( WCEFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-$wcefr_update_checker = Puc_v4_Factory::buildUpdateChecker(
+$wcefr_update_checker = PucFactory::buildUpdateChecker(
 	'https://www.ilghera.com/wp-update-server-2/?action=get_metadata&slug=wc-exporter-for-reviso-premium',
 	WCEFR_FILE,
 	'wc-exporter-for-reviso-premium'

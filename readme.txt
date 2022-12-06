@@ -27,31 +27,9 @@ Export suppliers, products, customers and orders from your Woocommerce store to 
 * Add specific fields for electronic invoicing to the checkout form.
 * Delete all data in Reviso with a click.
 
-= Try Reviso for free! =
-[https://www.reviso.com/trial?src=hero](https://www.reviso.com/trial?src=hero)
-
-**ITALIANO**
-Esporta fornitori, prodotti, clienti e ordini dal tuo store WooCommerce a TeamSystem Reviso, ora rinominato per l'Italia in *Contabilità in Cloud*.
-Esporta nuovi ordini e crea fatture in tempo reale.
-
-**FUNZIONALITÀ DISPONIBILI**
-
-* Esporta utenti WordPress come clienti o fornitori verso Reviso.
-* Seleziona uno o più livelli utente da esportare.
-* Aggiorna clienti e fornitori in Reviso in tempo reale (Premium).
-* Esporta prodotti WooCommerce in Reviso (Premium).
-* Seleziona una o più categorie di prodotti da esportare.
-* Aggiorna prodotti in Reviso in tempo reale (Premium).
-* Esporta ordini WooCommerce in Reviso
-* Esporta nuovi ordini in tempo reale (Premium)
-* Crea le fatture in Reviso per gli ordini completati (Premium).
-* Invia la fattura PDF al cliente come allegato della mail di conferma d'ordine.
-* Aggiungi campi specifici per la fatturazione elettronica alla pagina di checkout.
-* Cancella dati in Reviso con un click
-
 https://youtu.be/gtyhllUEqN4
 
-= Prova Reviso gratuitamente! =
+= Try Reviso for free! =
 [https://www.reviso.com/trial?src=hero](https://www.reviso.com/trial?src=hero)
 
 
@@ -66,12 +44,12 @@ This plugin sends data to an external service, like the products bought by the u
 [https://rest.reviso.com/](https://rest.reviso.com/)
 
 = Service privacy policy: =
-[https://www.reviso.com/privacy-policy](https://www.reviso.com/privacy-policy)
+[https://www.reviso.com/privacy-policy-en](https://www.reviso.com/privacy-policy-en)
 
 
 == Installation ==
 
-* Upload the 'wc-exporter-for-reviso’ directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
+* Upload the *wc-exporter-for-reviso* directory to your */wp-content/plugins/* directory, using your favorite method (ftp, sftp, scp, etc...)
 * Activate Reviso for WooCommerce from your Plugins page.
 * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
 

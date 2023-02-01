@@ -332,9 +332,11 @@ class WCEFR_Orders {
 
 
 	/**
-	 * Add a specific payment method in reviso
+	 * Get the specific payment method in reviso
 	 *
-	 * @param string $payment_gateway the wc payment gateway.
+	 * @param string $payment_gateway the wc payment gateway ID.
+     *
+     * @return object the payment method
 	 */
 	public function get_remote_payment_method( $payment_gateway = null ) {
 
@@ -1037,7 +1039,9 @@ class WCEFR_Orders {
         $vat_included           = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? 1 : 0;
 
         /*Add the payment method if not already on Reviso*/
-        $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
+        $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : __( 'Direct', 'wc-exporter-for-reviso' ); 
+        error_log( 'PAYMENT METHOD TITLE: ' . $payment_method_title );
+
         $payment_method       = $this->get_remote_payment_method( $payment_method_title );
         $payment_term         = $this->get_remote_payment_term();
 

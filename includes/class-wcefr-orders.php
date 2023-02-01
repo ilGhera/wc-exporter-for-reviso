@@ -39,7 +39,9 @@ class WCEFR_Orders {
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
+        /* $this->get_remote_payment_method(); */
+		/* $output  = $this->wcefr_call->call( 'get', 'payment-terms' ); */
+        /* error_log( 'PAYMENT TERMS: ' . print_r( $output, true ) ); */
 	}
 
 
@@ -197,57 +199,63 @@ class WCEFR_Orders {
 
 
 	/**
-	 * TEMP
 	 *
 	 * Get the wc payment gateways available
+     *
+     * @return array
 	 */
-	public function get_available_methods() {
+	public function get_wc_available_methods() {
 
-		$gateways = WC()->payment_gateways->get_available_payment_gateways();
-
+		$gateways         = WC()->payment_gateways->get_available_payment_gateways();
 		$enabled_gateways = array();
 
 		if ( $gateways ) {
+
 			foreach ( $gateways as $gateway ) {
 
-				if ( 'yes' == $gateway->enabled ) {
+				/* if ( 'yes' == $gateway->enabled ) { */
 
-					$enabled_gateways[] = $gateway;
+					$enabled_gateways[] = $gateway->id;
 
-				}
+				/* } */
 			}
+
 		}
+
+        return $enabled_gateways;
 
 	}
 
 
 	/**
-	 * Check if a specific payment method exists in Reviso
+	 * Get the payment methods from Reviso
 	 *
-	 * @param  string $payment_gateway the wc payment gateway.
-	 * @return int the Reviso payment method number.
+	 * @return array the Reviso payment methods.
 	 */
-	private function payment_metod_exists( $payment_gateway ) {
+	private function get_remote_payment_metods() {
 
+        $output    = null;
         $transient = get_transient( 'wcefr-payment-methods' );
 
         if ( $transient ) {
 
-            $response = $transient;
+            $output = $transient;
 
         } else {
 
-            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $payment_gateway );
+            $response = $this->wcefr_call->call( 'get', 'payment-types' );
+
+            if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+                set_transient( 'wcefr-payment-methods', $response->collection, DAY_IN_SECONDS );
+
+                $output = $response->collection;
+
+            }
             
         }
 
-		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
-
-            set_transient( 'wcefr-payment-methods', $response, DAY_IN_SECONDS );
-
-			return $response->collection[0];
-
-		}
+        return $output;
 
 	}
 
@@ -257,32 +265,41 @@ class WCEFR_Orders {
 	 *
 	 * @param string $payment_gateway the wc payment gateway.
 	 */
-	public function add_remote_payment_method( $payment_gateway ) {
+	public function get_remote_payment_method( $payment_gateway = null ) {
 
-        $payment_gateway = avoid_length_exceed( $payment_gateway, 50 );
-		$output          = $this->payment_metod_exists( $payment_gateway );
+        error_log( 'GATEWAY: ' . $payment_gateway );
+        /* error_log( 'LOCAL METHODS: ' . print_r( $this->get_wc_available_methods(), true ) ); */
+        /* error_log( 'REMOTE METHODS: ' . print_r( $this->get_remote_payment_metods(), true ) ); */
 
-		if ( ! $output ) {
+        $remote_methods = $this->get_remote_payment_metods();
+        $method_name = null;
+        switch ( $payment_gateway ) {
+            case 'bacs':
+                $method_name = 'Bank transfer';
+                break;
+            case 'cheque':
+                $method_name = 'Check';
+                break;
+            case 'cod':
+                $method_name = 'Cash';
+                break;
+            case 'findomestic':
+                $method_name = 'RID';
+                break;
+            default:
+                $method_name = 'Payment card';
+                break;
+        }
 
-            delete_transient( 'wcefr-payment-methods' );
+        foreach ( $remote_methods as $method ) {
 
-			$args = array(
-				'name'             => $payment_gateway,
-				'paymentTermsType' => 'net', // temp.
-				'daysOfCredit'     => 0,
-			);
+            if ( strtolower( $method_name ) === strtolower( $method->name ) ) {
 
-			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
+                return $method;
 
-			if ( isset( $response->name ) ) {
+            }
 
-				$output = $response;
-
-			}
-
-		}
-
-		return $output;
+        }
 
 	}
 
@@ -489,6 +506,8 @@ class WCEFR_Orders {
             set_transient( 'wcefr-additional-expenses', $response, DAY_IN_SECONDS );
 
 		}
+
+        error_log( 'ADDITIONAL EXP.: ' . print_r( $output, true ) );
 
 		return $output;
 
@@ -948,7 +967,7 @@ class WCEFR_Orders {
 
         /*Add the payment method if not already on Reviso*/
         $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
-        $payment_method       = $this->add_remote_payment_method( $payment_method_title );
+        $payment_method       = $this->get_remote_payment_method( $payment_method_title );
 
 		$output = array(
 			'currency'               => $order->get_currency(),
@@ -958,7 +977,7 @@ class WCEFR_Orders {
 			'grossAmount'            => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
 			'isArchived'             => false,
 			'isSent'                 => false,
-			'paymentTerms'           => $payment_method,
+			'paymentType'            => $payment_method,
 			'roundingAmount'         => 0.00,
 			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'vatAmount'              => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
@@ -1018,6 +1037,8 @@ class WCEFR_Orders {
 			}
 
 		}
+
+        error_log( 'ORDER DATA: ' . print_r( $output, true ) );
 
 		return $output;
 

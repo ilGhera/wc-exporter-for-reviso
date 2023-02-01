@@ -39,9 +39,7 @@ class WCEFR_Orders {
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-        /* $this->get_remote_payment_method(); */
-		/* $output  = $this->wcefr_call->call( 'get', 'payment-terms' ); */
-        /* error_log( 'PAYMENT TERMS: ' . print_r( $output, true ) ); */
+
 	}
 
 
@@ -209,7 +207,6 @@ class WCEFR_Orders {
 
         $output    = null;
         $transient = get_transient( 'wcefr-payment-term' );
-        error_log( 'TRANSIENT: ' . print_r( $transient, true ) );
 
         if ( $transient ) {
 
@@ -254,7 +251,6 @@ class WCEFR_Orders {
 			);
 
 			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
-            error_log( 'NEW TERM: ' . print_r( $response, true ) );
 
 			if ( isset( $response->name ) ) {
 
@@ -340,12 +336,9 @@ class WCEFR_Orders {
 	 */
 	public function get_remote_payment_method( $payment_gateway = null ) {
 
-        error_log( 'GATEWAY: ' . $payment_gateway );
-        /* error_log( 'LOCAL METHODS: ' . print_r( $this->get_wc_available_methods(), true ) ); */
-        /* error_log( 'REMOTE METHODS: ' . print_r( $this->get_remote_payment_metods(), true ) ); */
-
         $remote_methods = $this->get_remote_payment_metods();
-        $method_name = null;
+        $method_name    = null;
+
         switch ( $payment_gateway ) {
             case 'bacs':
                 $method_name = 'Bank transfer';
@@ -1040,8 +1033,6 @@ class WCEFR_Orders {
 
         /*Add the payment method if not already on Reviso*/
         $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : __( 'Direct', 'wc-exporter-for-reviso' ); 
-        error_log( 'PAYMENT METHOD TITLE: ' . $payment_method_title );
-
         $payment_method       = $this->get_remote_payment_method( $payment_method_title );
         $payment_term         = $this->get_remote_payment_term();
 

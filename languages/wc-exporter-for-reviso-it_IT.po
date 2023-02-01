@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-14 18:50+0200\n"
-"PO-Revision-Date: 2022-12-23 19:16+0100\n"
+"POT-Creation-Date: 2023-02-01 10:29+0100\n"
+"PO-Revision-Date: 2023-02-01 10:29+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -314,29 +314,33 @@ msgstr "Elimina tutti i fornitori in Contabilità in Cloud"
 msgid "Update suppliers in Reviso in real time"
 msgstr "Aggiorna i fornitori in Contabilità in Cloud in tempo reale"
 
-#: includes/class-wcefr-orders.php:89
+#: includes/class-wcefr-orders.php:91
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:512
+#: includes/class-wcefr-orders.php:242
+msgid "Order date"
+msgstr "Data ordine"
+
+#: includes/class-wcefr-orders.php:600
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:950
+#: includes/class-wcefr-orders.php:1038
 msgid "Direct"
-msgstr ""
+msgstr "Diretto"
 
-#: includes/class-wcefr-orders.php:1180
+#: includes/class-wcefr-orders.php:1271
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1250
+#: includes/class-wcefr-orders.php:1341
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1259
+#: includes/class-wcefr-orders.php:1350
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 

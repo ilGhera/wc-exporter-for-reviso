@@ -199,6 +199,77 @@ class WCEFR_Orders {
 
 
 	/**
+	 * Check if a specific payment term exists in Reviso
+	 *
+     * @param string $term_name the payment term name to search in Reviso.
+     * 
+	 * @return int the Reviso payment term number.
+	 */
+	private function payment_term_exists( $term_name ) {
+
+        $output    = null;
+        $transient = get_transient( 'wcefr-payment-term' );
+        error_log( 'TRANSIENT: ' . print_r( $transient, true ) );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $term_name );
+            
+            if ( isset( $response->collection[0] ) && ! empty( $response->collection[0] ) ) {
+
+                set_transient( 'wcefr-payment-term', $response->collection[0], DAY_IN_SECONDS );
+
+                $output = $response->collection[0];
+
+            }
+        }
+
+        return $output;
+
+	}
+
+
+	/**
+	 * Add a specific payment term in Reviso
+	 *
+	 * @param string $payment_gateway the wc payment gateway.
+	 */
+	public function get_remote_payment_term() {
+
+        $term_name = __( 'Order date', 'wc-exporter-for-reviso' );
+		$output    = $this->payment_term_exists( $term_name );
+
+		if ( ! $output ) {
+
+            delete_transient( 'wcefr-payment-term' );
+
+			$args = array(
+				'name'             => $term_name,
+				'paymentTermsType' => 'net', // temp.
+				'daysOfCredit'     => 0,
+			);
+
+			$response = $this->wcefr_call->call( 'post', 'payment-terms', $args );
+            error_log( 'NEW TERM: ' . print_r( $response, true ) );
+
+			if ( isset( $response->name ) ) {
+
+				$output = $response;
+
+			}
+
+		}
+
+		return $output;
+
+	}
+
+
+	/**
 	 *
 	 * Get the wc payment gateways available
      *
@@ -968,6 +1039,7 @@ class WCEFR_Orders {
         /*Add the payment method if not already on Reviso*/
         $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
         $payment_method       = $this->get_remote_payment_method( $payment_method_title );
+        $payment_term         = $this->get_remote_payment_term();
 
 		$output = array(
 			'currency'               => $order->get_currency(),
@@ -977,6 +1049,7 @@ class WCEFR_Orders {
 			'grossAmount'            => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
 			'isArchived'             => false,
 			'isSent'                 => false,
+			'paymentTerms'           => $payment_term,
 			'paymentType'            => $payment_method,
 			'roundingAmount'         => 0.00,
 			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),

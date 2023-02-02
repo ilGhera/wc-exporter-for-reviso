@@ -386,6 +386,7 @@ class WCEFR_Users {
 			$identification_number   = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
 			$italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null;
 			$public_entry_number     = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
+            $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
 
 		} elseif ( $order ) {
 
@@ -403,6 +404,7 @@ class WCEFR_Users {
 			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
 			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
 			$public_entry_number     = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
+            $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
 
 		} else {
 
@@ -467,6 +469,7 @@ class WCEFR_Users {
 			$type_singular . 'Group' => array(
 				$type_singular . 'GroupNumber' => intval( $group ),
 			),
+            'italianCustomerType'    => $italian_castomer_type,
 		);
 
 		if ( 'IT' === $country ) {

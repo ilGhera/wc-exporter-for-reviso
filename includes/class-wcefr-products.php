@@ -214,6 +214,7 @@ class WCEFR_Products {
 		$output = true;
 
 		$response = $this->wcefr_call->call( 'get', 'products/' . $sku_ready );
+        error_log( 'REMOTE PRODUCT: ' . print_r( $response, true ) );
 
 		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 

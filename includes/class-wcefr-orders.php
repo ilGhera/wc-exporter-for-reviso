@@ -681,17 +681,7 @@ class WCEFR_Orders {
 
             $customer_number = $response->collection[0]->customerNumber;
 
-            if ( ! $update ) {
-
-                return $customer_number;
-
-            } else {
-
-                $user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
-
-                return $user->customerNumber;
-
-            }
+            return $customer_number;
 
 		} else {
 

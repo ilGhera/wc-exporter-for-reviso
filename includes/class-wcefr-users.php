@@ -449,7 +449,7 @@ class WCEFR_Users {
 	 */
 	public function prepare_user_data( $user_id, $type, $order = null, $attention = false ) {
 
-		$type_singular = substr( $type, 0, -1 );
+		$type_singular   = substr( $type, 0, -1 );
 
 		if ( $user_id ) {
 
@@ -498,6 +498,15 @@ class WCEFR_Users {
 		} else {
 
 			return;
+
+        }
+
+        error_log( 'COMPANY: ' . $company );
+
+        /* Generic pa code */
+        if ( ! $public_entry_number ) {
+
+            $public_entry_number = 'IT' === $country ? '0000000' : 'XXXXXXX';
 
         }
 
@@ -691,7 +700,6 @@ class WCEFR_Users {
 	 */
 	public function export_single_user( $user_id, $type, $order = null, $new = false, $remote_id = null ) {
 
-        error_log( 'TYPE: ' . $type );
         $output       = null;
         $contact_name = null;
         $args         = $this->prepare_user_data( $user_id, $type, $order );

@@ -125,15 +125,21 @@ class WCEFR_Users {
      */
     private function get_user_data( $user_id ) {
 
-        $user_details = get_userdata( $user_id );
-        $output       = array_map(
-            function( $a ) {
-                return $a[0];
-            },
-            get_user_meta( $user_id )
-        );
+        $output = null;
 
-        $output['user_url'] = $user_details->user_url; 
+        if ( $user_id ) {
+
+            $user_details = get_userdata( $user_id );
+            $output       = array_map(
+                function( $a ) {
+                    return $a[0];
+                },
+                get_user_meta( $user_id )
+            );
+
+            $output['user_url'] = $user_details->user_url; 
+
+        }
 
         return $output;
 
@@ -451,7 +457,25 @@ class WCEFR_Users {
 
 		$type_singular   = substr( $type, 0, -1 );
 
-		if ( $user_id ) {
+		if ( $order ) {
+
+            $company                 = $order->get_billing_company();
+			$contact                 = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+            $name                    = $company ? $company : $contact;
+			$user_email              = $order->get_billing_email();
+			$country                 = $order->get_billing_country();
+			$city                    = $order->get_billing_city();
+			$state                   = $order->get_billing_state();
+			$address                 = $order->get_billing_address_1();
+			$postcode                = $order->get_billing_postcode();
+			$phone                   = $order->get_billing_phone();
+			$vat_number              = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
+			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
+			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
+			$public_entry_number     = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
+            $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
+
+		} elseif ( $user_id ) {
 
             /* Get user data */
 			$user_data = $this->get_user_data( $user_id ); 
@@ -477,31 +501,11 @@ class WCEFR_Users {
 
             }
 
-		} elseif ( $order ) {
-
-            $company                 = $order->get_billing_company();
-			$contact                 = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-            $name                    = $company ? $company : $contact;
-			$user_email              = $order->get_billing_email();
-			$country                 = $order->get_billing_country();
-			$city                    = $order->get_billing_city();
-			$state                   = $order->get_billing_state();
-			$address                 = $order->get_billing_address_1();
-			$postcode                = $order->get_billing_postcode();
-			$phone                   = $order->get_billing_phone();
-			$vat_number              = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
-			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
-			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
-			$public_entry_number     = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
-            $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
-
 		} else {
 
 			return;
 
         }
-
-        error_log( 'COMPANY: ' . $company );
 
         /* Generic pa code */
         if ( ! $public_entry_number ) {
@@ -546,6 +550,13 @@ class WCEFR_Users {
 
 		}
 
+        /* Payment method and term */
+        $class = new WCEFR_Orders();
+        $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
+        $payment_method       = $class->get_remote_payment_method( $payment_method_title );
+        $payment_term         = $class->get_remote_payment_term();
+        
+
 		$args = array(
 			'name'                   => $name,
 			'email'                  => $user_email,
@@ -558,9 +569,8 @@ class WCEFR_Users {
 			'vatZone' => array(
 				'vatZoneNumber' => $vat_zone,
 			),
-			'paymentTerms'           => array(
-				'paymentTermsNumber' => 6,
-			),
+			'paymentTerms'           => $payment_term,
+			'paymentType'            => $payment_method,
 			'countryCode'            => array(
 				'code' => $country,
 			),
@@ -676,11 +686,16 @@ class WCEFR_Users {
      */
     public function update_remote_customer( $user_id ) {
 
-        $user_data = get_userdata( $user_id );
+        if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ) {
 
-        if ( is_array( $user_data->roles ) && in_array( $this->customers_role, $user_data->roles  ) ) {
+            error_log( 'NON STA FUNZIONANDO!!!' );
+            $user_data = get_userdata( $user_id );
 
-            $this->export_single_user( $user_id, 'customers', null, false, null );
+            if ( is_array( $user_data->roles ) && in_array( $this->customers_role, $user_data->roles  ) ) {
+
+                $this->export_single_user( $user_id, 'customers', null, false, null );
+
+            }
 
         }
 
@@ -733,6 +748,7 @@ class WCEFR_Users {
             if (  $remote_id && 'customers' === $type ) {
 
                 $contact_name = $this->prepare_user_data( $user_id, $type, $order, true );
+                error_log( 'CONTACT NAME: ' . print_r( $contact_name, true ) );
 
                 /* Add the customer contact name in case of company */
                 if ( $contact_name ) {

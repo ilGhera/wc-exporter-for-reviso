@@ -53,7 +53,7 @@ class WCEFR_Orders {
 		/*Export orders automatically to Reviso*/
 		if ( $this->export_orders ) {
 
-            error_log( 'POST 1: ' . print_r( $_POST, true ) );
+            /* error_log( 'POST 1: ' . print_r( $_POST, true ) ); */
 			add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
 
 		}
@@ -688,9 +688,16 @@ class WCEFR_Orders {
 
             } else {
 
+                error_log( 'AGGIORNO IL CLIENTE ESISTENTE!' );
                 $user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
+                error_log( 'USER AGGIORNATO: ' . print_r( $user, true ) );
 
-                return $user->customerNumber;
+                if ( isset( $user->customerNumber  ) ) {
+
+                    return $user->customerNumber;
+
+                }
+
 
             }
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-01 10:29+0100\n"
-"PO-Revision-Date: 2023-02-01 10:29+0100\n"
+"POT-Creation-Date: 2023-02-06 22:45+0100\n"
+"PO-Revision-Date: 2023-02-06 22:46+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -27,9 +27,9 @@ msgstr "Sembra che tu non abbia i permessi per visualizzare questa pagina"
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato"
 
-#: admin/class-wcefr-admin.php:94
+#: admin/class-wcefr-admin.php:94 admin/ilghera-notice/extension.php:19
 msgid "WooCommerce Exporter for Reviso - Premium"
-msgstr "WooCommerce Exporter for Contabilità in Cloud - Premium"
+msgstr "WC Exporter for Contabilità in Cloud - Premium"
 
 #: admin/class-wcefr-admin.php:109
 msgid "Premium Key"
@@ -74,6 +74,39 @@ msgstr "Clienti"
 #: admin/class-wcefr-admin.php:124
 msgid "Orders"
 msgstr "Ordini"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:76
+#, php-format
+msgid ""
+"<img src=\"%1$s\"><b>%2$s</b>. Your license is <u>expired</u> and you're "
+"unable to receive updates, renew it by clicking on this <a href=\"%3$s\" "
+"target=\"_blank\">link</a>."
+msgstr ""
+"<img src=\"%1$s\"><b>%2$s</b>. La tua licenza è <u>scaduta</u> e non sei in "
+"grado di ricevere aggiornamenti, rinnovala facendo clic su questo <a "
+"href=\"%3$s\" target=\"_blank\">link</a>."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:92
+#, php-format
+msgid ""
+"<img src=\"%1$s\"><b>%2$s</b>. It seems like your license is <u>not valid</"
+"u> and you're unable to receive updates, you can purchase one by clicking <a "
+"href=\"%3$s\" target=\"_blank\">here</a>."
+msgstr ""
+"<img src=\"%1$s\"><b>%2$s</b>. Sembra che la tua licenza <u>non sia valida</"
+"u> e non sei in grado di ricevere aggiornamenti, puoi acquistarne una "
+"facendo clic <a href=\"%3$s\" target=\"_blank\">qui</a>."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:108
+#, php-format
+msgid ""
+"<img src=\"%1$s\"><b>%2$s</b>. You have not set up a license key and you "
+"cannot receive updates, you can purchase one by clicking <a href=\"%3$s\" "
+"target=\"_blank\">here</a>."
+msgstr ""
+"<img src=\"%1$s\"><b>%2$s</b>. Non hai impostato una chiave di licenza e non "
+"sei in grado di ricevere aggiornamenti, puoi acquistarne una facendo clic <a "
+"href=\"%3$s\" target=\"_blank\">qui</a>."
 
 #: admin/wcefr-customers-template.php:18 admin/wcefr-suppliers-template.php:18
 msgid "User role"
@@ -314,15 +347,15 @@ msgstr "Elimina tutti i fornitori in Contabilità in Cloud"
 msgid "Update suppliers in Reviso in real time"
 msgstr "Aggiorna i fornitori in Contabilità in Cloud in tempo reale"
 
-#: includes/class-wcefr-orders.php:91
+#: includes/class-wcefr-orders.php:89
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:242
+#: includes/class-wcefr-orders.php:240
 msgid "Order date"
 msgstr "Data ordine"
 
-#: includes/class-wcefr-orders.php:600
+#: includes/class-wcefr-orders.php:595
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
@@ -330,17 +363,17 @@ msgstr "Spese di spedizione"
 msgid "Direct"
 msgstr "Diretto"
 
-#: includes/class-wcefr-orders.php:1271
+#: includes/class-wcefr-orders.php:1279
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1341
+#: includes/class-wcefr-orders.php:1349
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1350
+#: includes/class-wcefr-orders.php:1358
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
@@ -404,21 +437,21 @@ msgstr "<i>Centro di responsabilità</i>"
 msgid "Set a specific departmental distribution for this product"
 msgstr "Seleziona un centro di responsabilità specifico per questo prodotto"
 
-#: includes/class-wcefr-users.php:700
+#: includes/class-wcefr-users.php:822
 msgid "Saved!"
 msgstr "Salvato!"
 
-#: includes/class-wcefr-users.php:757
+#: includes/class-wcefr-users.php:879
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:877
+#: includes/class-wcefr-users.php:999
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:887
+#: includes/class-wcefr-users.php:1009
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"

@@ -216,7 +216,6 @@ class WCEFR_Users {
 	private function add_delivery_location( $customer_number, $args ) {
  
 		$output = $this->wcefr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
-        error_log( 'ADD LOCATION: ' . print_r( $output, true ) );
 
         /*Log the error*/
         if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
@@ -244,7 +243,6 @@ class WCEFR_Users {
 
         $output             = null;
 		$delivery_locations = $this->get_delivery_locations( $customer_number );
-        error_log( 'GET LOCATIONS: ' . print_r( $delivery_locations, true ) );
 
 		/* $count = 0; */
 		/* if ( isset( $delivery_locations->collection ) && is_array( $delivery_locations->collection ) ) { */
@@ -527,9 +525,9 @@ class WCEFR_Users {
 		/*Reviso VatZone based on user country */
 		$vat_zone = $shop_country === $country ? 1 : 3;
 
-		/*Reviso's group selected by the admin*/
 		if ( $order ) {
 	
+            /*Reviso's group selected by the admin*/
             $get_customers_groups = get_option( 'wcefr-orders-customers-group' );
 
             if ( 0 === intval( $get_customers_groups ) ) {
@@ -544,18 +542,17 @@ class WCEFR_Users {
 
             }
 
+            /* Payment method and term */
+            $class = new WCEFR_Orders();
+            $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
+            $payment_method       = $class->get_remote_payment_method( $payment_method_title );
+            $payment_term         = $class->get_remote_payment_term();
+
 		} else {
 
 			$group = get_option( 'wcefr-' . $type . '-group' );
 
 		}
-
-        /* Payment method and term */
-        $class = new WCEFR_Orders();
-        $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
-        $payment_method       = $class->get_remote_payment_method( $payment_method_title );
-        $payment_term         = $class->get_remote_payment_term();
-        
 
 		$args = array(
 			'name'                   => $name,
@@ -569,8 +566,6 @@ class WCEFR_Users {
 			'vatZone' => array(
 				'vatZoneNumber' => $vat_zone,
 			),
-			'paymentTerms'           => $payment_term,
-			'paymentType'            => $payment_method,
 			'countryCode'            => array(
 				'code' => $country,
 			),
@@ -608,6 +603,14 @@ class WCEFR_Users {
 		if ( $public_entry_number ) {
 			$args['publicEntryNumber'] = $public_entry_number;
 		}
+
+        if ( $payment_method ) {
+            $args['paymentType'] = $payment_method;
+        }
+
+        if ( $payment_term ) {
+            $args['paymentTerms'] = $payment_term;
+        }
 
 		return $args;
 
@@ -688,7 +691,6 @@ class WCEFR_Users {
 
         if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ) {
 
-            error_log( 'NON STA FUNZIONANDO!!!' );
             $user_data = get_userdata( $user_id );
 
             if ( is_array( $user_data->roles ) && in_array( $this->customers_role, $user_data->roles  ) ) {
@@ -748,7 +750,6 @@ class WCEFR_Users {
             if (  $remote_id && 'customers' === $type ) {
 
                 $contact_name = $this->prepare_user_data( $user_id, $type, $order, true );
-                error_log( 'CONTACT NAME: ' . print_r( $contact_name, true ) );
 
                 /* Add the customer contact name in case of company */
                 if ( $contact_name ) {
@@ -765,7 +766,6 @@ class WCEFR_Users {
                 $args['defaultDeliveryLocation'] = array(
                     'deliveryLocationNumber' => $this->get_delivery_location( $user_id, $remote_id, $order ),
                 );
-                error_log( 'ARGS: ' . print_r( $args, true ) );
 
 				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
 
@@ -777,8 +777,6 @@ class WCEFR_Users {
 				error_log( 'WCEFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
 
 			} else {
-
-                error_log( 'OUTPUT 100: ' . print_r( $output, true ) );
 
 				return $output;
 

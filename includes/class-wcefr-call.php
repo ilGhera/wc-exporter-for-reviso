@@ -61,7 +61,6 @@ class WCEFR_Call {
         ini_set( 'serialize_precision', -1 );
 
 		$body = $args ? json_encode( $args ) : '';
-        error_log( 'BODY: ' . $body );
         
 		$response = wp_remote_request(
 			$this->base_url . $endpoint,

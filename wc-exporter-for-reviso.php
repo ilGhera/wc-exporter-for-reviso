@@ -39,6 +39,7 @@ function load_wc_exporter_for_reviso() {
 
 	/*Files required*/
 	require_once( WCEFR_DIR . 'libraries/action-scheduler/action-scheduler.php' );
+	require_once( WCEFR_ADMIN . 'ilghera-notice/class-ilghera-notice.php' );
 	require_once( WCEFR_ADMIN . 'class-wcefr-admin.php' );
 	require_once( WCEFR_INCLUDES . 'wcefr-functions.php' );
 	require_once( WCEFR_INCLUDES . 'class-wcefr-call.php' );

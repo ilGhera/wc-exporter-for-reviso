@@ -120,16 +120,25 @@ class WCEFR_Users {
     /**
      * Get the WP user data
      *
-     * @param int $user_id the WP user ID.
-     * @return array
+     * @param int  $user_id  the WP user ID.
+     * @param bool $user_url return only the user site URL with true.
+     *
+     * @return mixed 
      */
-    private function get_user_data( $user_id ) {
+    private function get_user_data( $user_id, $user_url = false ) {
 
         $output = null;
 
         if ( $user_id ) {
 
             $user_details = get_userdata( $user_id );
+
+            if ( $user_url ) {
+
+                return $user_details->user_url;
+
+            }
+
             $output       = array_map(
                 function( $a ) {
                     return $a[0];
@@ -467,6 +476,7 @@ class WCEFR_Users {
 			$address                 = $order->get_billing_address_1();
 			$postcode                = $order->get_billing_postcode();
 			$phone                   = $order->get_billing_phone();
+            $website                 = $this->get_user_data( $user_id, true ); 
 			$vat_number              = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
 			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
 			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
@@ -543,14 +553,19 @@ class WCEFR_Users {
             }
 
             /* Payment method and term */
-            $class = new WCEFR_Orders();
+            $class                = new WCEFR_Orders();
             $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
             $payment_method       = $class->get_remote_payment_method( $payment_method_title );
             $payment_term         = $class->get_remote_payment_term();
 
 		} else {
 
+            /*Reviso's group saved by the admin*/
 			$group = get_option( 'wcefr-' . $type . '-group' );
+
+            /* Payment method and term */
+            $payment_method = get_user_meta( $user_id, 'wcefr-payment-method', true );
+            $payment_term   = get_user_meta( $user_id, 'wcefr-payment-term', true );
 
 		}
 

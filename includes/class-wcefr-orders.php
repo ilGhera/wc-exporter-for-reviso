@@ -669,11 +669,11 @@ class WCEFR_Orders {
 
 		$response = $this->wcefr_call->call( 'get', 'customers?filter=email$eq:' . $email );
 
+        /* Get the WP user if exists */
+        $user_id = $order->get_user_id(); 
+
         /*Add the new user in Reviso*/
         $wcefr_users = new WCEFR_Users();
-
-        $user    = get_user_by( 'email', $email );
-        $user_id = isset( $user->ID ) ? $user->ID : 0;
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
@@ -1039,6 +1039,14 @@ class WCEFR_Orders {
         $payment_method       = $this->get_remote_payment_method( $payment_method_title );
         $payment_term         = $this->get_remote_payment_term();
 
+        /* Save user metas */
+        $user_id = $order->get_user_id(); 
+
+        if ( 0 !== $user_id ) {
+            update_user_meta( $user_id, 'wcefr-payment-method', $payment_method );
+            update_user_meta( $user_id, 'wcefr-payment-term', $payment_term );
+        }
+
 		$output = array(
 			'currency'               => $order->get_currency(),
 			'date'                   => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
@@ -1078,7 +1086,7 @@ class WCEFR_Orders {
 			'notes'                  => array(
 				'text1' => 'WC-Order-' . $order->get_id(),
 			),
-			'numberSeries'          => array(
+			'numberSeries'           => array(
 				'numberSeriesNumber' => $this->get_remote_number_series( $this->get_order_ns_prefix( $order ), null, true ),
 			),
 		);

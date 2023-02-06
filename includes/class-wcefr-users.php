@@ -598,7 +598,7 @@ class WCEFR_Users {
 		}
 
 		if ( $identification_number ) {
-			$args['corporateIdentificationNumber'] = $identification_number;
+			$args['corporateIdentificationNumber'] = strtoupper( $identification_number );
 		}
 
 		if ( $italian_certified_email ) {

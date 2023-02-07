@@ -1044,7 +1044,6 @@ class WCEFR_Orders {
 
         if ( 0 !== $user_id ) {
             update_user_meta( $user_id, 'wcefr-payment-method', $payment_method );
-            update_user_meta( $user_id, 'wcefr-payment-term', $payment_term );
         }
 
 		$output = array(

@@ -535,6 +535,10 @@ class WCEFR_Users {
 		/*Reviso VatZone based on user country */
 		$vat_zone = $shop_country === $country ? 1 : 3;
 
+        /* Payment term */
+        $class        = new WCEFR_Orders();
+        $payment_term = $class->get_remote_payment_term();
+
 		if ( $order ) {
 	
             /*Reviso's group selected by the admin*/
@@ -552,11 +556,9 @@ class WCEFR_Users {
 
             }
 
-            /* Payment method and term */
-            $class                = new WCEFR_Orders();
+            /* Payment method */
             $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
             $payment_method       = $class->get_remote_payment_method( $payment_method_title );
-            $payment_term         = $class->get_remote_payment_term();
 
 		} else {
 
@@ -565,7 +567,6 @@ class WCEFR_Users {
 
             /* Payment method and term */
             $payment_method = get_user_meta( $user_id, 'wcefr-payment-method', true );
-            $payment_term   = get_user_meta( $user_id, 'wcefr-payment-term', true );
 
 		}
 
@@ -609,7 +610,9 @@ class WCEFR_Users {
 
 		if ( $identification_number ) {
 			$args['corporateIdentificationNumber'] = strtoupper( $identification_number );
-		}
+        } elseif ( $vat_number ) {
+			$args['corporateIdentificationNumber'] = strtoupper( $vat_number );
+        }
 
 		if ( $italian_certified_email ) {
 			$args['italianCertifiedEmail'] = $italian_certified_email;

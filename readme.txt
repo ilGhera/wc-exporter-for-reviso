@@ -62,6 +62,7 @@ Release Date: 7 February 2023
 * Enhancement: Italian customer type set in Reviso
 * Enhancement: Vat code used instead of customer fiscal code if missed 
 * Update: Plugin Update Checker
+* Update: Action Scheduler 
 * Bug fix: Payment type not set in orders export 
 * Bug fix: Customer website deleted on data update with receiving orders
 * Bug fix: Fiscal code must uppercase 

@@ -56,10 +56,11 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 
-= 1.2.0
+= 1.2.1
 Release Date: 13 February 2023
 
-* Bug fix: Bug exporting order discounts to Reviso 
+* Bug fix: Wrong order discount value exported to Reviso 
+* Bug fix: Remote vat code not found 
 
 
 = 1.2.0

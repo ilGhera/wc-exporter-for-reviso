@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.1.0
+ * @since 1.2.1
  */
 class WCEFR_Products {
 
@@ -402,7 +402,7 @@ class WCEFR_Products {
         } else {
 
             $transient_name = 'wcefr-vat-rate-' . $vat_rate;
-            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
+            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', ceil( $vat_rate ) );
 
         }
 

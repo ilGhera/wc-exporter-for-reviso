@@ -400,10 +400,9 @@ class WCEFR_Orders {
             (float)
             $order->get_total()          -
             $order->get_total_tax()      -
-            $order->get_total_shipping() -
-            $order->get_shipping_tax()   +
+            $order->get_total_shipping() +
+            /* $order->get_shipping_tax()   + */
             $order->get_total_discount(),
-            /* wc_get_price_decimals(), */
             10,
             '.',
             ''

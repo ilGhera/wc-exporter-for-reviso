@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2023-02-06 22:36+0100\n"
+"POT-Creation-Date: 2023-02-13 17:55+0100\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -336,25 +336,25 @@ msgstr ""
 msgid "Order date"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:595
+#: includes/class-wcefr-orders.php:594
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1038
+#: includes/class-wcefr-orders.php:1037
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1279
+#: includes/class-wcefr-orders.php:1277
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1349
+#: includes/class-wcefr-orders.php:1347
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1358
+#: includes/class-wcefr-orders.php:1356
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
@@ -418,21 +418,21 @@ msgstr ""
 msgid "Set a specific departmental distribution for this product"
 msgstr ""
 
-#: includes/class-wcefr-users.php:822
+#: includes/class-wcefr-users.php:825
 msgid "Saved!"
 msgstr ""
 
-#: includes/class-wcefr-users.php:879
+#: includes/class-wcefr-users.php:882
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:999
+#: includes/class-wcefr-users.php:1002
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:1009
+#: includes/class-wcefr-users.php:1012
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr ""
@@ -484,9 +484,13 @@ msgstr ""
 msgid "WARNING! The <strong>VAT number</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:458
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:507
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:528
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:418
+msgid "WARNING! The <strong>Recipient Code</strong> entered is incorrect."
+msgstr ""
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:470
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:519
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:540
 msgid "Electronic invoicing"
 msgstr ""
 

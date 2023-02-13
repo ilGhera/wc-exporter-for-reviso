@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-06 22:45+0100\n"
-"PO-Revision-Date: 2023-02-06 22:46+0100\n"
+"POT-Creation-Date: 2023-02-13 17:55+0100\n"
+"PO-Revision-Date: 2023-02-13 17:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -355,25 +355,25 @@ msgstr "Fattura"
 msgid "Order date"
 msgstr "Data ordine"
 
-#: includes/class-wcefr-orders.php:595
+#: includes/class-wcefr-orders.php:594
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:1038
+#: includes/class-wcefr-orders.php:1037
 msgid "Direct"
 msgstr "Diretto"
 
-#: includes/class-wcefr-orders.php:1279
+#: includes/class-wcefr-orders.php:1277
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1349
+#: includes/class-wcefr-orders.php:1347
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1358
+#: includes/class-wcefr-orders.php:1356
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
@@ -437,21 +437,21 @@ msgstr "<i>Centro di responsabilità</i>"
 msgid "Set a specific departmental distribution for this product"
 msgstr "Seleziona un centro di responsabilità specifico per questo prodotto"
 
-#: includes/class-wcefr-users.php:822
+#: includes/class-wcefr-users.php:825
 msgid "Saved!"
 msgstr "Salvato!"
 
-#: includes/class-wcefr-users.php:879
+#: includes/class-wcefr-users.php:882
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:999
+#: includes/class-wcefr-users.php:1002
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:1009
+#: includes/class-wcefr-users.php:1012
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"
@@ -507,9 +507,15 @@ msgstr ""
 "ATTENZIONE! Sembra che la <strong>Partita IVA</strong> inserita non sia "
 "corretta."
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:458
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:507
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:528
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:418
+msgid "WARNING! The <strong>Recipient Code</strong> entered is incorrect."
+msgstr ""
+"ATTENZIONE! Sembra che il <strong>Codice Destinatario</strong> inserito non "
+"sia corretto."
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:470
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:519
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:540
 msgid "Electronic invoicing"
 msgstr "Fatturazione elettronica"
 

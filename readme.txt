@@ -59,6 +59,7 @@ This plugin sends data to an external service, like the products bought by the u
 = 1.2.1
 Release Date: 20 February 2023
 
+* Enhancement: Receiver code checking when provided by the user.
 * Bug fix: Wrong order discount value exported to Reviso 
 * Bug fix: Remote vat code not found 
 

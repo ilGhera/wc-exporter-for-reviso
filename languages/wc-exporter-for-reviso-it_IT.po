@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-13 17:55+0100\n"
-"PO-Revision-Date: 2023-02-13 17:56+0100\n"
+"POT-Creation-Date: 2023-02-20 09:24+0100\n"
+"PO-Revision-Date: 2023-02-20 09:30+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -75,38 +75,31 @@ msgstr "Clienti"
 msgid "Orders"
 msgstr "Ordini"
 
-#: admin/ilghera-notice/class-ilghera-notice.php:76
-#, php-format
-msgid ""
-"<img src=\"%1$s\"><b>%2$s</b>. Your license is <u>expired</u> and you're "
-"unable to receive updates, renew it by clicking on this <a href=\"%3$s\" "
-"target=\"_blank\">link</a>."
-msgstr ""
-"<img src=\"%1$s\"><b>%2$s</b>. La tua licenza è <u>scaduta</u> e non sei in "
-"grado di ricevere aggiornamenti, rinnovala facendo clic su questo <a "
-"href=\"%3$s\" target=\"_blank\">link</a>."
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Renew now"
+msgstr "Aggiorna ora"
 
-#: admin/ilghera-notice/class-ilghera-notice.php:92
-#, php-format
-msgid ""
-"<img src=\"%1$s\"><b>%2$s</b>. It seems like your license is <u>not valid</"
-"u> and you're unable to receive updates, you can purchase one by clicking <a "
-"href=\"%3$s\" target=\"_blank\">here</a>."
-msgstr ""
-"<img src=\"%1$s\"><b>%2$s</b>. Sembra che la tua licenza <u>non sia valida</"
-"u> e non sei in grado di ricevere aggiornamenti, puoi acquistarne una "
-"facendo clic <a href=\"%3$s\" target=\"_blank\">qui</a>."
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Get a license"
+msgstr "Ottieni una licenza"
 
-#: admin/ilghera-notice/class-ilghera-notice.php:108
-#, php-format
-msgid ""
-"<img src=\"%1$s\"><b>%2$s</b>. You have not set up a license key and you "
-"cannot receive updates, you can purchase one by clicking <a href=\"%3$s\" "
-"target=\"_blank\">here</a>."
+#: admin/ilghera-notice/class-ilghera-notice.php:107
+msgid "Your license is <u>expired</u> and you're unable to receive updates."
 msgstr ""
-"<img src=\"%1$s\"><b>%2$s</b>. Non hai impostato una chiave di licenza e non "
-"sei in grado di ricevere aggiornamenti, puoi acquistarne una facendo clic <a "
-"href=\"%3$s\" target=\"_blank\">qui</a>."
+"La tua licenza è <u>scaduta</u> e non sei in grado di ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:123
+msgid ""
+"It seems like your license is <u>not valid</u> and you're unable to receive "
+"updates."
+msgstr ""
+"Sembra che la tua licenza non sia <u>valida</u> e non sei in grado di "
+"ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:139
+msgid "You have not set up a license key and you cannot receive updates."
+msgstr ""
+"Non hai impostato una licenza e non sei in grado di ricevere aggiornamenti."
 
 #: admin/wcefr-customers-template.php:18 admin/wcefr-suppliers-template.php:18
 msgid "User role"
@@ -622,6 +615,26 @@ msgstr "Mostra PEC e Codice Destinatario solo per l'Italia"
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:203
 msgid "Show the tax code field only to Italian customers"
 msgstr "Mostra il campo Codice Fiscale solo per l'Italia"
+
+#, php-format
+#~ msgid ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. Your license is <u>expired</u> and you're "
+#~ "unable to receive updates, renew it by clicking on this <a href=\"%3$s\" "
+#~ "target=\"_blank\">link</a>."
+#~ msgstr ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. La tua licenza è <u>scaduta</u> e non sei "
+#~ "in grado di ricevere aggiornamenti, rinnovala facendo clic su questo <a "
+#~ "href=\"%3$s\" target=\"_blank\">link</a>."
+
+#, php-format
+#~ msgid ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. You have not set up a license key and you "
+#~ "cannot receive updates, you can purchase one by clicking <a href=\"%3$s\" "
+#~ "target=\"_blank\">here</a>."
+#~ msgstr ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. Non hai impostato una chiave di licenza e "
+#~ "non sei in grado di ricevere aggiornamenti, puoi acquistarne una facendo "
+#~ "clic <a href=\"%3$s\" target=\"_blank\">qui</a>."
 
 #~ msgid "Orders settings"
 #~ msgstr "Impostazioni ordini"

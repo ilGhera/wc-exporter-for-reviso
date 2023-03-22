@@ -62,6 +62,7 @@ Release Date: 22 March 2023
 * Enhancement: Fiscal code in capital letters 
 * Enhancement: Default receiver code in capital letters 
 * Update: Plugin Update Checker
+* Update: Action Scheduler 
 * Bug Fix: Receiver code field not hidden with private invoices
 
 

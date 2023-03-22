@@ -295,6 +295,65 @@ class ActionScheduler_QueueRunner_Test extends ActionScheduler_UnitTestCase {
 		$this->assertCount( 0, $pending_actions, 'The failure threshold (5 consecutive fails for recurring actions with the same signature) having been met, no further actions were scheduled.' );
 	}
 
+	/**
+	 * If a recurring action continually fails, it will not be re-scheduled. However, a hook makes it possible to
+	 * exempt specific actions from this behavior (without impacting other unrelated recurring actions).
+	 *
+	 * @see self::test_failing_recurring_actions_are_not_rescheduled_when_threshold_met()
+	 * @return void
+	 */
+	public function test_exceptions_can_be_made_for_failing_recurring_actions() {
+		$store    = ActionScheduler_Store::instance();
+		$runner   = ActionScheduler_Mocker::get_queue_runner( $store );
+		$observed = 0;
+
+		// Create 2 sets of 5 actions that have already past and have already failed (five being the threshold of what
+		// counts as 'consistently failing').
+		for ( $i = 0; $i < 4; $i++ ) {
+			$date      = as_get_datetime_object( 12 - $i . ' hours ago' );
+			$store->mark_failure( as_schedule_recurring_action( $date->getTimestamp(), HOUR_IN_SECONDS, 'foo' ) );
+			$store->mark_failure( as_schedule_recurring_action( $date->getTimestamp(), HOUR_IN_SECONDS, 'bar' ) );
+		}
+
+		// Add one more action (pending and past-due) to each set.
+		$date = as_get_datetime_object( '6 hours ago' );
+		as_schedule_recurring_action( $date->getTimestamp(), HOUR_IN_SECONDS, 'foo' );
+		as_schedule_recurring_action( $date->getTimestamp(), HOUR_IN_SECONDS, 'bar' );
+
+		// Define a filter function that allows scheduled actions for hook 'foo' to still be rescheduled, despite its
+		// history of consistent failure.
+		$filter = function( $is_failing, $action ) use ( &$observed ) {
+			$observed++;
+			return 'foo' === $action->get_hook() ? false : $is_failing;
+		};
+
+		// Process the queue with our consistent-failure filter function in place.
+		add_filter( 'action_scheduler_recurring_action_is_consistently_failing', $filter, 10, 2 );
+		$runner->run();
+
+		// Check how many (if any) of our test actions were re-scheduled.
+		$pending_foo_actions = $store->query_actions(
+			array(
+				'hook'   => 'foo',
+				'status' => ActionScheduler_Store::STATUS_PENDING,
+			)
+		);
+		$pending_bar_actions = $store->query_actions(
+			array(
+				'hook'   => 'bar',
+				'status' => ActionScheduler_Store::STATUS_PENDING,
+			)
+		);
+
+		// Expectations...
+		$this->assertCount( 1, $pending_foo_actions, 'We expect a new instance of action "foo" will have been scheduled.' );
+		$this->assertCount( 0, $pending_bar_actions, 'We expect no further instances of action "bar" will have been scheduled.' );
+		$this->assertEquals( 2, $observed, 'We expect our callback to have been invoked twice, once in relation to each test action.' );
+
+		// Clean-up...
+		remove_filter( 'action_scheduler_recurring_action_is_consistently_failing', $filter, 10, 2 );
+	}
+
 	public function test_hooked_into_wp_cron() {
 		$next = wp_next_scheduled( ActionScheduler_QueueRunner::WP_CRON_HOOK, array( 'WP Cron' ) );
 		$this->assertNotEmpty($next);
@@ -473,5 +532,76 @@ class ActionScheduler_QueueRunner_Test extends ActionScheduler_UnitTestCase {
 			),
 			$execution_order
 		);
+	}
+
+	/**
+	 * Tests the ability of the queue runner to accommodate a range of error conditions (raised recoverable errors
+	 * under PHP 5.6, thrown errors under PHP 7.0 upwards, and exceptions under all supported versions).
+	 *
+	 * @return void
+	 */
+	public function test_recoverable_errors_do_not_break_queue_runner() {
+		$executed = 0;
+		as_enqueue_async_action( 'foo' );
+		as_enqueue_async_action( 'bar' );
+		as_enqueue_async_action( 'baz' );
+		as_enqueue_async_action( 'foobar' );
+
+		/**
+		 * Trigger a custom user error.
+		 *
+		 * @return void
+		 */
+		$foo = function () use ( &$executed ) {
+			$executed++;
+			trigger_error( 'Trouble.', E_USER_ERROR );
+		};
+
+		/**
+		 * Throw an exception.
+		 *
+		 * @throws Exception Intentionally raised for testing purposes.
+		 *
+		 * @return void
+		 */
+		$bar = function () use ( &$executed ) {
+			$executed++;
+			throw new Exception( 'More trouble.' );
+		};
+
+		/**
+		 * Trigger a recoverable fatal error. Under PHP 5.6 the error will be raised, and under PHP 7.0 and higher the
+		 * error will be thrown (different mechanisms are needed to support this difference).
+		 *
+		 * @throws Throwable Intentionally raised for testing purposes.
+		 *
+		 * @return void
+		 */
+		$baz = function () use ( &$executed ) {
+			$executed++;
+			(string) (object) array();
+		};
+
+		/**
+		 * A problem-free callback.
+		 *
+		 * @return void
+		 */
+		$foobar = function () use ( &$executed ) {
+			$executed++;
+		};
+
+		add_action( 'foo', $foo );
+		add_action( 'bar', $bar );
+		add_action( 'baz', $baz );
+		add_action( 'foobar', $foobar );
+
+		ActionScheduler_Mocker::get_queue_runner( ActionScheduler::store() )->run();
+		$this->assertEquals( 4, $executed, 'All enqueued actions ran as expected despite errors and exceptions being raised by the first actions in the set.' );
+
+		remove_action( 'foo', $foo );
+		remove_action( 'bar', $bar );
+		remove_action( 'baz', $baz );
+		remove_action( 'foobar', $foobar );
 	}
 }

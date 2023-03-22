@@ -1,7 +1,7 @@
 === WooCommerce Exporter for Reviso - Premium ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 1.2.1
+Version: 1.2.2
 Requires at least: 4.0
 Tested up to: 6.1
 License: GPLv2
@@ -54,6 +54,15 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+
+= 1.2.2
+Release Date: 22 March 2023
+
+* Enhancement: Fiscal code in capital letters 
+* Enhancement: Default receiver code in capital letters 
+* Update: Plugin Update Checker
+* Bug Fix: Receiver code field not hidden with private invoices
 
 
 = 1.2.1

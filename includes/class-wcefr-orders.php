@@ -53,7 +53,7 @@ class WCEFR_Orders {
 		/*Export orders automatically to Reviso*/
 		if ( $this->export_orders ) {
 
-			add_action( 'woocommerce_thankyou', array( $this, 'export_single_order' ) );
+			add_action( 'woocommerce_thankyou', array( $this, 'single_order_async_action' ) );
 
 		}
 
@@ -1222,6 +1222,26 @@ class WCEFR_Orders {
 	}
 
 
+    /**
+     * Enqueue the single async action with Action Scheduler
+     *
+     * @param int $order_id the WC order ID.
+     *
+     * @return void
+     */
+    public function single_order_async_action( $order_id ) {
+
+        as_enqueue_async_action(
+            'wcefr_export_single_order_event',
+            array(
+                'order_id' => $order_id,
+            ),
+            'wcefr_export_single_order'
+        );
+
+    }
+
+
 	/**
 	 * Export WC orders to Reviso
 	 */
@@ -1259,13 +1279,7 @@ class WCEFR_Orders {
 					$n++;
 
 					/*Cron event*/
-					as_enqueue_async_action(
-						'wcefr_export_single_order_event',
-						array(
-							'order_id' => $post->ID,
-						),
-						'wcefr_export_single_order'
-					);
+                    $this->single_order_async_action( $post->ID );
 
 				}
 

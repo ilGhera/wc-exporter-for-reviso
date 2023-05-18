@@ -78,10 +78,10 @@ class WCEFR_Products {
      */
     private function inventory_module() {
 
-        $output    = false;
+        $output    = 0;
         $transient = get_transient( 'wcefr-inventory-module' );
 
-        if ( $transient ) {
+        if ( null !== $transient ) {
 
             $output = $transient;
 
@@ -97,7 +97,7 @@ class WCEFR_Products {
 
                         if ( 'Lager' === $module->name ) {
 
-                            $output = true;
+                            $output = 1;
 
                             continue;
 
@@ -125,10 +125,10 @@ class WCEFR_Products {
      */
     public function dimension_module() {
 
-        $output    = false;
+        $output    = 0;
         $transient = get_transient( 'wcefr-dimension-module' );
 
-        if ( $transient ) {
+        if ( null !== $transient ) {
 
             $output = $transient;
 
@@ -144,7 +144,7 @@ class WCEFR_Products {
 
                         if ( 0 === strpos( $module->name, 'Dimension' ) ) {
 
-                            $output = true;
+                            $output = 1;
 
                             continue;
 

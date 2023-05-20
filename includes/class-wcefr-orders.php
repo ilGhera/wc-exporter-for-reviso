@@ -123,7 +123,18 @@ class WCEFR_Orders {
 
 				echo '<a href="?wcefr-preview=true&order-id=' . esc_attr( $order_id ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 
-			}
+            } else {
+
+				$icon = WCEFR_URI . 'images/pdf-black.png';
+                $order = wc_get_order( $order_id );
+
+                if ( 'completed' === $order->get_status() ) {
+
+                    echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+
+                }
+
+            }
 
 		}
 

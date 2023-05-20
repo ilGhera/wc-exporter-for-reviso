@@ -60,15 +60,19 @@ class WCEFR_Orders {
 		/*Create invoices in Reviso with WC completed orders */
 		if ( $this->create_invoices ) {
 
-            /* Remove order completed notification */
-            add_action( 'woocommerce_email', function( $email_class ) {
-
-                remove_action( 'woocommerce_order_status_completed_notification', array( $email_class->emails['WC_Email_Customer_Completed_Order'], 'trigger' ) );
-
-            });
-
 			/* add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) ); */
 			add_action( 'woocommerce_order_status_completed', array( $this, 'single_order_async_action' ) );
+
+            if ( $this->issue_invoices && $this->send_invoices  ) {
+
+                /* Remove order completed notification */
+                add_action( 'woocommerce_email', function( $email_class ) {
+
+                    remove_action( 'woocommerce_order_status_completed_notification', array( $email_class->emails['WC_Email_Customer_Completed_Order'], 'trigger' ) );
+
+                });
+
+            }
 
 		}
 

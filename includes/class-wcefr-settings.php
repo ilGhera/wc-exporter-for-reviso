@@ -4,7 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.0.2
+ * @since 1.3.0
+ */
+
+/**
+ * WCEFR_Settings
  */
 class WCEFR_Settings {
 
@@ -39,13 +43,13 @@ class WCEFR_Settings {
 		$screen = get_current_screen();
 
 		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
-            wp_enqueue_script( 'chosen', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js' );
-            wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ) );
+			wp_enqueue_script( 'chosen', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js', array( 'jquery' ), WCEFR_VERSION, false );
+			wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ), WCEFR_VERSION, false );
 
-            wp_enqueue_style( 'chosen-style', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.min.css' );
-            wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css' );
-            wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css' );
-        }
+			wp_enqueue_style( 'chosen-style', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.min.css', array(), WCEFR_VERSION );
+			wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css', array(), WCEFR_VERSION );
+			wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css', array(), WCEFR_VERSION );
+		}
 
 	}
 
@@ -105,7 +109,7 @@ class WCEFR_Settings {
 	public function check_connection_callback( $return = false ) {
 
 		$response = $this->wcefr_call->call( 'get', 'self' );
-        
+
 		if ( isset( $response->httpStatusCode ) && isset( $response->message ) ) {
 
 			echo false;
@@ -121,52 +125,51 @@ class WCEFR_Settings {
 				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-exporter-for-reviso' ) ) . '</span></h4>';
 
 			}
-
 		}
 
 		exit;
 
 	}
 
-    /**
-     * Clear the temporary date saved in the db
-     *
-     * @return void
-     */
-    public function clear_cache() {
+	/**
+	 * Clear the temporary date saved in the db
+	 *
+	 * @return void
+	 */
+	public function clear_cache() {
 
-        $transients = array( 
-            'wcefr-suppliers-groups',
-            'wcefr-customers-groups',
-            'wcefr-payment-methods',
-            'wcefr-additional-expenses',
-            'wcefr-inventory-module',
-            'wcefr-dimension-module',
-            'wcefr-departmental-distribution',
-            'wcefr-vat-code',
-            'wcefr-vat-rate',
-            'wcefr-number-series-prefix',
-            'wcefr-number-series-type',
-            'wcefr-number-series',
-        );
+		$transients = array(
+			'wcefr-suppliers-groups',
+			'wcefr-customers-groups',
+			'wcefr-payment-methods',
+			'wcefr-additional-expenses',
+			'wcefr-inventory-module',
+			'wcefr-dimension-module',
+			'wcefr-departmental-distribution',
+			'wcefr-vat-code',
+			'wcefr-vat-rate',
+			'wcefr-number-series-prefix',
+			'wcefr-number-series-type',
+			'wcefr-number-series',
+		);
 
-        foreach ( $transients as $transient ) {
+		foreach ( $transients as $transient ) {
 
-            delete_transient( $transient );
+			delete_transient( $transient );
 
-        }
+		}
 
-        /* Response message */
-        $response[] = array(
-            'ok',
-            /* translators: Transients deleted */
-            esc_html__( 'Temporary data were deleted', 'wc-exporter-for-reviso' ),
-        );
+		/* Response message */
+		$response[] = array(
+			'ok',
+			/* translators: Transients deleted */
+			esc_html__( 'Temporary data were deleted', 'wc-exporter-for-reviso' ),
+		);
 
-        echo json_encode( $response );
+		echo wp_json_encode( $response );
 
-        exit;
-    } 
+		exit;
+	}
 
 }
 new WCEFR_Settings( true );

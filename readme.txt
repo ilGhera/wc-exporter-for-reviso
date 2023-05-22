@@ -61,6 +61,7 @@ Release Date: 22 May 2023
 
 * Enhancement: Performance improvement on exporting new orders in real time
 * Enhancement: Performance improvement on compliting orders in back-end
+* Enhancement: WP Coding Standards 
 * Update: Plugin Update Checker
 * Update: Action Scheduler 
 * Bug Fix: Continuous calls to the endpoint self in some cases 

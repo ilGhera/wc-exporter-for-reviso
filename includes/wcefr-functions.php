@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.1.1
+ * @since 1.3.0
  */
 
 /**
@@ -16,25 +16,24 @@
  */
 function avoid_length_exceed( $text, $limit ) {
 
-    $output = $text;
+	$output = $text;
 
-    if ( strlen( $text ) > $limit ) {
+	if ( strlen( $text ) > $limit ) {
 
-        if ( 25 === intval( $limit ) ) {
+		if ( 25 === intval( $limit ) ) {
 
-            /*Product number (sku)*/
-            $output = substr( $text, 0, $limit );
+			/*Product number (sku)*/
+			$output = substr( $text, 0, $limit );
 
-        } else {
+		} else {
 
-            /*Product name and description*/
-            $output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+			/*Product name and description*/
+			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
 
-        }
+		}
+	}
 
-    }
-
-    return $output;
+	return $output;
 
 }
 
@@ -42,7 +41,7 @@ function avoid_length_exceed( $text, $limit ) {
 /**
  * Update checker
  */
-require( WCEFR_DIR . 'plugin-update-checker/plugin-update-checker.php' );
+require WCEFR_DIR . 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $wcefr_update_checker = PucFactory::buildUpdateChecker(
@@ -94,8 +93,8 @@ function wcefr_update_message( $plugin_data, $response ) {
 
 		$decoded_key = explode( '|', base64_decode( $key ) );
 		$bought_date = date( 'd-m-Y', strtotime( $decoded_key[1] ) );
-		$limit = strtotime( $bought_date . ' + 365 day' );
-		$now = strtotime( 'today' );
+		$limit       = strtotime( $bought_date . ' + 365 day' );
+		$now         = strtotime( 'today' );
 
 		if ( $limit < $now ) {
 
@@ -106,7 +105,6 @@ function wcefr_update_message( $plugin_data, $response ) {
 			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/wc-exporter-for-reviso-premium/" target="_blank">here</a> for prices and details.';
 
 		}
-
 	}
 
 	$allowed_tags = array(

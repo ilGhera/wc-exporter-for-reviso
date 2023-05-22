@@ -4,10 +4,10 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.1.0
+ * @since 1.3.0
  */
 
-$synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;
+$synchronize_customers = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;
 ?>
 
 <!-- Export form -->
@@ -30,7 +30,7 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 					}
 					?>
 				</select>
-                <span class="wcefr-role-response customers"></span>
+				<span class="wcefr-role-response customers"></span>
 				<p class="description"><?php esc_html_e( 'Select your customers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>
@@ -43,7 +43,6 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 			</td>
 		</tr>
 	</table>
-	
 	<p class="submit">
 		<input type="submit" name="download_csv" class="button-primary wcefr export-users customers" value="<?php esc_html_e( 'Export to Reviso', 'wc-exporter-for-reviso' ); ?>" />
 	</p>
@@ -72,17 +71,17 @@ $synchronize_customers  = get_option( 'wcefr-synchronize-customers' ) ? get_opti
 <!-- Settings form -->
 <form name="wcefr-customers-settings" class="wcefr-form"  method="post" action="">
 
-    <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
+	<h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<table class="form-table">
 		<tr class="synchronize-customers">
 			<th scope="row"><?php esc_html_e( 'Customers', 'wc-exporter-for-reviso' ); ?></th>
 			<td>
-				<input type="checkbox" name="wcefr-synchronize-customers" value="1"<?php echo 1 == $synchronize_customers ? ' checked="checked"' : ''; ?>>
+				<input type="checkbox" name="wcefr-synchronize-customers" value="1"<?php echo 1 === intval( $synchronize_customers ) ? ' checked="checked"' : ''; ?>>
 				<p class="description"><?php esc_html_e( 'Update customers in Reviso in real time', 'wc-exporter-for-reviso' ); ?></p>
 			</td>
 		</tr>
-        <?php wp_nonce_field( 'wcefr-customers-settings', 'wcefr-customers-settings-nonce' ); ?>
+		<?php wp_nonce_field( 'wcefr-customers-settings', 'wcefr-customers-settings-nonce' ); ?>
 	</table>
 
 	<p class="submit">

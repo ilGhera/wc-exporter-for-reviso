@@ -6,6 +6,10 @@
  * @package wc-exporter-for-reviso/includes
  * @since 1.3.0
  */
+
+/**
+ * WCEFR_Orders
+ */
 class WCEFR_Orders {
 
 	/**
@@ -17,14 +21,8 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
-			$this->export_orders                 = get_option( 'wcefr-export-orders' );
-			$this->create_invoices               = get_option( 'wcefr-create-invoices' );
-			$this->issue_invoices                = get_option( 'wcefr-issue-invoices' );
-			$this->send_invoices                 = get_option( 'wcefr-send-invoices' );
-			$this->book_invoices                 = get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
-			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' ); 
-			$this->init();
+			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' );
 
 			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
@@ -34,47 +32,10 @@ class WCEFR_Orders {
 			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
 
 			add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
-			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
-	}
-
-
-	/**
-	 * Check the administrator settings to automatically export orders to Reviso
-	 *
-	 * @return void
-	 */
-	public function init() {
-
-		/*Export orders automatically to Reviso*/
-		if ( $this->export_orders ) {
-
-			add_action( 'woocommerce_thankyou', array( $this, 'single_order_async_action' ) );
-
-		}
-
-		/*Create invoices in Reviso with WC completed orders */
-		if ( $this->create_invoices ) {
-
-			/* add_action( 'woocommerce_order_status_completed', array( $this, 'create_single_invoice' ) ); */
-			add_action( 'woocommerce_order_status_completed', array( $this, 'single_order_async_action' ) );
-
-            if ( $this->issue_invoices && $this->send_invoices  ) {
-
-                /* Remove order completed notification */
-                add_action( 'woocommerce_email', function( $email_class ) {
-
-                    remove_action( 'woocommerce_order_status_completed_notification', array( $email_class->emails['WC_Email_Customer_Completed_Order'], 'trigger' ) );
-
-                });
-
-            }
-
-		}
 
 	}
 
@@ -123,26 +84,24 @@ class WCEFR_Orders {
 
 				echo '<a href="?wcefr-preview=true&order-id=' . esc_attr( $order_id ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 
-            } else {
+			} else {
 
 				$icon      = WCEFR_URI . 'images/pdf-black.png';
-                $order     = wc_get_order( $order_id );
-                $scheduled = as_has_scheduled_action(
-                    'wcefr_export_single_order_event',
-                    array(
-                        'order_id' => $order_id,
-                    ),
-                    'wcefr_export_single_order',
-                );
+				$order     = wc_get_order( $order_id );
+				$scheduled = as_has_scheduled_action(
+					'wcefr_export_single_order_event',
+					array(
+						'order_id' => $order_id,
+					),
+					'wcefr_export_single_order',
+				);
 
-                if ( 'completed' === $order->get_status() && $scheduled ) {
+				if ( 'completed' === $order->get_status() && $scheduled ) {
 
-                    echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+					echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 
-                }
-
-            }
-
+				}
+			}
 		}
 
 	}
@@ -175,9 +134,7 @@ class WCEFR_Orders {
 					continue;
 
 				}
-
 			}
-
 		}
 
 		return $output;
@@ -216,9 +173,7 @@ class WCEFR_Orders {
 					continue;
 
 				}
-
 			}
-
 		}
 
 		return $output;
@@ -229,50 +184,48 @@ class WCEFR_Orders {
 	/**
 	 * Check if a specific payment term exists in Reviso
 	 *
-     * @param string $term_name the payment term name to search in Reviso.
-     * 
+	 * @param string $term_name the payment term name to search in Reviso.
+	 *
 	 * @return int the Reviso payment term number.
 	 */
 	private function payment_term_exists( $term_name ) {
 
-        $output    = null;
-        $transient = get_transient( 'wcefr-payment-term' );
+		$output    = null;
+		$transient = get_transient( 'wcefr-payment-term' );
 
-        if ( $transient ) {
+		if ( $transient ) {
 
-            $output = $transient;
+			$output = $transient;
 
-        } else {
+		} else {
 
-            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $term_name );
-            
-            if ( isset( $response->collection[0] ) && ! empty( $response->collection[0] ) ) {
+			$response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $term_name );
 
-                set_transient( 'wcefr-payment-term', $response->collection[0], DAY_IN_SECONDS );
+			if ( isset( $response->collection[0] ) && ! empty( $response->collection[0] ) ) {
 
-                $output = $response->collection[0];
+				set_transient( 'wcefr-payment-term', $response->collection[0], DAY_IN_SECONDS );
 
-            }
-        }
+				$output = $response->collection[0];
 
-        return $output;
+			}
+		}
+
+		return $output;
 
 	}
 
 
 	/**
 	 * Add a specific payment term in Reviso
-	 *
-	 * @param string $payment_gateway the wc payment gateway.
 	 */
 	public function get_remote_payment_term() {
 
-        $term_name = __( 'Order date', 'wc-exporter-for-reviso' );
+		$term_name = __( 'Order date', 'wc-exporter-for-reviso' );
 		$output    = $this->payment_term_exists( $term_name );
 
 		if ( ! $output ) {
 
-            delete_transient( 'wcefr-payment-term' );
+			delete_transient( 'wcefr-payment-term' );
 
 			$args = array(
 				'name'             => $term_name,
@@ -287,7 +240,6 @@ class WCEFR_Orders {
 				$output = $response;
 
 			}
-
 		}
 
 		return $output;
@@ -298,8 +250,8 @@ class WCEFR_Orders {
 	/**
 	 *
 	 * Get the wc payment gateways available
-     *
-     * @return array
+	 *
+	 * @return array
 	 */
 	public function get_wc_available_methods() {
 
@@ -310,16 +262,12 @@ class WCEFR_Orders {
 
 			foreach ( $gateways as $gateway ) {
 
-				/* if ( 'yes' == $gateway->enabled ) { */
+				$enabled_gateways[] = $gateway->id;
 
-					$enabled_gateways[] = $gateway->id;
-
-				/* } */
 			}
-
 		}
 
-        return $enabled_gateways;
+		return $enabled_gateways;
 
 	}
 
@@ -331,28 +279,27 @@ class WCEFR_Orders {
 	 */
 	private function get_remote_payment_metods() {
 
-        $output    = null;
-        $transient = get_transient( 'wcefr-payment-methods' );
+		$output    = null;
+		$transient = get_transient( 'wcefr-payment-methods' );
 
-        if ( $transient ) {
+		if ( $transient ) {
 
-            $output = $transient;
+			$output = $transient;
 
-        } else {
+		} else {
 
-            $response = $this->wcefr_call->call( 'get', 'payment-types' );
+			$response = $this->wcefr_call->call( 'get', 'payment-types' );
 
-            if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+			if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
-                set_transient( 'wcefr-payment-methods', $response->collection, DAY_IN_SECONDS );
+				set_transient( 'wcefr-payment-methods', $response->collection, DAY_IN_SECONDS );
 
-                $output = $response->collection;
+				$output = $response->collection;
 
-            }
-            
-        }
+			}
+		}
 
-        return $output;
+		return $output;
 
 	}
 
@@ -361,41 +308,40 @@ class WCEFR_Orders {
 	 * Get the specific payment method in reviso
 	 *
 	 * @param string $payment_gateway the wc payment gateway ID.
-     *
-     * @return object the payment method
+	 *
+	 * @return object the payment method
 	 */
 	public function get_remote_payment_method( $payment_gateway = null ) {
 
-        $remote_methods = $this->get_remote_payment_metods();
-        $method_name    = null;
+		$remote_methods = $this->get_remote_payment_metods();
+		$method_name    = null;
 
-        switch ( $payment_gateway ) {
-            case 'bacs':
-                $method_name = 'Bank transfer';
-                break;
-            case 'cheque':
-                $method_name = 'Check';
-                break;
-            case 'cod':
-                $method_name = 'Cash';
-                break;
-            case 'findomestic':
-                $method_name = 'RID';
-                break;
-            default:
-                $method_name = 'Payment card';
-                break;
-        }
+		switch ( $payment_gateway ) {
+			case 'bacs':
+				$method_name = 'Bank transfer';
+				break;
+			case 'cheque':
+				$method_name = 'Check';
+				break;
+			case 'cod':
+				$method_name = 'Cash';
+				break;
+			case 'findomestic':
+				$method_name = 'RID';
+				break;
+			default:
+				$method_name = 'Payment card';
+				break;
+		}
 
-        foreach ( $remote_methods as $method ) {
+		foreach ( $remote_methods as $method ) {
 
-            if ( strtolower( $method_name ) === strtolower( $method->name ) ) {
+			if ( strtolower( $method_name ) === strtolower( $method->name ) ) {
 
-                return $method;
+				return $method;
 
-            }
-
-        }
+			}
+		}
 
 	}
 
@@ -405,11 +351,12 @@ class WCEFR_Orders {
 	 *
 	 * @param  float $value the result of the percentage.
 	 * @param  float $total the total number.
+	 *
 	 * @return float        the percentage
 	 */
 	private function get_percentage( $value, $total ) {
 
-		if ( 0 != $total ) {
+		if ( 0 !== intval( $total ) ) {
 
 			return floatval( wc_format_decimal( ( $value / $total * 100 ), 2 ) );
 
@@ -418,37 +365,36 @@ class WCEFR_Orders {
 	}
 
 
-   /*
-    * Get the total order discount
-    *
-    * @param object $order the order.
-    * @return float the discount percentage
-    */ 
-    private function get_order_discount_percentage( $order ) {
-    
-        $net_total = number_format(
-            (float)
-            $order->get_total()          -
-            $order->get_total_tax()      -
-            $order->get_total_shipping() +
-            /* $order->get_shipping_tax()   + */
-            $order->get_total_discount(),
-            10,
-            '.',
-            ''
-        );
+	/**
+	 * Get the total order discount
+	 *
+	 * @param object $order the order.
+	 *
+	 * @return float the discount percentage
+	 */
+	private function get_order_discount_percentage( $order ) {
 
-        return $this->get_percentage( $order->get_total_discount(), $net_total );
+		$net_total = number_format(
+			(float) $order->get_total() -
+			$order->get_total_tax() -
+			$order->get_total_shipping() +
+			$order->get_total_discount(),
+			10,
+			'.',
+			''
+		);
 
-    }
+		return $this->get_percentage( $order->get_total_discount(), $net_total );
+
+	}
 
 
 	/**
 	 * Get a specific vat account from Reviso or create it necessary
 	 *
-	 * @param  int $vat_rate the vat rate.
+	 * @param  int    $vat_rate the vat rate.
 	 * @param  string $vat_code the vat code.
-     *
+	 *
 	 * @return array  vat accounts available in Reviso
 	 */
 	private function get_remote_vat_code( $vat_rate, $vat_code = null ) {
@@ -471,34 +417,34 @@ class WCEFR_Orders {
 		$output = array();
 		$class  = new WCEFR_Products();
 
-        /* Get order tax labels */
-        $tax_labels = array();
+		/* Get order tax labels */
+		$tax_labels = array();
 
-        foreach( $order->get_items('tax') as $item ){
+		foreach ( $order->get_items( 'tax' ) as $item ) {
 
-            $tax_labels[ $item->get_rate_id() ] = $item->get_label();
+			$tax_labels[ $item->get_rate_id() ] = $item->get_label();
 
-        }
+		}
 
-        /* Order items */
+		/* Order items */
 		if ( $order->get_items() ) {
 
 			$n = -1;
 			foreach ( $order->get_items() as $item_id => $item ) {
 
 				$n++;
-                $item_data = $item->get_data();
+				$item_data = $item->get_data();
 				$product   = $item->get_product();
 
 				if ( $product ) {
 
-                    $sku                = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
+					$sku                = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
 					$qty                = wc_stock_amount( $item['qty'] );
 					$total_net_amount   = floatval( wc_format_decimal( $order->get_line_subtotal( $item, false, false ), 10 ) );
 					$total_gross_amount = floatval( wc_format_decimal( $order->get_line_total( $item, false, false ), 10 ) ) + floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$total_vat_amount   = floatval( wc_format_decimal( $item['line_tax'], 10 ) );
 					$vat_rate           = $this->get_percentage( $total_vat_amount, $total_net_amount );
-                    
+
 					$output[ $n ] = array(
 
 						'lineNumber'         => $n + 1,
@@ -515,48 +461,45 @@ class WCEFR_Orders {
 							'productNumber' => $sku,
 							'name'          => $item['name'],
 						),
-						'unit'              => array(
-							'name' => 'Pezzi',
+						'unit'               => array(
+							'name'       => 'Pezzi',
 							'unitNumber' => 1,
 						),
 
 					);
 
-                    /*Departmental distribution*/
-                    if ( $class->dimension_module() ) {
+					/*Departmental distribution*/
+					if ( $class->dimension_module() ) {
 
-                        $specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
-                        $generic_dist  = get_option( 'wcefr-departmental-distribution' );
-                        $dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
+						$specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
+						$generic_dist  = get_option( 'wcefr-departmental-distribution' );
+						$dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
 
-                        if ( $dist ) {
+						if ( $dist ) {
 
-                            $output[ $n ]['departmentalDistribution'] = array(
-                                'departmentalDistributionNumber' => $dist,
-                            );
+							$output[ $n ]['departmentalDistribution'] = array(
+								'departmentalDistributionNumber' => $dist,
+							);
 
-                        }
-                        
-                    }
-
+						}
+					}
 				}
 
-                /* Get the label tax of the specific order item */
-                $taxes = $item->get_taxes();
+				/* Get the label tax of the specific order item */
+				$taxes = $item->get_taxes();
 
-                foreach( $taxes['subtotal'] as $rate_id => $tax ){
+				foreach ( $taxes['subtotal'] as $rate_id => $tax ) {
 
-                    $tax_label = $tax_labels[ $rate_id ];
+					$tax_label = $tax_labels[ $rate_id ];
 
-                    /* Add vatInfo to the item data */
-                    $output[ $n ]['vatInfo'] = array(
-                        'vatAccount' => array(
-                            'vatCode' => $this->get_remote_vat_code( $vat_rate, $tax_label ),
-                        ),
-                    );
+					/* Add vatInfo to the item data */
+					$output[ $n ]['vatInfo'] = array(
+						'vatAccount' => array(
+							'vatCode' => $this->get_remote_vat_code( $vat_rate, $tax_label ),
+						),
+					);
 
-                }
-
+				}
 			}
 		}
 
@@ -573,21 +516,21 @@ class WCEFR_Orders {
 	 */
 	public function get_additional_expenses( $additional_expense_number = null ) {
 
-		$output    = null;
-		$endpoint  = $additional_expense_number ? '/' . $additional_expense_number : '';
+		$output   = null;
+		$endpoint = $additional_expense_number ? '/' . $additional_expense_number : '';
 
-        /* Get transient */
-        $transient = get_transient( 'wcefr-additional-expenses' );
+		/* Get transient */
+		$transient = get_transient( 'wcefr-additional-expenses' );
 
-        if ( $transient ) {
+		if ( $transient ) {
 
-            $response = $transient;
+			$response = $transient;
 
-        } else {
+		} else {
 
-            $response = $this->wcefr_call->call( 'get', 'additional-expenses' . $endpoint );
-            
-        }
+			$response = $this->wcefr_call->call( 'get', 'additional-expenses' . $endpoint );
+
+		}
 
 		if ( $endpoint ) {
 
@@ -597,8 +540,8 @@ class WCEFR_Orders {
 
 			$output = $response->collection;
 
-            /* Add transient */
-            set_transient( 'wcefr-additional-expenses', $response, DAY_IN_SECONDS );
+			/* Add transient */
+			set_transient( 'wcefr-additional-expenses', $response, DAY_IN_SECONDS );
 
 		}
 
@@ -612,17 +555,17 @@ class WCEFR_Orders {
 	 *
 	 * @param boolean $transport with true create the additional expenses to use with WC Shipping.
 	 * @param mixed   $args      null or an array of arguments for the new additional expenses.
-     * @param int     $vat_rate  the vat rate.
-     *
-     * @return init
+	 * @param int     $vat_rate  the vat rate.
+	 *
+	 * @return init
 	 */
 	public function add_additional_expenses( $transport = true, $args = null, $vat_rate = null ) {
 
 		if ( $transport ) {
 
 			$args = array(
-				'name' => __( 'Transportation fee', 'wc-exporter-for-reviso' ),
-				'account' => array(
+				'name'                  => __( 'Transportation fee', 'wc-exporter-for-reviso' ),
+				'account'               => array(
 					'accountNumber' => '5805490',
 				),
 				'additionalExpenseType' => 'transport',
@@ -647,8 +590,8 @@ class WCEFR_Orders {
 	/**
 	 * Get additional expenses to use for transport or create it if doesn't exist
 	 *
-     * @param int $transport_vat_rate the transport vat rate used in the order.
-     *
+	 * @param int $transport_vat_rate the transport vat rate used in the order.
+	 *
 	 * @return object
 	 */
 	public function get_transport_additional_expenses( $transport_vat_rate ) {
@@ -664,7 +607,6 @@ class WCEFR_Orders {
 				if ( 'transport' === $single->additionalExpenseType ) {
 					$output[] = $single;
 				}
-
 			}
 		}
 
@@ -689,42 +631,39 @@ class WCEFR_Orders {
 	 * Get the user from Reviso by email
 	 *
 	 * @param  string $email  the user email.
-     * @param  object $order  the WC order to get the customer details.
-     * @param  bool   $update update user with true.
-     *
+	 * @param  object $order  the WC order to get the customer details.
+	 * @param  bool   $update update user with true.
+	 *
 	 * @return int the Reviso customer number
 	 */
 	private function get_remote_customer( $email, $order, $update = false ) {
 
 		$response = $this->wcefr_call->call( 'get', 'customers?filter=email$eq:' . $email );
 
-        /* Get the WP user if exists */
-        $user_id = $order->get_user_id(); 
+		/* Get the WP user if exists */
+		$user_id = $order->get_user_id();
 
-        /*Add the new user in Reviso*/
-        $wcefr_users = new WCEFR_Users();
+		/*Add the new user in Reviso*/
+		$wcefr_users = new WCEFR_Users();
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
-            $customer_number = $response->collection[0]->customerNumber;
+			$customer_number = $response->collection[0]->customerNumber;
 
-            if ( ! $update ) {
+			if ( ! $update ) {
 
-                return $customer_number;
+				return $customer_number;
 
-            } else {
+			} else {
 
-                $user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
+				$user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
 
-                if ( isset( $user->customerNumber  ) ) {
+				if ( isset( $user->customerNumber ) ) {
 
-                    return $user->customerNumber;
+					return $user->customerNumber;
 
-                }
-
-
-            }
-
+				}
+			}
 		} else {
 
 			$new_user = $wcefr_users->export_single_user( $user_id, 'customers', $order, true );
@@ -766,7 +705,6 @@ class WCEFR_Orders {
 				return true;
 
 			}
-
 		}
 
 	}
@@ -784,54 +722,53 @@ class WCEFR_Orders {
 
 		if ( $prefix ) {
 
-            $transient_name = 'wcefr-number-series-prefix';
+			$transient_name = 'wcefr-number-series-prefix';
 			$args           = '?filter=prefix$eq:' . $prefix;
 
 		} elseif ( $entry_type ) {
 
-            $transient_name = 'wcefr-number-series-type';
+			$transient_name = 'wcefr-number-series-type';
 			$args           = '?filter=entryType$eq:' . $entry_type;
 
 		} else {
 
-            $transient_name = 'wcefr-number-series';
+			$transient_name = 'wcefr-number-series';
 			$args           = null;
 
 		}
 
-        /* Get the transient */
-        $transient = get_transient( $transient_name );
+		/* Get the transient */
+		$transient = get_transient( $transient_name );
 
-        if ( $transient ) {
+		if ( $transient ) {
 
-            $response = $transient;
+			$response = $transient;
 
-        } else {
+		} else {
 
-            $response  = $this->wcefr_call->call( 'get', 'number-series' . $args );
+			$response = $this->wcefr_call->call( 'get', 'number-series' . $args );
 
-        }
-            
-        if ( isset( $response->collection ) ) {
+		}
 
-            if ( ! $transient ) {
+		if ( isset( $response->collection ) ) {
 
-                /* Set the transient */
-                set_transient( $transient_name, $response, DAY_IN_SECONDS );
-                
-            }
+			if ( ! $transient ) {
 
-            if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
+				/* Set the transient */
+				set_transient( $transient_name, $response, DAY_IN_SECONDS );
 
-                return $response->collection[0]->numberSeriesNumber;
+			}
 
-            } else {
+			if ( $first && isset( $response->collection[0]->numberSeriesNumber ) ) {
 
-                return $response->collection;
+				return $response->collection[0]->numberSeriesNumber;
 
-            }
+			} else {
 
-        }
+				return $response->collection;
+
+			}
+		}
 
 	}
 
@@ -839,19 +776,19 @@ class WCEFR_Orders {
 	/**
 	 * Used for issuing an invoice
 	 *
-     * @param  object $order        the wc order.
-     * @param  int $customer_number the Reviso customer number.
+	 * @param  object $order        the wc order.
+	 * @param  int    $customer_number the Reviso customer number.
 	 * @return object
 	 */
 	private function create_remote_voucher( $order, $customer_number = null ) {
 
 		$lines = array();
 
-        if ( ! $customer_number ) {
+		if ( ! $customer_number ) {
 
-            $customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
+			$customer_number = $this->get_remote_customer( $order->get_billing_email(), $order );
 
-        }
+		}
 
 		if ( $order->get_items() ) {
 
@@ -869,7 +806,6 @@ class WCEFR_Orders {
 				);
 
 			}
-
 		}
 
 		$args = array(
@@ -895,16 +831,16 @@ class WCEFR_Orders {
 	 */
 	private function get_vat_zone( $country ) {
 
-		$countries = new WC_Countries();
-		$all_countries = $countries->get_countries(); // temp.
+		$countries         = new WC_Countries();
+		$all_countries     = $countries->get_countries(); // temp.
 		$europen_countries = $countries->get_european_union_countries();
-		$base_country = $countries->get_base_country();
+		$base_country      = $countries->get_base_country();
 
 		if ( $country === $base_country ) {
 
 			return 1;
 
-		} elseif ( in_array( $country, $europen_countries ) ) {
+		} elseif ( in_array( $country, $europen_countries, true ) ) {
 
 			return 2;
 
@@ -932,7 +868,6 @@ class WCEFR_Orders {
 
 		if ( $invoice ) {
 
-			// $responses[] = $this->wcefr_call->call( 'get', '/v2/invoices/drafts' . $filter );
 			$responses['drafts'] = $this->get_remote_invoices( false, $filter );
 
 			/*Booked invoices endpoint requires a different filter*/
@@ -954,8 +889,6 @@ class WCEFR_Orders {
 
 				if ( $invoice_details ) {
 
-					// $number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
-
 					return array(
 						'id'     => $id,
 						'number' => $result->number,
@@ -967,80 +900,31 @@ class WCEFR_Orders {
 					return $id;
 
 				}
-
 			}
-
 		}
 
 	}
 
 
 	/**
-	 * Attach Reviso invoice to the WC completed order and custome invoice email
+	 * Get the number series prefix based on the order type
 	 *
-	 * @param  array  $attachments the WC mail attachments.
-	 * @param  string $status      the order status.
-	 * @param  object $order       the WC order.
+	 * @param object $order the order.
+	 * @return string
 	 */
-	public function email_attachments( $attachments, $status, $order ) {
+	private function get_order_ns_prefix( $order ) {
 
-		if ( $this->issue_invoices && $this->send_invoices ) {
+		if ( 'private' === $order->get_meta( '_billing_wcefr_invoice_type' ) ) {
 
-			$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
+			return $this->number_series_prefix_receipts;
 
-			if ( isset( $status ) && in_array( $status, $allowed_statuses ) ) {
+		} else {
 
-				$invoice = $this->document_exists( $order->get_id(), true, true );
-
-				if ( isset( $invoice['id'] ) && isset( $invoice['status'] ) ) {
-
-					$filename = 'Invoice-' . $invoice['number'] . '-';
-
-					$pdf  = tempnam( sys_get_temp_dir(), $filename );
-
-					rename( $pdf, $pdf .= '.pdf' );
-
-					$file = $this->wcefr_call->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false );
-
-					$handle = fopen( $pdf, 'w' );
-
-					fwrite( $handle, $file );
-
-					$attachments[] = $pdf;
-
-					fclose( $handle );
-					/*unlink( $pdf );*/
-
-				}
-
-			}
+			return $this->number_series_prefix;
 
 		}
 
-		return $attachments;
-
 	}
-
-
-   /**
-    * Get the number series prefix based on the order type
-    *
-    * @param object $order the order.
-    * @return string 
-    */ 
-    private function get_order_ns_prefix( $order ) {
-
-        if( 'private' ===  $order->get_meta( '_billing_wcefr_invoice_type' ) ) {
-           
-            return $this->number_series_prefix_receipts;
-            
-        } else {
-            
-            return $this->number_series_prefix; 
-
-        }
-
-    }
 
 
 	/**
@@ -1050,7 +934,7 @@ class WCEFR_Orders {
 	 * @return array
 	 */
 	private function prepare_order_data( $order ) {
-        
+
 		$company_name           = $order->get_billing_company();
 		$customer_name          = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
 		$client_name            = $company_name ? $company_name : $customer_name;
@@ -1061,46 +945,46 @@ class WCEFR_Orders {
 		$transport_gross_amount = $transport_amount + $transport_vat_amount;
 		$order_completed        = 'completed' === $order->get_status() ? true : false;
 		$customer_number        = $this->get_remote_customer( $order->get_billing_email(), $order, true );
-        $vat_included           = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? 1 : 0;
+		$vat_included           = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? 1 : 0;
 
-        /*Add the payment method if not already on Reviso*/
-        $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : __( 'Direct', 'wc-exporter-for-reviso' ); 
-        $payment_method       = $this->get_remote_payment_method( $payment_method_title );
-        $payment_term         = $this->get_remote_payment_term();
+		/*Add the payment method if not already on Reviso*/
+		$payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : __( 'Direct', 'wc-exporter-for-reviso' );
+		$payment_method       = $this->get_remote_payment_method( $payment_method_title );
+		$payment_term         = $this->get_remote_payment_term();
 
-        /* Save user metas */
-        $user_id = $order->get_user_id(); 
+		/* Save user metas */
+		$user_id = $order->get_user_id();
 
-        if ( 0 !== $user_id ) {
-            update_user_meta( $user_id, 'wcefr-payment-method', $payment_method );
-        }
+		if ( 0 !== $user_id ) {
+			update_user_meta( $user_id, 'wcefr-payment-method', $payment_method );
+		}
 
 		$output = array(
-			'currency'               => $order->get_currency(),
-			'date'                   => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
-			'dueDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ), // temp.
-			'exchangeRate'           => 100.00,
-			'grossAmount'            => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
-			'isArchived'             => false,
-			'isSent'                 => false,
-			'paymentTerms'           => $payment_term,
-			'paymentType'            => $payment_method,
-			'roundingAmount'         => 0.00,
-			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
-			'vatAmount'              => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
-			'vatIncluded'            => $vat_included,
-			'lines'                  => $this->order_items_data( $order ),
-			'customer'               => array(
+			'currency'       => $order->get_currency(),
+			'date'           => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
+			'dueDate'        => $order->get_date_created()->date( 'Y-m-d H:i:s' ), // temp.
+			'exchangeRate'   => 100.00,
+			'grossAmount'    => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
+			'isArchived'     => false,
+			'isSent'         => false,
+			'paymentTerms'   => $payment_term,
+			'paymentType'    => $payment_method,
+			'roundingAmount' => 0.00,
+			'vatDate'        => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
+			'vatAmount'      => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
+			'vatIncluded'    => $vat_included,
+			'lines'          => $this->order_items_data( $order ),
+			'customer'       => array(
 				'splitPayment'   => false,
 				'customerNumber' => $customer_number,
 			),
-			'delivery'               => array(
+			'delivery'       => array(
 				'address' => $order->get_shipping_address_1(),
 				'city'    => $order->get_shipping_city(),
 				'country' => $order->get_shipping_country(),
 				'zip'     => $order->get_shipping_postcode(),
 			),
-			'recipient'              => array(
+			'recipient'      => array(
 				'address'           => $order->get_billing_address_1(),
 				'city'              => $order->get_billing_city(),
 				'country'           => $order->get_billing_country(),
@@ -1111,39 +995,13 @@ class WCEFR_Orders {
 					'vatZoneNumber' => $this->get_vat_zone( $order->get_billing_country() ), // temp.
 				),
 			),
-			'notes'                  => array(
+			'notes'          => array(
 				'text1' => 'WC-Order-' . $order->get_id(),
 			),
-			'numberSeries'           => array(
+			'numberSeries'   => array(
 				'numberSeriesNumber' => $this->get_remote_number_series( $this->get_order_ns_prefix( $order ), null, true ),
 			),
 		);
-
-		if ( $order_completed && $this->create_invoices ) {
-
-			$output['additionalExpenseLines'] = array( // temp.
-				array(
-					'additionalExpense'     => $this->get_transport_additional_expenses( $transport_vat_rate ),
-					'additionalExpenseType' => 'Transport',
-					'lineNumber'            => 1,
-					'amount'                => $transport_amount,
-					'vatAccount'            => array(
-						'vatCode' => $this->get_remote_vat_code( $transport_vat_rate ),
-					),
-					// 'grossAmount'           => $transport_gross_amount,
-					// 'isExcluded'            => false,
-					// 'vatAmount'             => $transport_vat_amount,
-					// 'vatRate'               => $transport_vat_rate,
-				),
-			);
-
-			if ( $this->issue_invoices ) {
-
-				$output['voucher'] = $this->create_remote_voucher( $order, $customer_number );
-
-			}
-
-		}
 
 		return $output;
 
@@ -1158,17 +1016,9 @@ class WCEFR_Orders {
 	 */
 	public function export_single_order( $order_id, $invoice = false ) {
 
-        $order          = new WC_Order( $order_id );
-        $invoice        = 'completed' === $order->get_status() ? true : $invoice;
+		$order          = new WC_Order( $order_id );
 		$order_exists   = $this->document_exists( $order_id );
 		$invoice_exists = $this->document_exists( $order_id, true, true );
-
-		if ( $invoice && $order_exists ) {
-
-			$this->delete_remote_orders( $order_exists );
-			$order_exists = false;
-
-		}
 
 		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
@@ -1186,43 +1036,16 @@ class WCEFR_Orders {
 
 					update_post_meta( $order_id, 'wcefr-invoice', $output->id );
 
-                    if ( $this->issue_invoices ) {
-
-                        $data = $output->voucher->voucherNumber->displayVoucherNumber;
-
-                        /*Book the invoise if set by the admin*/
-                        if ( $this->book_invoices ) {
-
-                            $booked = $this->wcefr_call->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
-
-                            $data = $booked->displayInvoiceNumber;
-
-                        }
-
-                        if ( $this->send_invoices ) {
-
-                            \WC_Emails::instance();
-
-                            /* Send the WC completed order email */
-                            $email_oc = new WC_Email_Customer_Completed_Order();
-                            $email_oc->trigger( $order_id );
-
-                        }
-
-                    }
-
 				}
 
 				/*Log the error*/
 				if ( isset( $output->errorCode ) && isset( $output->message ) ) {
 
 					error_log( 'WCEFR ERROR | Order ID ' . $order_id . ' | ' . $output->message );
-                    error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
+					error_log( 'ERROR DETAILS: ' . print_r( $output, true ) );
 
 				}
-
 			}
-
 		} else {
 
 			/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
@@ -1231,7 +1054,6 @@ class WCEFR_Orders {
 				update_post_meta( $order_id, 'wcefr-invoice', $invoice_exists['number'] );
 
 			}
-
 		}
 
 	}
@@ -1254,7 +1076,6 @@ class WCEFR_Orders {
 				$output[ $key ] = sanitize_text_field( wp_unslash( $value ) );
 
 			}
-
 		}
 
 		return $output;
@@ -1262,24 +1083,24 @@ class WCEFR_Orders {
 	}
 
 
-    /**
-     * Enqueue the single async action with Action Scheduler
-     *
-     * @param int $order_id the WC order ID.
-     *
-     * @return void
-     */
-    public function single_order_async_action( $order_id ) {
+	/**
+	 * Enqueue the single async action with Action Scheduler
+	 *
+	 * @param int $order_id the WC order ID.
+	 *
+	 * @return void
+	 */
+	public function single_order_async_action( $order_id ) {
 
-        as_enqueue_async_action(
-            'wcefr_export_single_order_event',
-            array(
-                'order_id' => $order_id,
-            ),
-            'wcefr_export_single_order'
-        );
+		as_enqueue_async_action(
+			'wcefr_export_single_order_event',
+			array(
+				'order_id' => $order_id,
+			),
+			'wcefr_export_single_order'
+		);
 
-    }
+	}
 
 
 	/**
@@ -1287,7 +1108,7 @@ class WCEFR_Orders {
 	 */
 	public function export_orders() {
 
-		if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-export-orders-nonce'] ), 'wcefr-export-orders' ) ) {
+		if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-export-orders-nonce'] ) ), 'wcefr-export-orders' ) ) {
 
 			$statuses = isset( $_POST['statuses'] ) ? $this->sanitize_array( $_POST['statuses'] ) : array( 'any' );
 
@@ -1319,10 +1140,9 @@ class WCEFR_Orders {
 					$n++;
 
 					/*Cron event*/
-                    $this->single_order_async_action( $post->ID );
+					$this->single_order_async_action( $post->ID );
 
 				}
-
 			}
 
 			$response[] = array(
@@ -1331,7 +1151,7 @@ class WCEFR_Orders {
 				esc_html( sprintf( __( '%d order(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 			);
 
-			echo json_encode( $response );
+			echo wp_json_encode( $response );
 
 		}
 
@@ -1401,7 +1221,7 @@ class WCEFR_Orders {
 					esc_html( sprintf( __( '%d order(s) delete process has begun', 'wc-exporter-for-reviso' ), $n ) ),
 				);
 
-				echo json_encode( $response );
+				echo wp_json_encode( $response );
 
 			} else {
 
@@ -1410,7 +1230,7 @@ class WCEFR_Orders {
 					esc_html( __( 'ERROR! There are not orders to delete', 'wc-exporter-for-reviso' ) ),
 				);
 
-				echo json_encode( $response );
+				echo wp_json_encode( $response );
 
 			}
 

@@ -4,7 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.0.0
+ * @since 1.3.0
+ */
+
+/**
+ * WCEFR_Admin
  */
 class WCEFR_Admin {
 
@@ -30,18 +34,18 @@ class WCEFR_Admin {
 		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
 
 			/*js*/
-			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr.js', array( 'jquery' ), '1.0', true );
+			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr.js', array( 'jquery' ), WCEFR_VERSION, true );
 
 			/*css*/
-			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css' );
+			wp_enqueue_style( 'bootstrap-iso', plugin_dir_url( __DIR__ ) . 'css/bootstrap-iso.css', array(), WCEFR_VERSION );
 
 		} elseif ( 'edit-shop_order' === $screen->id ) {
 
-			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr-shop-orders.js', array( 'jquery' ), '1.0', true );
+			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr-shop-orders.js', array( 'jquery' ), WCEFR_VERSION, true );
 
 		}
 
-		wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css' );
+		wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css', array(), WCEFR_VERSION );
 
 	}
 
@@ -79,14 +83,14 @@ class WCEFR_Admin {
 			echo '<div class="wrap-left">';
 
 				/*Check if WooCommerce is installed ancd activated*/
-				if ( ! class_exists( 'WooCommerce' ) ) {
-					echo '<div id="message" class="error">';
-						echo '<p>';
-							echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-exporter-for-reviso' ) ) . '</strong>';
-						echo '</p>';
-					echo '</div>';
-					exit;
-				}
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			echo '<div id="message" class="error">';
+				echo '<p>';
+					echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-exporter-for-reviso' ) ) . '</strong>';
+				echo '</p>';
+			echo '</div>';
+			exit;
+		}
 
 				echo '<div id="wcefr-generale">';
 
@@ -96,13 +100,13 @@ class WCEFR_Admin {
 					/*Plugin premium key*/
 					$key = sanitize_text_field( get_option( 'wcefr-premium-key' ) );
 
-					if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['wcefr-premium-key-nonce'] ), 'wcefr-premium-key' ) ) {
+		if ( isset( $_POST['wcefr-premium-key'], $_POST['wcefr-premium-key-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key-nonce'] ) ), 'wcefr-premium-key' ) ) {
 
-						$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
+			$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
 
-						update_option( 'wcefr-premium-key', $key );
+			update_option( 'wcefr-premium-key', $key );
 
-					}
+		}
 
 					/*Premium Key Form*/
 					echo '<form id="wcefr-premium-key" method="post" action="">';
@@ -127,42 +131,42 @@ class WCEFR_Admin {
 					/*Settings*/
 					echo '<div id="wcefr-settings" class="wcefr-admin" style="display: block;">';
 
-						include( WCEFR_ADMIN . 'wcefr-settings-template.php' );
+						include WCEFR_ADMIN . 'wcefr-settings-template.php';
 
 					echo '</div>';
 
 					/*Checkout*/
 					echo '<div id="wcefr-checkout" class="wcefr-admin">';
 
-                        include( WCEFR_INCLUDES . 'wc-checkout-fields/templates/wcefr-checkout-template.php' );
+						include WCEFR_INCLUDES . 'wc-checkout-fields/templates/wcefr-checkout-template.php';
 
 					echo '</div>';
 
 					/*Suppliers*/
 					echo '<div id="wcefr-suppliers" class="wcefr-admin">';
 
-						include( WCEFR_ADMIN . 'wcefr-suppliers-template.php' );
+						include WCEFR_ADMIN . 'wcefr-suppliers-template.php';
 
 					echo '</div>';
 
 					/*Products*/
 					echo '<div id="wcefr-products" class="wcefr-admin">';
 
-						include( WCEFR_ADMIN . 'wcefr-products-template.php' );
+						include WCEFR_ADMIN . 'wcefr-products-template.php';
 
 					echo '</div>';
 
 					/*Customers*/
 					echo '<div id="wcefr-customers" class="wcefr-admin">';
 
-						include( WCEFR_ADMIN . 'wcefr-customers-template.php' );
+						include WCEFR_ADMIN . 'wcefr-customers-template.php';
 
 					echo '</div>';
 
 					/*Orders*/
 					echo '<div id="wcefr-orders" class="wcefr-admin">';
 
-						include( WCEFR_ADMIN . 'wcefr-orders-template.php' );
+						include WCEFR_ADMIN . 'wcefr-orders-template.php';
 
 					echo '</div>';
 

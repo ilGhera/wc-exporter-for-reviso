@@ -125,10 +125,17 @@ class WCEFR_Orders {
 
             } else {
 
-				$icon = WCEFR_URI . 'images/pdf-black.png';
-                $order = wc_get_order( $order_id );
+				$icon      = WCEFR_URI . 'images/pdf-black.png';
+                $order     = wc_get_order( $order_id );
+                $scheduled = as_has_scheduled_action(
+                    'wcefr_export_single_order_event',
+                    array(
+                        'order_id' => $order_id,
+                    ),
+                    'wcefr_export_single_order',
+                );
 
-                if ( 'completed' === $order->get_status() ) {
+                if ( 'completed' === $order->get_status() && $scheduled ) {
 
                     echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 

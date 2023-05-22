@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.1.0
+ * @since 1.2.0
  */
 
 ?>
@@ -29,7 +29,7 @@
 					}
 					?>
 				</select>
-                <span class="wcefr-role-response customers"></span>
+				<span class="wcefr-role-response customers"></span>
 				<p class="description"><?php esc_html_e( 'Select your customers user role', 'wc-exporter-for-reviso' ); ?></p>
 
 			</td>
@@ -70,7 +70,7 @@
 <!-- Settings form -->
 <form name="wcefr-customers-settings" class="wcefr-form"  method="post" action="">
 
-    <h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
+	<h2><?php esc_html_e( 'Synchronization options', 'wc-exporter-for-reviso' ); ?></h2>
 
 	<table class="form-table">
 		<tr class="synchronize-customers">

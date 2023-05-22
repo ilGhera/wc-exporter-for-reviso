@@ -21,8 +21,14 @@ class WCEFR_Orders {
 
 		if ( $init ) {
 
+			$this->export_orders                 = get_option( 'wcefr-export-orders' );
+			$this->create_invoices               = get_option( 'wcefr-create-invoices' );
+			$this->issue_invoices                = get_option( 'wcefr-issue-invoices' );
+			$this->send_invoices                 = get_option( 'wcefr-send-invoices' );
+			$this->book_invoices                 = get_option( 'wcefr-book-invoices' );
 			$this->number_series_prefix          = get_option( 'wcefr-number-series-prefix' );
 			$this->number_series_prefix_receipts = get_option( 'wcefr-number-series-receipts-prefix' );
+			$this->init();
 
 			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
 			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
@@ -32,10 +38,48 @@ class WCEFR_Orders {
 			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
 
 			add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
+			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
+
+	}
+
+
+	/**
+	 * Check the administrator settings to automatically export orders to Reviso
+	 *
+	 * @return void
+	 */
+	public function init() {
+
+		/*Export orders automatically to Reviso*/
+		if ( $this->export_orders ) {
+
+			add_action( 'woocommerce_thankyou', array( $this, 'single_order_async_action' ) );
+
+		}
+
+		/*Create invoices in Reviso with WC completed orders */
+		if ( $this->create_invoices ) {
+
+			add_action( 'woocommerce_order_status_completed', array( $this, 'single_order_async_action' ) );
+
+			if ( $this->issue_invoices && $this->send_invoices ) {
+
+				/* Remove order completed notification */
+				add_action(
+					'woocommerce_email',
+					function( $email_class ) {
+
+						remove_action( 'woocommerce_order_status_completed_notification', array( $email_class->emails['WC_Email_Customer_Completed_Order'], 'trigger' ) );
+
+					}
+				);
+
+			}
+		}
 
 	}
 
@@ -217,6 +261,8 @@ class WCEFR_Orders {
 
 	/**
 	 * Add a specific payment term in Reviso
+	 *
+	 * @return object
 	 */
 	public function get_remote_payment_term() {
 
@@ -262,8 +308,11 @@ class WCEFR_Orders {
 
 			foreach ( $gateways as $gateway ) {
 
-				$enabled_gateways[] = $gateway->id;
+				/* if ( 'yes' == $gateway->enabled ) { */
 
+					$enabled_gateways[] = $gateway->id;
+
+				/* } */
 			}
 		}
 
@@ -351,7 +400,6 @@ class WCEFR_Orders {
 	 *
 	 * @param  float $value the result of the percentage.
 	 * @param  float $total the total number.
-	 *
 	 * @return float        the percentage
 	 */
 	private function get_percentage( $value, $total ) {
@@ -369,7 +417,6 @@ class WCEFR_Orders {
 	 * Get the total order discount
 	 *
 	 * @param object $order the order.
-	 *
 	 * @return float the discount percentage
 	 */
 	private function get_order_discount_percentage( $order ) {
@@ -378,6 +425,7 @@ class WCEFR_Orders {
 			(float) $order->get_total() -
 			$order->get_total_tax() -
 			$order->get_total_shipping() +
+			/* $order->get_shipping_tax()   + */
 			$order->get_total_discount(),
 			10,
 			'.',
@@ -868,6 +916,7 @@ class WCEFR_Orders {
 
 		if ( $invoice ) {
 
+			// $responses[] = $this->wcefr_call->call( 'get', '/v2/invoices/drafts' . $filter );
 			$responses['drafts'] = $this->get_remote_invoices( false, $filter );
 
 			/*Booked invoices endpoint requires a different filter*/
@@ -889,6 +938,8 @@ class WCEFR_Orders {
 
 				if ( $invoice_details ) {
 
+					// $number = 'drafts' === $key ? $result->voucher->voucherNumber->displayVoucherNumber : $result->displayInvoiceNumber;
+
 					return array(
 						'id'     => $id,
 						'number' => $result->number,
@@ -902,6 +953,51 @@ class WCEFR_Orders {
 				}
 			}
 		}
+
+	}
+
+
+	/**
+	 * Attach Reviso invoice to the WC completed order and custome invoice email
+	 *
+	 * @param  array  $attachments the WC mail attachments.
+	 * @param  string $status      the order status.
+	 * @param  object $order       the WC order.
+	 */
+	public function email_attachments( $attachments, $status, $order ) {
+
+		if ( $this->issue_invoices && $this->send_invoices ) {
+
+			$allowed_statuses = array( 'customer_invoice', 'customer_completed_order' );
+
+			if ( isset( $status ) && in_array( $status, $allowed_statuses, true ) ) {
+
+				$invoice = $this->document_exists( $order->get_id(), true, true );
+
+				if ( isset( $invoice['id'] ) && isset( $invoice['status'] ) ) {
+
+					$filename = 'Invoice-' . $invoice['number'] . '-';
+
+					$pdf = tempnam( sys_get_temp_dir(), $filename );
+
+					rename( $pdf, $pdf .= '.pdf' );
+
+					$file = $this->wcefr_call->call( 'get', '/v2/invoices/' . $invoice['status'] . '/' . $invoice['id'] . '/pdf', null, false );
+
+					$handle = fopen( $pdf, 'w' );
+
+					fwrite( $handle, $file );
+
+					$attachments[] = $pdf;
+
+					fclose( $handle );
+					/*unlink( $pdf );*/
+
+				}
+			}
+		}
+
+		return $attachments;
 
 	}
 
@@ -1003,6 +1099,31 @@ class WCEFR_Orders {
 			),
 		);
 
+		if ( $order_completed && $this->create_invoices ) {
+
+			$output['additionalExpenseLines'] = array( // temp.
+				array(
+					'additionalExpense'     => $this->get_transport_additional_expenses( $transport_vat_rate ),
+					'additionalExpenseType' => 'Transport',
+					'lineNumber'            => 1,
+					'amount'                => $transport_amount,
+					'vatAccount'            => array(
+						'vatCode' => $this->get_remote_vat_code( $transport_vat_rate ),
+					),
+					// 'grossAmount'           => $transport_gross_amount,
+					// 'isExcluded'            => false,
+					// 'vatAmount'             => $transport_vat_amount,
+					// 'vatRate'               => $transport_vat_rate,
+				),
+			);
+
+			if ( $this->issue_invoices ) {
+
+				$output['voucher'] = $this->create_remote_voucher( $order, $customer_number );
+
+			}
+		}
+
 		return $output;
 
 	}
@@ -1017,8 +1138,16 @@ class WCEFR_Orders {
 	public function export_single_order( $order_id, $invoice = false ) {
 
 		$order          = new WC_Order( $order_id );
+		$invoice        = 'completed' === $order->get_status() ? true : $invoice;
 		$order_exists   = $this->document_exists( $order_id );
 		$invoice_exists = $this->document_exists( $order_id, true, true );
+
+		if ( $invoice && $order_exists ) {
+
+			$this->delete_remote_orders( $order_exists );
+			$order_exists = false;
+
+		}
 
 		if ( ! $order_exists && ! isset( $invoice_exists['id'] ) ) {
 
@@ -1036,6 +1165,29 @@ class WCEFR_Orders {
 
 					update_post_meta( $order_id, 'wcefr-invoice', $output->id );
 
+					if ( $this->issue_invoices ) {
+
+						$data = $output->voucher->voucherNumber->displayVoucherNumber;
+
+						/*Book the invoise if set by the admin*/
+						if ( $this->book_invoices ) {
+
+							$booked = $this->wcefr_call->call( 'post', '/v2/invoices/booked', array( 'id' => $output->id ) );
+
+							$data = $booked->displayInvoiceNumber;
+
+						}
+
+						if ( $this->send_invoices ) {
+
+							\WC_Emails::instance();
+
+							/* Send the WC completed order email */
+							$email_oc = new WC_Email_Customer_Completed_Order();
+							$email_oc->trigger( $order_id );
+
+						}
+					}
 				}
 
 				/*Log the error*/

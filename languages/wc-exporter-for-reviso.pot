@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WC Exporter for Reviso\n"
-"POT-Creation-Date: 2022-10-14 18:50+0200\n"
+"POT-Creation-Date: 2023-05-22 09:29+0200\n"
 "PO-Revision-Date: 2016-05-26 13:25+0200\n"
 "Last-Translator: ilGhera <info@ilghera.com>\n"
 "Language-Team: ilGhera <info@ilghera.com>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr ""
 
-#: admin/class-wcefr-admin.php:94
+#: admin/class-wcefr-admin.php:94 admin/ilghera-notice/extension.php:19
 msgid "WooCommerce Exporter for Reviso - Premium"
 msgstr ""
 
@@ -72,6 +72,28 @@ msgstr ""
 
 #: admin/class-wcefr-admin.php:124
 msgid "Orders"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Renew now"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Get a license"
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:107
+msgid "Your license is <u>expired</u> and you're unable to receive updates."
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:123
+msgid ""
+"It seems like your license is <u>not valid</u> and you're unable to receive "
+"updates."
+msgstr ""
+
+#: admin/ilghera-notice/class-ilghera-notice.php:139
+msgid "You have not set up a license key and you cannot receive updates."
 msgstr ""
 
 #: admin/wcefr-customers-template.php:18 admin/wcefr-suppliers-template.php:18
@@ -304,29 +326,37 @@ msgstr ""
 msgid "Update suppliers in Reviso in real time"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:89
+#: includes/class-wcefr-orders.php:101
 msgid "Invoice"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:512
+#: includes/class-wcefr-orders.php:140
+msgid "Not available yet"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:270
+msgid "Order date"
+msgstr ""
+
+#: includes/class-wcefr-orders.php:624
 msgid "Transportation fee"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:950
+#: includes/class-wcefr-orders.php:1067
 msgid "Direct"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1180
+#: includes/class-wcefr-orders.php:1331
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1250
+#: includes/class-wcefr-orders.php:1401
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-orders.php:1259
+#: includes/class-wcefr-orders.php:1410
 msgid "ERROR! There are not orders to delete"
 msgstr ""
 
@@ -390,21 +420,21 @@ msgstr ""
 msgid "Set a specific departmental distribution for this product"
 msgstr ""
 
-#: includes/class-wcefr-users.php:700
+#: includes/class-wcefr-users.php:825
 msgid "Saved!"
 msgstr ""
 
-#: includes/class-wcefr-users.php:757
+#: includes/class-wcefr-users.php:882
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:877
+#: includes/class-wcefr-users.php:1002
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr ""
 
-#: includes/class-wcefr-users.php:887
+#: includes/class-wcefr-users.php:1012
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr ""
@@ -456,9 +486,13 @@ msgstr ""
 msgid "WARNING! The <strong>VAT number</strong> entered is incorrect."
 msgstr ""
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:458
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:507
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:528
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:418
+msgid "WARNING! The <strong>Recipient Code</strong> entered is incorrect."
+msgstr ""
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:499
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:556
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:579
 msgid "Electronic invoicing"
 msgstr ""
 

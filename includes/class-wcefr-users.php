@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.1.0
+ * @since 1.2.0
  */
 class WCEFR_Users {
 
@@ -50,6 +50,44 @@ class WCEFR_Users {
 		$this->wcefr_call = new WCEFR_Call();
 
 	}
+
+
+    /**
+     * Get the WP user data
+     *
+     * @param int  $user_id  the WP user ID.
+     * @param bool $user_url return only the user site URL with true.
+     *
+     * @return mixed 
+     */
+    private function get_user_data( $user_id, $user_url = false ) {
+
+        $output = null;
+
+        if ( $user_id ) {
+
+            $user_details = get_userdata( $user_id );
+
+            if ( $user_url ) {
+
+                return $user_details->user_url;
+
+            }
+
+            $output       = array_map(
+                function( $a ) {
+                    return $a[0];
+                },
+                get_user_meta( $user_id )
+            );
+
+            $output['user_url'] = $user_details->user_url; 
+
+        }
+
+        return $output;
+
+    }
 
 
 	/**
@@ -103,51 +141,117 @@ class WCEFR_Users {
 
 		$output = $this->wcefr_call->call( 'get', 'customers/' . $customer_number . '/delivery-locations' );
 
-		return $output;
+        if ( isset( $output->collection ) ) {
+
+            return $output->collection;
+
+        }
 
 	}
 
 
 	/**
-	 * Add a delivery location to the specified user
+	 * Add a new delivery location for a specific user in Reviso
 	 *
-	 * @param int   $customer_number the customer number in Reviso.
-	 * @param array $userdata        wp user data.
+	 * @param  int   $customer_number the customer number in Reviso.
+	 * @param  array $args            the delivery location details.
+	 * @return array
+	 */
+	private function add_delivery_location( $customer_number, $args ) {
+ 
+		$output = $this->wcefr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
+
+        /*Log the error*/
+        if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
+
+            error_log( 'WCEFR ERROR | User ID ' . $user_id . ' | ' . $output->message );
+
+        } else {
+
+            return $output->deliveryLocationNumber;
+
+        }
+
+	}
+
+
+	/**
+	 * Get the delivery location to the specified user
+	 *
+	 * @param int    $user_id         the WP user.
+	 * @param int    $customer_number the customer number in Reviso.
+	 * @param object $order           the WC order.
 	 * @return void
 	 */
-	private function add_delivery_location( $customer_number, $userdata ) {
+	private function get_delivery_location( $user_id, $customer_number, $order = null ) {
 
+        $output             = null;
 		$delivery_locations = $this->get_delivery_locations( $customer_number );
 
-		$count = 0;
-		if ( isset( $delivery_locations->collection ) && is_array( $delivery_locations->collection ) ) {
-			$count = count( $delivery_locations->collection );
-		}
+		/* $count = 0; */
+		/* if ( isset( $delivery_locations->collection ) && is_array( $delivery_locations->collection ) ) { */
+		/* 	$count = count( $delivery_locations->collection ); */
+		/* } */
 
-		if ( isset( $userdata->shipping_address_1 ) ) {
+        /* Get user data */
+        $user_data = $this->get_user_data( $user_id ); 
 
-			$args = array(
-				'address'                => $userdata['shipping_address_1'],
-				'city'                   => $userdata['shipping_city'],
-				'country'                => $userdata['shipping_country'],
-				'postalCode'             => $userdata['shipping_postcode'],
-				'barred'                 => null,
-				'deliveryLocationNumber' => $count + 1,
-			);
+        if ( is_array( $user_data ) && ! empty( $user_data ) ) {
 
-		} else {
+			$shipping_country        = isset( $user_data['shipping_country'] ) ? $user_data['shipping_country'] : '';
+			$shipping_city           = isset( $user_data['shipping_city'] ) ? $user_data['shipping_city'] : '';
+			$shipping_address        = isset( $user_data['shipping_address_1'] ) ? $user_data['shipping_address_1'] : '';
+			$shipping_postcode       = isset( $user_data['shipping_postcode'] ) ? $user_data['shipping_postcode'] : '';
+            $shipping_country        = $shipping_country ? $shipping_country : $user_data['billing_country'];
+            $shipping_city           = $shipping_city ? $shipping_city : $user_data['billing_city'];
+            $shipping_address        = $shipping_address ? $shipping_address : $user_data['billing_address_1'];
+            $shipping_postcode       = $shipping_postcode ? $shipping_postcode : $user_data['billing_postcode'];
 
-			$args = array(
-				'address'                => $userdata['billing_address_1'],
-				'city'                   => $userdata['billing_city'],
-				'country'                => $userdata['billing_country'],
-				'postalCode'             => $userdata['billing_postcode'],
-				'barred'                 => null,
-				'deliveryLocationNumber' => $count + 1,
-			);
-		}
+        } elseif ( is_object( $order ) ) {
 
-		$this->wcefr_call->call( 'post', 'customers/' . $customer_number . '/delivery-locations', $args );
+			$shipping_country        = $order->get_shipping_country() ? $order->get_shipping_country() : '';
+			$shipping_city           = $order->get_shipping_city() ? $order->get_shipping_city() : '';
+			$shipping_address        = $order->get_shipping_address_1() ? $order->get_shipping_address_1() : '';
+			$shipping_postcode       = $order->get_shipping_postcode() ? $order->get_shipping_postcode() : '';
+            $shipping_country        = $shipping_country ? $shipping_country : $order->get_billing_country();
+            $shipping_city           = $shipping_city ? $shipping_city : $order->get_billing_city();
+            $shipping_address        = $shipping_address ? $shipping_address : $order->get_billing_address_1();
+            $shipping_postcode       = $shipping_postcode ? $shipping_postcode : $order->get_billing_postcode();
+        }
+
+        if ( is_array( $delivery_locations ) ) {
+
+            foreach ( $delivery_locations as $location ) {
+
+                if ( $shipping_address === $location->address ) {
+
+                    $output = $location->deliveryLocationNumber;
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+        if ( ! $output ) {
+
+            /* Add a new delivery location */
+            $args = array(
+                'address'                => $shipping_address, 
+                'city'                   => $shipping_city,
+                'country'                => $shipping_country,
+                'postalCode'             => $shipping_postcode, 
+                /* 'barred'                 => null, */
+                /* 'deliveryLocationNumber' => $count + 1, */
+            );
+
+            $output = $this->add_delivery_location( $customer_number, $args );
+
+        }
+
+        return $output;
 
 	}
 
@@ -293,36 +397,9 @@ class WCEFR_Users {
 	 */
 	public function prepare_user_data( $user_id, $type, $order = null, $attention = false ) {
 
-		$type_singular = substr( $type, 0, -1 );
+		$type_singular   = substr( $type, 0, -1 );
 
-		if ( $user_id ) {
-
-			$user_details = get_userdata( $user_id );
-
-			$user_data = array_map(
-				function( $a ) {
-					return $a[0];
-				},
-				get_user_meta( $user_id )
-			);
-
-            $company                 = isset( $user_data['billing_company'] ) ? $user_data['billing_company'] : null;
-			$contact                 = isset( $user_data['billing_first_name'], $user_data['billing_last_name'] ) ? $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'] : '';
-            $name                    = $company ? $company : $contact;
-			$user_email              = isset( $user_data['billing_email'] ) ? $user_data['billing_email'] : '';
-			$country                 = isset( $user_data['billing_country'] ) ? $user_data['billing_country'] : '';
-			$city                    = isset( $user_data['billing_city'] ) ? $user_data['billing_city'] : '';
-			$state                   = isset( $user_data['billing_state'] ) ? $user_data['billing_state'] : '';
-			$address                 = isset( $user_data['billing_address_1'] ) ? $user_data['billing_address_1'] : '';
-			$postcode                = isset( $user_data['billing_postcode'] ) ? $user_data['billing_postcode'] : '';
-			$phone                   = isset( $user_data['billing_phone'] ) ? $user_data['billing_phone'] : '';
-			$website                 = $user_details->user_url;
-			$vat_number              = isset( $user_data['billing_wcefr_piva'] ) ? $user_data['billing_wcefr_piva'] : null;
-			$identification_number   = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
-			$italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null;
-			$public_entry_number     = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
-
-		} elseif ( $order ) {
+		if ( $order ) {
 
             $company                 = $order->get_billing_company();
 			$contact                 = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
@@ -334,14 +411,49 @@ class WCEFR_Users {
 			$address                 = $order->get_billing_address_1();
 			$postcode                = $order->get_billing_postcode();
 			$phone                   = $order->get_billing_phone();
+            $website                 = $this->get_user_data( $user_id, true ); 
 			$vat_number              = $order->get_meta( '_billing_wcefr_piva' ) ? $order->get_meta( '_billing_wcefr_piva' ) : null;
 			$identification_number   = $order->get_meta( '_billing_wcefr_cf' ) ? $order->get_meta( '_billing_wcefr_cf' ) : null;
 			$italian_certified_email = $order->get_meta( '_billing_wcefr_pec' ) ? $order->get_meta( '_billing_wcefr_pec' ) : null;
 			$public_entry_number     = $order->get_meta( '_billing_wcefr_pa_code' ) ? $order->get_meta( '_billing_wcefr_pa_code' ) : null;
+            $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
+
+		} elseif ( $user_id ) {
+
+            /* Get user data */
+			$user_data = $this->get_user_data( $user_id ); 
+
+            if ( is_array( $user_data ) ) {
+
+                $company                 = isset( $user_data['billing_company'] ) ? $user_data['billing_company'] : null;
+                $contact                 = isset( $user_data['billing_first_name'], $user_data['billing_last_name'] ) ? $user_data['billing_first_name'] . ' ' . $user_data['billing_last_name'] : '';
+                $name                    = $company ? $company : $contact;
+                $user_email              = isset( $user_data['billing_email'] ) ? $user_data['billing_email'] : '';
+                $country                 = isset( $user_data['billing_country'] ) ? $user_data['billing_country'] : '';
+                $city                    = isset( $user_data['billing_city'] ) ? $user_data['billing_city'] : '';
+                $state                   = isset( $user_data['billing_state'] ) ? $user_data['billing_state'] : '';
+                $address                 = isset( $user_data['billing_address_1'] ) ? $user_data['billing_address_1'] : '';
+                $postcode                = isset( $user_data['billing_postcode'] ) ? $user_data['billing_postcode'] : '';
+                $phone                   = isset( $user_data['billing_phone'] ) ? $user_data['billing_phone'] : '';
+                $website                 = isset( $user_data['user_url'] ) ? $user_data['user_url'] : null;
+                $vat_number              = isset( $user_data['billing_wcefr_piva'] ) ? $user_data['billing_wcefr_piva'] : null;
+                $identification_number   = isset( $user_data['billing_wcefr_cf'] ) ? $user_data['billing_wcefr_cf'] : null;
+                $italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null;
+                $public_entry_number     = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
+                $italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
+
+            }
 
 		} else {
 
 			return;
+
+        }
+
+        /* Generic pa code */
+        if ( ! $public_entry_number ) {
+
+            $public_entry_number = 'IT' === $country ? '0000000' : 'XXXXXXX';
 
         }
 
@@ -358,9 +470,13 @@ class WCEFR_Users {
 		/*Reviso VatZone based on user country */
 		$vat_zone = $shop_country === $country ? 1 : 3;
 
-		/*Reviso's group selected by the admin*/
+        /* Payment term */
+        $class        = new WCEFR_Orders();
+        $payment_term = $class->get_remote_payment_term();
+
 		if ( $order ) {
 	
+            /*Reviso's group selected by the admin*/
             $get_customers_groups = get_option( 'wcefr-orders-customers-group' );
 
             if ( 0 === intval( $get_customers_groups ) ) {
@@ -375,9 +491,17 @@ class WCEFR_Users {
 
             }
 
+            /* Payment method */
+            $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : ''; 
+            $payment_method       = $class->get_remote_payment_method( $payment_method_title );
+
 		} else {
 
+            /*Reviso's group saved by the admin*/
 			$group = get_option( 'wcefr-' . $type . '-group' );
+
+            /* Payment method and term */
+            $payment_method = get_user_meta( $user_id, 'wcefr-payment-method', true );
 
 		}
 
@@ -393,15 +517,13 @@ class WCEFR_Users {
 			'vatZone' => array(
 				'vatZoneNumber' => $vat_zone,
 			),
-			'paymentTerms'           => array(
-				'paymentTermsNumber' => 6,
-			),
 			'countryCode'            => array(
 				'code' => $country,
 			),
 			$type_singular . 'Group' => array(
 				$type_singular . 'GroupNumber' => intval( $group ),
 			),
+            'italianCustomerType'    => $italian_castomer_type,
 		);
 
 		if ( 'IT' === $country ) {
@@ -422,8 +544,10 @@ class WCEFR_Users {
 		}
 
 		if ( $identification_number ) {
-			$args['corporateIdentificationNumber'] = $identification_number;
-		}
+			$args['corporateIdentificationNumber'] = strtoupper( $identification_number );
+        } elseif ( $vat_number ) {
+			$args['corporateIdentificationNumber'] = strtoupper( $vat_number );
+        }
 
 		if ( $italian_certified_email ) {
 			$args['italianCertifiedEmail'] = $italian_certified_email;
@@ -432,6 +556,14 @@ class WCEFR_Users {
 		if ( $public_entry_number ) {
 			$args['publicEntryNumber'] = $public_entry_number;
 		}
+
+        if ( $payment_method ) {
+            $args['paymentType'] = $payment_method;
+        }
+
+        if ( $payment_term ) {
+            $args['paymentTerms'] = $payment_term;
+        }
 
 		return $args;
 
@@ -449,7 +581,7 @@ class WCEFR_Users {
     public function get_customer_contact_number( $remote_id, $contact_name ) {
 
         /* Get customer contacts */
-        $contacts       = $this->wcefr_call->call( 'get', 'customers/' . $remote_id . '/contacts' );
+        $contacts = $this->wcefr_call->call( 'get', 'customers/' . $remote_id . '/contacts' );
 
         if ( isset( $contacts->collection ) && is_array( $contacts->collection ) ) {
 
@@ -494,7 +626,9 @@ class WCEFR_Users {
 	 */
 	public function export_single_user( $user_id, $type, $order = null, $new = false, $remote_id = null ) {
 
-        $args = $this->prepare_user_data( $user_id, $type, $order );
+        $output       = null;
+        $contact_name = null;
+        $args         = $this->prepare_user_data( $user_id, $type, $order );
 
         if ( $new ) {
 
@@ -509,14 +643,7 @@ class WCEFR_Users {
 
 		if ( $args ) {
 
-            $contact_name = null;
-
-            if ( 'customers' === $type ) {
-
-                $contact_name = $this->prepare_user_data( $user_id, $type, $order, true );
-
-            }
-
+            /* Add the new customer in Reviso */
 			if ( ! $remote_id ) {
 
 				$output = $this->wcefr_call->call( 'post', $type . '/', $args );
@@ -525,24 +652,13 @@ class WCEFR_Users {
 
                     $remote_id = $output->customerNumber;
 
-                    /* Add the customer contact name in case of company */
-                    if ( $contact_name ) {
-
-                        $contact_number = $this->get_customer_contact_number( $remote_id, $contact_name );
-                        
-                        $args['attention'] = array(
-                            'customerContactNumber' => $contact_number,
-                        );
-
-                    }
-
-                    /* Update the customer */
-                    $output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
-
                 }
 
+            } 
 
-			} else {
+            if (  $remote_id && 'customers' === $type ) {
+
+                $contact_name = $this->prepare_user_data( $user_id, $type, $order, true );
 
                 /* Add the customer contact name in case of company */
                 if ( $contact_name ) {
@@ -554,6 +670,11 @@ class WCEFR_Users {
                     );
 
                 }
+
+                /* Add the delivery location */
+                $args['defaultDeliveryLocation'] = array(
+                    'deliveryLocationNumber' => $this->get_delivery_location( $user_id, $remote_id, $order ),
+                );
 
 				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
 

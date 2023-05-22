@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.1.0
+ * @since 1.3.0
  */
 class WCEFR_Products {
 
@@ -38,10 +38,10 @@ class WCEFR_Products {
      */
     private function inventory_module() {
 
-        $output    = false;
+        $output    = 0;
         $transient = get_transient( 'wcefr-inventory-module' );
 
-        if ( $transient ) {
+        if ( null !== $transient ) {
 
             $output = $transient;
 
@@ -57,7 +57,7 @@ class WCEFR_Products {
 
                         if ( 'Lager' === $module->name ) {
 
-                            $output = true;
+                            $output = 1;
 
                             continue;
 
@@ -85,10 +85,10 @@ class WCEFR_Products {
      */
     public function dimension_module() {
 
-        $output    = false;
+        $output    = 0;
         $transient = get_transient( 'wcefr-dimension-module' );
 
-        if ( $transient ) {
+        if ( null !== $transient ) {
 
             $output = $transient;
 
@@ -104,7 +104,7 @@ class WCEFR_Products {
 
                         if ( 0 === strpos( $module->name, 'Dimension' ) ) {
 
-                            $output = true;
+                            $output = 1;
 
                             continue;
 
@@ -362,7 +362,7 @@ class WCEFR_Products {
         } else {
 
             $transient_name = 'wcefr-vat-rate-' . $vat_rate;
-            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', $vat_rate );
+            $end            = sprintf( '?filter=vatType.vatTypeNumber$eq:1$and:ratePercentage$eq:%s', ceil( $vat_rate ) );
 
         }
 

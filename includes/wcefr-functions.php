@@ -65,3 +65,4 @@ function wcefr_go_premium() {
 	echo wp_kses( $output, $allowed );
 
 }
+

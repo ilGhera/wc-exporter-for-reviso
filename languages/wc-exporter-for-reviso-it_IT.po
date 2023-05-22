@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-14 18:50+0200\n"
-"PO-Revision-Date: 2022-10-14 18:53+0200\n"
+"POT-Creation-Date: 2023-05-22 09:29+0200\n"
+"PO-Revision-Date: 2023-05-22 09:30+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: _;__;_e;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -27,9 +27,9 @@ msgstr "Sembra che tu non abbia i permessi per visualizzare questa pagina"
 msgid "ATTENTION! It seems like Woocommerce is not installed"
 msgstr "ATTENZIONE! Sembra che WooCommerce non sia installato"
 
-#: admin/class-wcefr-admin.php:94
+#: admin/class-wcefr-admin.php:94 admin/ilghera-notice/extension.php:19
 msgid "WooCommerce Exporter for Reviso - Premium"
-msgstr ""
+msgstr "WC Exporter for Contabilità in Cloud - Premium"
 
 #: admin/class-wcefr-admin.php:109
 msgid "Premium Key"
@@ -44,8 +44,8 @@ msgid ""
 "Add your Premium Key and keep update your copy of Woocommerce Exporter for "
 "Reviso - Premium"
 msgstr ""
-"Aggiungi la tua Premium Key e mantieni aggiornato WooCommerce for Reviso - "
-"Premium"
+"Aggiungi la tua Premium Key e mantieni aggiornato WooCommerce for "
+"Contabilità in Cloud - Premium"
 
 #: admin/class-wcefr-admin.php:113
 msgid "Save"
@@ -75,6 +75,32 @@ msgstr "Clienti"
 msgid "Orders"
 msgstr "Ordini"
 
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Renew now"
+msgstr "Aggiorna ora"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:66
+msgid "Get a license"
+msgstr "Ottieni una licenza"
+
+#: admin/ilghera-notice/class-ilghera-notice.php:107
+msgid "Your license is <u>expired</u> and you're unable to receive updates."
+msgstr ""
+"La tua licenza è <u>scaduta</u> e non sei in grado di ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:123
+msgid ""
+"It seems like your license is <u>not valid</u> and you're unable to receive "
+"updates."
+msgstr ""
+"Sembra che la tua licenza non sia <u>valida</u> e non sei in grado di "
+"ricevere aggiornamenti."
+
+#: admin/ilghera-notice/class-ilghera-notice.php:139
+msgid "You have not set up a license key and you cannot receive updates."
+msgstr ""
+"Non hai impostato una licenza e non sei in grado di ricevere aggiornamenti."
+
 #: admin/wcefr-customers-template.php:18 admin/wcefr-suppliers-template.php:18
 msgid "User role"
 msgstr "Ruolo utente"
@@ -89,12 +115,12 @@ msgstr "Gruppo"
 
 #: admin/wcefr-customers-template.php:42
 msgid "Select a Reviso customers group"
-msgstr "Seleziona un gruppo clienti di Reviso"
+msgstr "Seleziona un gruppo clienti di Contabilità in Cloud"
 
 #: admin/wcefr-customers-template.php:48 admin/wcefr-orders-template.php:35
 #: admin/wcefr-products-template.php:78 admin/wcefr-suppliers-template.php:48
 msgid "Export to Reviso"
-msgstr "Esporta verso Reviso"
+msgstr "Esporta verso Contabilità in Cloud"
 
 #: admin/wcefr-customers-template.php:59
 msgid "Delete customers"
@@ -102,12 +128,12 @@ msgstr "Cancella clienti"
 
 #: admin/wcefr-customers-template.php:61
 msgid "Delete all customers on Reviso"
-msgstr "Cancella tutti i clienti in Reviso"
+msgstr "Elimina tutti i clienti in Contabilità in Cloud"
 
 #: admin/wcefr-customers-template.php:67 admin/wcefr-orders-template.php:53
 #: admin/wcefr-products-template.php:96 admin/wcefr-suppliers-template.php:67
 msgid "Delete from Reviso"
-msgstr "Cancella da Reviso"
+msgstr "Cancella da Contabilità in Cloud"
 
 #: admin/wcefr-customers-template.php:75 admin/wcefr-orders-template.php:76
 #: admin/wcefr-products-template.php:104 admin/wcefr-suppliers-template.php:75
@@ -116,7 +142,7 @@ msgstr "Opzioni di sincronizzazione"
 
 #: admin/wcefr-customers-template.php:82
 msgid "Update customers in Reviso in real time"
-msgstr "Aggiorna i clienti in Reviso in tempo reale"
+msgstr "Aggiorna i clienti in Contabilità in Cloud in tempo reale"
 
 #: admin/wcefr-customers-template.php:89 admin/wcefr-products-template.php:118
 #: admin/wcefr-suppliers-template.php:89
@@ -142,7 +168,7 @@ msgstr "Cancella ordini"
 
 #: admin/wcefr-orders-template.php:47
 msgid "Delete all orders on Reviso"
-msgstr "Cancella tutti gli ordini in Reviso"
+msgstr "Elimina tutti gli ordini in Contabilità in Cloud"
 
 #: admin/wcefr-orders-template.php:118
 msgid "Export orders"
@@ -150,7 +176,7 @@ msgstr "Esporta ordini"
 
 #: admin/wcefr-orders-template.php:121
 msgid "Export orders to Reviso automatically"
-msgstr "Easporta i nuovi ordini verso Reviso in automatico"
+msgstr "Easporta i nuovi ordini verso Contabilità in Cloud in automatico"
 
 #: admin/wcefr-orders-template.php:125
 msgid "Create invoices"
@@ -158,7 +184,7 @@ msgstr "Crea fattura"
 
 #: admin/wcefr-orders-template.php:128
 msgid "Create invoices in Reviso for completed orders"
-msgstr "Crea la fattura in Reviso per gli ordini completati"
+msgstr "Crea la fattura in Contabilità in Cloud per gli ordini completati"
 
 #: admin/wcefr-orders-template.php:132
 msgid "Issue invoices"
@@ -166,7 +192,7 @@ msgstr "Emetti fattura"
 
 #: admin/wcefr-orders-template.php:135
 msgid "Issue invoices created in Reviso directly "
-msgstr "Emetti direttamente la fattura creata in Reviso "
+msgstr "Emetti direttamente la fattura creata in Contabilità in Cloud "
 
 #: admin/wcefr-orders-template.php:139
 msgid "Send invoices"
@@ -182,7 +208,7 @@ msgstr "Contabilizza fattura"
 
 #: admin/wcefr-orders-template.php:149
 msgid "Book invoices created in Reviso directly "
-msgstr "Contabilizza direttamente la fattura creata in Reviso "
+msgstr "Contabilizza direttamente la fattura creata in Contabilità in Cloud "
 
 #: admin/wcefr-orders-template.php:153
 msgid "Number series"
@@ -191,12 +217,14 @@ msgstr "Serie numeriche"
 #: admin/wcefr-orders-template.php:176
 msgid "Choose the series of numbers to use for <b>Invoices</b>"
 msgstr ""
-"Seleziona la serie numerica di Reviso da utilizzare per le <b>Fatture</b>"
+"Seleziona la serie numerica di Contabilità in Cloud da utilizzare per le "
+"<b>Fatture</b>"
 
 #: admin/wcefr-orders-template.php:196
 msgid "Choose the series of numbers to use for <b>Receipts</b>"
 msgstr ""
-"Seleziona la serie numerica di Reviso da utilizzare per le <b>Ricevute</b>"
+"Seleziona la serie numerica di Contabilità in Cloud da utilizzare per le "
+"<b>Ricevute</b>"
 
 #: admin/wcefr-orders-template.php:201
 msgid "Customers group"
@@ -211,8 +239,8 @@ msgid ""
 "Select a specific group of Reviso customers or use <i>Auto</i> for national "
 "and foreign groups"
 msgstr ""
-"Seleziona uno specifico gruppo clienti Reviso o <i>Auto</i> per utilizzare "
-"<i>Clienti nazionali</i> e <i>Clienti esteri</i>"
+"Seleziona uno specifico gruppo clienti Contabilità in Cloud o <i>Auto</i> "
+"per utilizzare <i>Clienti nazionali</i> e <i>Clienti esteri</i>"
 
 #: admin/wcefr-orders-template.php:214
 msgid "Save options"
@@ -228,7 +256,8 @@ msgstr "Tutte le categorie"
 
 #: admin/wcefr-products-template.php:39
 msgid "Select which categories to send to Reviso."
-msgstr "Seleziona la/ le categorie di prodotti da inviare a Reviso."
+msgstr ""
+"Seleziona la/ le categorie di prodotti da inviare a Contabilità in Cloud."
 
 #: admin/wcefr-products-template.php:49
 msgid "Departmental distribution"
@@ -252,12 +281,12 @@ msgid ""
 "Delete all products on Reviso. Note that you cannot delete a product that "
 "has been used on an Invoice."
 msgstr ""
-"Cancella tutti i prodotti in Reviso. I prodotti utilizzati nelle fatture non "
-"potranno essere rimossi."
+"Cancella tutti i prodotti in Contabilità in Cloud. I prodotti utilizzati "
+"nelle fatture non potranno essere rimossi."
 
 #: admin/wcefr-products-template.php:111
 msgid "Update products in Reviso in real time"
-msgstr "Aggiorna i prodotti in Reviso in tempo reale"
+msgstr "Aggiorna i prodotti in Contabilità in Cloud in tempo reale"
 
 #: admin/wcefr-settings-template.php:17
 msgid "Connection status"
@@ -269,15 +298,15 @@ msgstr "Non connesso"
 
 #: admin/wcefr-settings-template.php:24
 msgid "Connect with your Reviso credentials"
-msgstr "Connettiti a Reviso con le tue credenziali"
+msgstr "Connettiti a Contabilità in Cloud con le tue credenziali"
 
 #: admin/wcefr-settings-template.php:30
 msgid "Connect to Reviso"
-msgstr "Connettiti a Reviso"
+msgstr "Connettiti a Contabilità in Cloud"
 
 #: admin/wcefr-settings-template.php:31
 msgid "Disconnect from Reviso"
-msgstr "Disconnettiti da Reviso"
+msgstr "Disconnettiti da Contabilità in Cloud"
 
 #: admin/wcefr-settings-template.php:43
 msgid "Temporary data"
@@ -297,7 +326,7 @@ msgstr "Seleziona il ruolo utente usato per i fornitori"
 
 #: admin/wcefr-suppliers-template.php:42
 msgid "Select a Reviso suppliers group"
-msgstr "Seleziona un gruppo fornitori Reviso"
+msgstr "Seleziona un gruppo fornitori Contabilità in Cloud"
 
 #: admin/wcefr-suppliers-template.php:59
 msgid "Delete suppliers"
@@ -305,35 +334,43 @@ msgstr "Cancella fornitori"
 
 #: admin/wcefr-suppliers-template.php:61
 msgid "Delete all suppliers on Reviso"
-msgstr "Cancella tutti i fornitori in Reviso"
+msgstr "Elimina tutti i fornitori in Contabilità in Cloud"
 
 #: admin/wcefr-suppliers-template.php:82
 msgid "Update suppliers in Reviso in real time"
-msgstr "Aggiorna i fornitori in Reviso in tempo reale"
+msgstr "Aggiorna i fornitori in Contabilità in Cloud in tempo reale"
 
-#: includes/class-wcefr-orders.php:89
+#: includes/class-wcefr-orders.php:101
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:512
+#: includes/class-wcefr-orders.php:140
+msgid "Not available yet"
+msgstr "Non ancora disponibile"
+
+#: includes/class-wcefr-orders.php:270
+msgid "Order date"
+msgstr "Data ordine"
+
+#: includes/class-wcefr-orders.php:624
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:950
+#: includes/class-wcefr-orders.php:1067
 msgid "Direct"
-msgstr ""
+msgstr "Diretto"
 
-#: includes/class-wcefr-orders.php:1180
+#: includes/class-wcefr-orders.php:1331
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1250
+#: includes/class-wcefr-orders.php:1401
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1259
+#: includes/class-wcefr-orders.php:1410
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
@@ -387,7 +424,7 @@ msgstr "I dati temporanei sono stati eliminati"
 
 #: includes/class-wcefr-single-product.php:45
 msgid "Reviso"
-msgstr ""
+msgstr "Contabilità in Cloud"
 
 #: includes/class-wcefr-single-product.php:70
 msgid "<i>Departmental distribution</i>"
@@ -397,21 +434,21 @@ msgstr "<i>Centro di responsabilità</i>"
 msgid "Set a specific departmental distribution for this product"
 msgstr "Seleziona un centro di responsabilità specifico per questo prodotto"
 
-#: includes/class-wcefr-users.php:700
+#: includes/class-wcefr-users.php:825
 msgid "Saved!"
 msgstr "Salvato!"
 
-#: includes/class-wcefr-users.php:757
+#: includes/class-wcefr-users.php:882
 #, php-format
 msgid "%1$d %2$s(s) export process has begun"
 msgstr "Il processo di esportazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:877
+#: includes/class-wcefr-users.php:1002
 #, php-format
 msgid "%1$d %2$s(s) delete process has begun"
 msgstr "Il processo di cancellazione di %1$d %2$s è iniziato"
 
-#: includes/class-wcefr-users.php:887
+#: includes/class-wcefr-users.php:1012
 #, php-format
 msgid "ERROR! There are not %s to delete"
 msgstr "ERRORE! Non ci sono %s da cancellare"
@@ -467,9 +504,15 @@ msgstr ""
 "ATTENZIONE! Sembra che la <strong>Partita IVA</strong> inserita non sia "
 "corretta."
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:458
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:507
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:528
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:418
+msgid "WARNING! The <strong>Recipient Code</strong> entered is incorrect."
+msgstr ""
+"ATTENZIONE! Sembra che il <strong>Codice Destinatario</strong> inserito non "
+"sia corretto."
+
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:499
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:556
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:579
 msgid "Electronic invoicing"
 msgstr "Fatturazione elettronica"
 
@@ -576,6 +619,26 @@ msgstr "Mostra PEC e Codice Destinatario solo per l'Italia"
 #: includes/wc-checkout-fields/templates/wcefr-checkout-template.php:203
 msgid "Show the tax code field only to Italian customers"
 msgstr "Mostra il campo Codice Fiscale solo per l'Italia"
+
+#, php-format
+#~ msgid ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. Your license is <u>expired</u> and you're "
+#~ "unable to receive updates, renew it by clicking on this <a href=\"%3$s\" "
+#~ "target=\"_blank\">link</a>."
+#~ msgstr ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. La tua licenza è <u>scaduta</u> e non sei "
+#~ "in grado di ricevere aggiornamenti, rinnovala facendo clic su questo <a "
+#~ "href=\"%3$s\" target=\"_blank\">link</a>."
+
+#, php-format
+#~ msgid ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. You have not set up a license key and you "
+#~ "cannot receive updates, you can purchase one by clicking <a href=\"%3$s\" "
+#~ "target=\"_blank\">here</a>."
+#~ msgstr ""
+#~ "<img src=\"%1$s\"><b>%2$s</b>. Non hai impostato una chiave di licenza e "
+#~ "non sei in grado di ricevere aggiornamenti, puoi acquistarne una facendo "
+#~ "clic <a href=\"%3$s\" target=\"_blank\">qui</a>."
 
 #~ msgid "Orders settings"
 #~ msgstr "Impostazioni ordini"

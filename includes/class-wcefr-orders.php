@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 1.1.0
+ * @since 1.3.0
  */
 class WCEFR_Orders {
 
@@ -80,7 +80,25 @@ class WCEFR_Orders {
 
 				echo '<a href="?wcefr-preview=true&order-id=' . esc_attr( $order_id ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
 
-			}
+            } else {
+
+				$icon      = WCEFR_URI . 'images/pdf-black.png';
+                $order     = wc_get_order( $order_id );
+                $scheduled = as_has_scheduled_action(
+                    'wcefr_export_single_order_event',
+                    array(
+                        'order_id' => $order_id,
+                    ),
+                    'wcefr_export_single_order',
+                );
+
+                if ( 'completed' === $order->get_status() && $scheduled ) {
+
+                    echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+
+                }
+
+            }
 
 		}
 
@@ -166,77 +184,55 @@ class WCEFR_Orders {
 
 
 	/**
-	 * TEMP
+	 * Check if a specific payment term exists in Reviso
 	 *
-	 * Get the wc payment gateways available
+     * @param string $term_name the payment term name to search in Reviso.
+     * 
+	 * @return int the Reviso payment term number.
 	 */
-	public function get_available_methods() {
+	private function payment_term_exists( $term_name ) {
 
-		$gateways = WC()->payment_gateways->get_available_payment_gateways();
-
-		$enabled_gateways = array();
-
-		if ( $gateways ) {
-			foreach ( $gateways as $gateway ) {
-
-				if ( 'yes' == $gateway->enabled ) {
-
-					$enabled_gateways[] = $gateway;
-
-				}
-			}
-		}
-
-	}
-
-
-	/**
-	 * Check if a specific payment method exists in Reviso
-	 *
-	 * @param  string $payment_gateway the wc payment gateway.
-	 * @return int the Reviso payment method number.
-	 */
-	private function payment_metod_exists( $payment_gateway ) {
-
-        $transient = get_transient( 'wcefr-payment-methods' );
+        $output    = null;
+        $transient = get_transient( 'wcefr-payment-term' );
 
         if ( $transient ) {
 
-            $response = $transient;
+            $output = $transient;
 
         } else {
 
-            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $payment_gateway );
+            $response = $this->wcefr_call->call( 'get', 'payment-terms?filter=name$eq:' . $term_name );
             
+            if ( isset( $response->collection[0] ) && ! empty( $response->collection[0] ) ) {
+
+                set_transient( 'wcefr-payment-term', $response->collection[0], DAY_IN_SECONDS );
+
+                $output = $response->collection[0];
+
+            }
         }
 
-		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
-
-            set_transient( 'wcefr-payment-methods', $response, DAY_IN_SECONDS );
-
-			return $response->collection[0];
-
-		}
+        return $output;
 
 	}
 
 
 	/**
-	 * Add a specific payment method in reviso
+	 * Add a specific payment term in Reviso
 	 *
 	 * @param string $payment_gateway the wc payment gateway.
 	 */
-	public function add_remote_payment_method( $payment_gateway ) {
+	public function get_remote_payment_term() {
 
-        $payment_gateway = avoid_length_exceed( $payment_gateway, 50 );
-		$output          = $this->payment_metod_exists( $payment_gateway );
+        $term_name = __( 'Order date', 'wc-exporter-for-reviso' );
+		$output    = $this->payment_term_exists( $term_name );
 
 		if ( ! $output ) {
 
-            delete_transient( 'wcefr-payment-methods' );
+            delete_transient( 'wcefr-payment-term' );
 
 			$args = array(
-				'name'             => $payment_gateway,
+				'name'             => $term_name,
 				'paymentTermsType' => 'net', // temp.
 				'daysOfCredit'     => 0,
 			);
@@ -252,6 +248,111 @@ class WCEFR_Orders {
 		}
 
 		return $output;
+
+	}
+
+
+	/**
+	 *
+	 * Get the wc payment gateways available
+     *
+     * @return array
+	 */
+	public function get_wc_available_methods() {
+
+		$gateways         = WC()->payment_gateways->get_available_payment_gateways();
+		$enabled_gateways = array();
+
+		if ( $gateways ) {
+
+			foreach ( $gateways as $gateway ) {
+
+				/* if ( 'yes' == $gateway->enabled ) { */
+
+					$enabled_gateways[] = $gateway->id;
+
+				/* } */
+			}
+
+		}
+
+        return $enabled_gateways;
+
+	}
+
+
+	/**
+	 * Get the payment methods from Reviso
+	 *
+	 * @return array the Reviso payment methods.
+	 */
+	private function get_remote_payment_metods() {
+
+        $output    = null;
+        $transient = get_transient( 'wcefr-payment-methods' );
+
+        if ( $transient ) {
+
+            $output = $transient;
+
+        } else {
+
+            $response = $this->wcefr_call->call( 'get', 'payment-types' );
+
+            if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
+
+                set_transient( 'wcefr-payment-methods', $response->collection, DAY_IN_SECONDS );
+
+                $output = $response->collection;
+
+            }
+            
+        }
+
+        return $output;
+
+	}
+
+
+	/**
+	 * Get the specific payment method in reviso
+	 *
+	 * @param string $payment_gateway the wc payment gateway ID.
+     *
+     * @return object the payment method
+	 */
+	public function get_remote_payment_method( $payment_gateway = null ) {
+
+        $remote_methods = $this->get_remote_payment_metods();
+        $method_name    = null;
+
+        switch ( $payment_gateway ) {
+            case 'bacs':
+                $method_name = 'Bank transfer';
+                break;
+            case 'cheque':
+                $method_name = 'Check';
+                break;
+            case 'cod':
+                $method_name = 'Cash';
+                break;
+            case 'findomestic':
+                $method_name = 'RID';
+                break;
+            default:
+                $method_name = 'Payment card';
+                break;
+        }
+
+        foreach ( $remote_methods as $method ) {
+
+            if ( strtolower( $method_name ) === strtolower( $method->name ) ) {
+
+                return $method;
+
+            }
+
+        }
 
 	}
 
@@ -286,10 +387,9 @@ class WCEFR_Orders {
             (float)
             $order->get_total()          -
             $order->get_total_tax()      -
-            $order->get_total_shipping() -
-            $order->get_shipping_tax()   +
+            $order->get_total_shipping() +
+            /* $order->get_shipping_tax()   + */
             $order->get_total_discount(),
-            /* wc_get_price_decimals(), */
             10,
             '.',
             ''
@@ -555,11 +655,11 @@ class WCEFR_Orders {
 
 		$response = $this->wcefr_call->call( 'get', 'customers?filter=email$eq:' . $email );
 
+        /* Get the WP user if exists */
+        $user_id = $order->get_user_id(); 
+
         /*Add the new user in Reviso*/
         $wcefr_users = new WCEFR_Users();
-
-        $user    = get_user_by( 'email', $email );
-        $user_id = isset( $user->ID ) ? $user->ID : 0;
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
 
@@ -573,7 +673,12 @@ class WCEFR_Orders {
 
                 $user = $wcefr_users->export_single_user( $user_id, 'customers', $order, false, $customer_number );
 
-                return $user->customerNumber;
+                if ( isset( $user->customerNumber  ) ) {
+
+                    return $user->customerNumber;
+
+                }
+
 
             }
 
@@ -869,8 +974,16 @@ class WCEFR_Orders {
         $vat_included           = 'yes' === get_option( 'woocommerce_prices_include_tax' ) ? 1 : 0;
 
         /*Add the payment method if not already on Reviso*/
-        $payment_method_title = $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Direct', 'wc-exporter-for-reviso' ); 
-        $payment_method       = $this->add_remote_payment_method( $payment_method_title );
+        $payment_method_title = $order->get_payment_method() ? $order->get_payment_method() : __( 'Direct', 'wc-exporter-for-reviso' ); 
+        $payment_method       = $this->get_remote_payment_method( $payment_method_title );
+        $payment_term         = $this->get_remote_payment_term();
+
+        /* Save user metas */
+        $user_id = $order->get_user_id(); 
+
+        if ( 0 !== $user_id ) {
+            update_user_meta( $user_id, 'wcefr-payment-method', $payment_method );
+        }
 
 		$output = array(
 			'currency'               => $order->get_currency(),
@@ -880,7 +993,8 @@ class WCEFR_Orders {
 			'grossAmount'            => floatval( wc_format_decimal( $order->get_total(), 2 ) ),
 			'isArchived'             => false,
 			'isSent'                 => false,
-			'paymentTerms'           => $payment_method,
+			'paymentTerms'           => $payment_term,
+			'paymentType'            => $payment_method,
 			'roundingAmount'         => 0.00,
 			'vatDate'                => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
 			'vatAmount'              => floatval( wc_format_decimal( $order->get_total_tax(), 2 ) ),
@@ -910,7 +1024,7 @@ class WCEFR_Orders {
 			'notes'                  => array(
 				'text1' => 'WC-Order-' . $order->get_id(),
 			),
-			'numberSeries'          => array(
+			'numberSeries'           => array(
 				'numberSeriesNumber' => $this->get_remote_number_series( $this->get_order_ns_prefix( $order ), null, true ),
 			),
 		);
@@ -999,6 +1113,26 @@ class WCEFR_Orders {
 	}
 
 
+    /**
+     * Enqueue the single async action with Action Scheduler
+     *
+     * @param int $order_id the WC order ID.
+     *
+     * @return void
+     */
+    public function single_order_async_action( $order_id ) {
+
+        as_enqueue_async_action(
+            'wcefr_export_single_order_event',
+            array(
+                'order_id' => $order_id,
+            ),
+            'wcefr_export_single_order'
+        );
+
+    }
+
+
 	/**
 	 * Export WC orders to Reviso
 	 */
@@ -1036,13 +1170,7 @@ class WCEFR_Orders {
 					$n++;
 
 					/*Cron event*/
-					as_enqueue_async_action(
-						'wcefr_export_single_order_event',
-						array(
-							'order_id' => $post->ID,
-						),
-						'wcefr_export_single_order'
-					);
+                    $this->single_order_async_action( $post->ID );
 
 				}
 

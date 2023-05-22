@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-20 09:24+0100\n"
-"PO-Revision-Date: 2023-02-20 09:30+0100\n"
+"POT-Creation-Date: 2023-05-22 09:29+0200\n"
+"PO-Revision-Date: 2023-05-22 09:30+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: _;__;_e;esc_html__;esc_html_e;esc_attr__;esc_attr_e\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -340,33 +340,37 @@ msgstr "Elimina tutti i fornitori in Contabilità in Cloud"
 msgid "Update suppliers in Reviso in real time"
 msgstr "Aggiorna i fornitori in Contabilità in Cloud in tempo reale"
 
-#: includes/class-wcefr-orders.php:89
+#: includes/class-wcefr-orders.php:101
 msgid "Invoice"
 msgstr "Fattura"
 
-#: includes/class-wcefr-orders.php:240
+#: includes/class-wcefr-orders.php:140
+msgid "Not available yet"
+msgstr "Non ancora disponibile"
+
+#: includes/class-wcefr-orders.php:270
 msgid "Order date"
 msgstr "Data ordine"
 
-#: includes/class-wcefr-orders.php:594
+#: includes/class-wcefr-orders.php:624
 msgid "Transportation fee"
 msgstr "Spese di spedizione"
 
-#: includes/class-wcefr-orders.php:1037
+#: includes/class-wcefr-orders.php:1067
 msgid "Direct"
 msgstr "Diretto"
 
-#: includes/class-wcefr-orders.php:1277
+#: includes/class-wcefr-orders.php:1331
 #, php-format
 msgid "%d order(s) export process has begun"
 msgstr "Il processo di esportaizone di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1347
+#: includes/class-wcefr-orders.php:1401
 #, php-format
 msgid "%d order(s) delete process has begun"
 msgstr "Il processo di cancellazione di %d ordini è iniziato"
 
-#: includes/class-wcefr-orders.php:1356
+#: includes/class-wcefr-orders.php:1410
 msgid "ERROR! There are not orders to delete"
 msgstr "ERRORE! Non ci sono ordini da cancellare"
 
@@ -506,9 +510,9 @@ msgstr ""
 "ATTENZIONE! Sembra che il <strong>Codice Destinatario</strong> inserito non "
 "sia corretto."
 
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:470
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:519
-#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:540
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:499
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:556
+#: includes/wc-checkout-fields/class-wcefr-checkout-fields.php:579
 msgid "Electronic invoicing"
 msgstr "Fatturazione elettronica"
 

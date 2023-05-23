@@ -80,10 +80,10 @@ class WCEFR_Products {
 	 */
 	private function inventory_module() {
 
-		$output    = 0;
+		$output    = 'no';
 		$transient = get_transient( 'wcefr-inventory-module' );
 
-		if ( null !== $transient ) {
+		if ( $transient ) {
 
 			$output = $transient;
 
@@ -99,7 +99,7 @@ class WCEFR_Products {
 
 						if ( 'Lager' === $module->name ) {
 
-							$output = 1;
+							$output = 'yes';
 
 							continue;
 
@@ -112,7 +112,7 @@ class WCEFR_Products {
 			}
 		}
 
-		return $output;
+		return 'yes' === $output ? true : false;
 
 	}
 
@@ -124,10 +124,10 @@ class WCEFR_Products {
 	 */
 	public function dimension_module() {
 
-		$output    = 0;
+		$output    = 'no';
 		$transient = get_transient( 'wcefr-dimension-module' );
 
-		if ( null !== $transient ) {
+		if ( $transient ) {
 
 			$output = $transient;
 
@@ -143,7 +143,7 @@ class WCEFR_Products {
 
 						if ( 0 === strpos( $module->name, 'Dimension' ) ) {
 
-							$output = 1;
+							$output = 'yes';
 
 							continue;
 
@@ -156,7 +156,7 @@ class WCEFR_Products {
 			}
 		}
 
-		return $output;
+		return 'yes' === $output ? true : false;
 
 	}
 

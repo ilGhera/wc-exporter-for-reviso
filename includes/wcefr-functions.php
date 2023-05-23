@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
- * @since 0.9.1
+ * @since 1.2.0
  */
 
 /**
@@ -16,25 +16,24 @@
  */
 function avoid_length_exceed( $text, $limit ) {
 
-    $output = $text;
+	$output = $text;
 
-    if ( strlen( $text ) > $limit ) {
+	if ( strlen( $text ) > $limit ) {
 
-        if ( 25 === intval( $limit ) ) {
+		if ( 25 === intval( $limit ) ) {
 
-            /*Product number (sku)*/
-            $output = substr( $text, 0, $limit );
+			/*Product number (sku)*/
+			$output = substr( $text, 0, $limit );
 
-        } else {
+		} else {
 
-            /*Product name and description*/
-            $output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
+			/*Product name and description*/
+			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
 
-        }
+		}
+	}
 
-    }
-
-    return $output;
+	return $output;
 
 }
 
@@ -42,14 +41,14 @@ function avoid_length_exceed( $text, $limit ) {
 /**
  * Go Premium button
  *
- * @return void 
+ * @return void
  */
 function wcefr_go_premium() {
 
-	$title = __( 'This is a premium functionality, click here for more information', 'wc-exporter-for-reviso' );
-	$output = '<span class="wcefr label label-warning premium">';
+	$title       = __( 'This is a premium functionality, click here for more information', 'wc-exporter-for-reviso' );
+	$output      = '<span class="wcefr label label-warning premium">';
 		$output .= '<a href="https://www.ilghera.com/product/woocommerce-exporter-for-reviso-premium" target="_blank" title="' . esc_attr( $title ) . '">Premium</a>';
-	$output .= '</span>';
+	$output     .= '</span>';
 
 	$allowed = array(
 		'span' => array(

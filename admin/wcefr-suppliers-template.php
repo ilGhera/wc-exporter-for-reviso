@@ -4,7 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
- * @since 1.1.0
+ * @since 1.3.0
  */
 
 ?>
@@ -104,3 +104,4 @@ wp_localize_script(
 		'deleteNonce'    => $delete_users_nonce,
 	)
 );
+

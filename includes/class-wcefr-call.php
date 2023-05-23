@@ -65,7 +65,6 @@ class WCEFR_Call {
 		ini_set( 'serialize_precision', -1 );
 
 		$body = $args ? json_encode( $args ) : '';
-        /* error_log( 'BODY: ' . print_r( $body, true ) ); */
 
 		$response = wp_remote_request(
 			$this->base_url . $endpoint,
@@ -76,9 +75,6 @@ class WCEFR_Call {
 				'body'    => $body,
 			)
 		);
-
-        error_log( 'ENDPOINT: ' . $endpoint );
-        /* error_log( 'RESPONSE: ' . print_r( $response['body'], true ) ); */
 
 		if ( ! is_wp_error( $response ) && isset( $response['body'] ) ) {
 
@@ -96,3 +92,4 @@ class WCEFR_Call {
 	}
 
 }
+

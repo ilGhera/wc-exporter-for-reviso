@@ -57,7 +57,7 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 = 1.3.0
-Release Date: 22 May 2023
+Release Date: 23 May 2023
 
 * Enhancement: Performance improvement on exporting new orders in real time
 * Enhancement: Performance improvement on compliting orders in back-end

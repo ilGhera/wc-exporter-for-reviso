@@ -517,11 +517,12 @@ class WCEFR_Orders {
 					);
 
 					/*Departmental distribution*/
-					if ( $class->dimension_module() ) {
+                    if ( $class->dimension_module() ) {
 
 						$specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
 						$generic_dist  = get_option( 'wcefr-departmental-distribution' );
 						$dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
+                        $dist          = apply_filters( 'wcefr-product-dep-distribution', $dist, $order->get_id() );
 
 						if ( $dist ) {
 

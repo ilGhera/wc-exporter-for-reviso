@@ -3,31 +3,28 @@ on:
   pull_request
 jobs:
   test:
-    name: PHP ${{ matrix.php }} WP ${{ matrix.wp }} MU ${{ matrix.multisite }}
+    name: PHP ${{ matrix.php }} WP ${{ matrix.wp }} MU ${{ matrix.multisite }} DB ${{ matrix.db }}
     timeout-minutes: 15
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         # We test against the earliest and latest PHP versions for each major supported version.
-        php: [ '5.6', '7.0', '7.4', '8.0' ]
-        wp: [ '5.2', '5.3', '5.4', '5.5', '5.6', 'latest' ]
+        php: [ '7.2', '7.4', '8.0', '8.3' ]
+        wp: [ '6.5', '6.6', 'latest', 'nightly' ]
         multisite: [ '0', '1' ]
+        db: [ 'mysql:5.6', 'mysql:8.1', 'mariadb:10.4', 'mariadb:10.6']
         exclude:
-          # Earlier versions of WordPress do not support PHP 7.4+
-          - php: 7.4
-            wp: 5.2
-          - php: 8.0
-            wp: 5.2
-          - php: 8.0
-            wp: 5.3
-          - php: 8.0
-            wp: 5.4
-          - php: 8.0
-            wp: 5.5
+          # WordPress 6.6+ requires PHP 7.2+
+          - php: 7.2
+            wp: 6.6
+          - php: 7.2
+            wp: latest
+          - php: 7.2
+            wp: nightly
     services:
       database:
-        image: mysql:5.6
+        image: ${{ matrix.db }}
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
@@ -38,7 +35,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # v2.34.1
         with:
           php-version: ${{ matrix.php }}
           tools: composer
@@ -50,42 +47,30 @@ jobs:
           php --version
           composer --version
 
-      - name: Get cached composer directories
-        uses: actions/cache@v2
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
         with:
-          path: ./vendor
-          key: ${{ runner.os }}-${{ hashFiles('./composer.lock') }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Setup and install composer
-        run: composer install
+      - name: Install dependencies
+        run: composer install --prefer-dist
 
-      - name: Setup PHPUnit 
-        run: |
-          # PHPUnit 5.7 when using PHP 5.6 - 7.0.
-          if [ "$(php -r "echo version_compare( PHP_VERSION, '7.1', '<' );")" ]; then
-            curl -L https://phar.phpunit.de/phpunit-5.7.phar -o /tmp/phpunit
-            OVERWRITE=1
-          # PHPUnit 7.5 when using PHP 7.1 - 7.4.
-          elif [ "$(php -r "echo version_compare( PHP_VERSION, '8.0', '<' );")" ]; then
-            curl -L https://phar.phpunit.de/phpunit-7.5.phar -o /tmp/phpunit
-            OVERWRITE=1
-          # PHPUnit 7.5 (Custom Fork) when using PHP 8.0+.
-          else
-            curl -L https://github.com/woocommerce/phpunit/archive/add-compatibility-with-php8-to-phpunit-7.zip -o /tmp/phpunit-7.5-fork.zip
-            unzip -d /tmp/phpunit-fork /tmp/phpunit-7.5-fork.zip
-            composer --working-dir=/tmp/phpunit-fork/phpunit-add-compatibility-with-php8-to-phpunit-7 install
-            rm ./vendor/bin/phpunit
-            ln -sf /tmp/phpunit-fork/phpunit-add-compatibility-with-php8-to-phpunit-7/phpunit ./vendor/bin/phpunit
-          fi
-          
-          if [ $OVERWRITE ]; then
-            rm ./vendor/bin/phpunit
-            chmod +x /tmp/phpunit
-            mv /tmp/phpunit ./vendor/bin/phpunit
-          fi
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Init DB and WP
-        run: ./tests/bin/install.sh woo_test root root 127.0.0.1 ${{ matrix.wp }}
+        run: |
+          # Use mysql_native_password when using PHP < 7.4 and MySQL >= 8.0
+          if [ "$(php -r 'echo version_compare(PHP_VERSION, "7.4", "<");')" -eq 1 ] && [ "${{ matrix.db }}" == "mysql:8.1" ]; then
+            mysql -uroot -proot -h127.0.0.1 -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root'; FLUSH PRIVILEGES;"
+          fi
+          ./tests/bin/install.sh woo_test root root 127.0.0.1 ${{ matrix.wp }}
 
       - name: Run tests
         run: |

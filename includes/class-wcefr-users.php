@@ -7,6 +7,8 @@
  * @since 1.3.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * WCEFR_Users
  */
@@ -19,14 +21,12 @@ class WCEFR_Users {
 	 */
 	private $suppliers_role;
 
-
 	/**
 	 * WP user role for customer
 	 *
 	 * @var string
 	 */
 	private $customers_role;
-
 
 	/**
 	 * Synchronize suppliers in real time
@@ -35,7 +35,6 @@ class WCEFR_Users {
 	 */
 	private $synchronize_suppliers;
 
-
 	/**
 	 * Synchronize customers in real time
 	 *
@@ -43,6 +42,12 @@ class WCEFR_Users {
 	 */
 	private $synchronize_customers;
 
+	/**
+	 * WCEFR_Call
+	 *
+	 * @var WCEFR_Call
+	 */
+	private $wcefr_call;
 
 	/**
 	 * Class constructor
@@ -74,7 +79,6 @@ class WCEFR_Users {
 				add_action( 'user_register', array( $this, 'update_remote_supplier' ), 10 );
 				add_action( 'profile_update', array( $this, 'update_remote_supplier' ), 10 );
 				add_action( 'delete_user', array( $this, 'delete_remote_supplier' ), 10, 3 );
-
 			}
 
 			if ( $this->synchronize_customers ) {
@@ -82,14 +86,11 @@ class WCEFR_Users {
 				add_action( 'user_register', array( $this, 'update_remote_customer' ), 10 );
 				add_action( 'profile_update', array( $this, 'update_remote_customer' ), 10 );
 				add_action( 'delete_user', array( $this, 'delete_remote_customer' ), 10, 3 );
-
 			}
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
 	}
-
 
 	/**
 	 * Users synchronization options
@@ -104,7 +105,6 @@ class WCEFR_Users {
 
 			/*Save to the db*/
 			update_option( 'wcefr-synchronize-suppliers', $synchronize_suppliers );
-
 		}
 
 		if ( isset( $_POST['wcefr-customers-settings-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-customers-settings-nonce'] ) ), 'wcefr-customers-settings' ) ) {
@@ -113,11 +113,8 @@ class WCEFR_Users {
 
 			/*Save to the db*/
 			update_option( 'wcefr-synchronize-customers', $synchronize_customers );
-
 		}
-
 	}
-
 
 	/**
 	 * Get the WP user data
@@ -138,7 +135,6 @@ class WCEFR_Users {
 			if ( $user_url ) {
 
 				return $user_details->user_url;
-
 			}
 
 			$output = array_map(
@@ -149,13 +145,10 @@ class WCEFR_Users {
 			);
 
 			$output['user_url'] = $user_details->user_url;
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Return the provinceNumer, required by Reviso for adding the province
@@ -175,7 +168,6 @@ class WCEFR_Users {
 		} else {
 
 			$provinces = $this->wcefr_call->call( 'get', 'provinces/IT?pagesize=1000' );
-
 		}
 
 		if ( isset( $provinces->collection ) ) {
@@ -183,7 +175,6 @@ class WCEFR_Users {
 			if ( ! $transient ) {
 
 				set_transient( 'wcefr-provinces', $provinces, DAY_IN_SECONDS );
-
 			}
 
 			foreach ( $provinces->collection as $prov ) {
@@ -191,13 +182,10 @@ class WCEFR_Users {
 				if ( isset( $prov->code ) && $code === $prov->code ) {
 
 					return $prov->provinceNumber;
-
 				}
 			}
 		}
-
 	}
-
 
 	/**
 	 * Get the delivery locations of a specific user in Reviso
@@ -213,11 +201,8 @@ class WCEFR_Users {
 		if ( isset( $output->collection ) ) {
 
 			return $output->collection;
-
 		}
-
 	}
-
 
 	/**
 	 * Add a new delivery location for a specific user in Reviso
@@ -239,11 +224,8 @@ class WCEFR_Users {
 		} else {
 
 			return $output->deliveryLocationNumber;
-
 		}
-
 	}
-
 
 	/**
 	 * Get the delivery location to the specified user
@@ -258,14 +240,6 @@ class WCEFR_Users {
 
 		$output             = null;
 		$delivery_locations = $this->get_delivery_locations( $customer_number );
-
-		/* $count = 0; */
-
-		/* if ( isset( $delivery_locations->collection ) && is_array( $delivery_locations->collection ) ) { */
-
-		/* 	$count = count( $delivery_locations->collection ); */
-
-		/* } */
 
 		/* Get user data */
 		$user_data = $this->get_user_data( $user_id );
@@ -302,7 +276,6 @@ class WCEFR_Users {
 					$output = $location->deliveryLocationNumber;
 
 					break;
-
 				}
 			}
 		}
@@ -315,18 +288,13 @@ class WCEFR_Users {
 				'city'       => $shipping_city,
 				'country'    => $shipping_country,
 				'postalCode' => $shipping_postcode,
-				// 'barred'                 => null,
-				// 'deliveryLocationNumber' => $count + 1,
 			);
 
 			$output = $this->add_delivery_location( $customer_number, $args );
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get customers and suppliers from Reviso
@@ -341,9 +309,7 @@ class WCEFR_Users {
 		$output = $this->wcefr_call->call( 'get', $type . '/' . $customer_number );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Check if a customer/ supplier exists in Reviso
@@ -368,12 +334,9 @@ class WCEFR_Users {
 			if ( isset( $output->collection[0]->$field_name ) ) {
 
 				return $output->collection[0]->$field_name;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Get the customers/ suppliers groups from Reviso
@@ -398,14 +361,11 @@ class WCEFR_Users {
 			foreach ( $groups->collection as $group ) {
 
 				$output[ $group->$field_name ] = $group->name;
-
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Callback - Get suppliers groups
@@ -425,15 +385,12 @@ class WCEFR_Users {
 			$output = $this->get_user_groups( 'suppliers' );
 
 			set_transient( 'wcefr-suppliers-groups', $output, DAY_IN_SECONDS );
-
 		}
 
 		echo wp_json_encode( $output );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Callback - Get customers groups
@@ -453,15 +410,12 @@ class WCEFR_Users {
 			$output = $this->get_user_groups( 'customers' );
 
 			set_transient( 'wcefr-customers-groups', $output, DAY_IN_SECONDS );
-
 		}
 
 		echo wp_json_encode( $output );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Prepare the single user data to export to Reviso
@@ -519,26 +473,22 @@ class WCEFR_Users {
 				$italian_certified_email = isset( $user_data['billing_wcefr_pec'] ) ? $user_data['billing_wcefr_pec'] : null;
 				$public_entry_number     = isset( $user_data['billing_wcefr_pa_code'] ) ? $user_data['billing_wcefr_pa_code'] : null;
 				$italian_castomer_type   = $vat_number ? 'B2B' : 'Consumer';
-
 			}
 		} else {
 
 			return;
-
 		}
 
 		/* Generic pa code */
 		if ( ! $public_entry_number ) {
 
 			$public_entry_number = 'IT' === $country ? '0000000' : 'XXXXXXX';
-
 		}
 
 		/* Customer contact */
 		if ( $attention ) {
 
 			return $company ? $contact : false;
-
 		}
 
 		$base_location = wc_get_base_location();
@@ -565,7 +515,6 @@ class WCEFR_Users {
 
 				/* Custom group */
 				$group = $get_customers_groups;
-
 			}
 
 			/* Payment method */
@@ -579,7 +528,6 @@ class WCEFR_Users {
 
 			/* Payment method and term */
 			$payment_method = get_user_meta( $user_id, 'wcefr-payment-method', true );
-
 		}
 
 		$args = array(
@@ -604,6 +552,7 @@ class WCEFR_Users {
 		);
 
 		if ( 'IT' === $country ) {
+
 			$args['province'] = array(
 				'countryCode'    => array(
 					'code' => $country,
@@ -613,39 +562,46 @@ class WCEFR_Users {
 		}
 
 		if ( isset( $website ) ) {
+
 			$args['website'] = $website;
 		}
 
 		if ( $vat_number ) {
+
 			$args['vatNumber'] = $vat_number;
 		}
 
 		if ( $identification_number ) {
+
 			$args['corporateIdentificationNumber'] = strtoupper( $identification_number );
+
 		} elseif ( $vat_number ) {
+
 			$args['corporateIdentificationNumber'] = strtoupper( $vat_number );
 		}
 
 		if ( $italian_certified_email ) {
+
 			$args['italianCertifiedEmail'] = $italian_certified_email;
 		}
 
 		if ( $public_entry_number ) {
+
 			$args['publicEntryNumber'] = $public_entry_number;
 		}
 
 		if ( $payment_method ) {
+
 			$args['paymentType'] = $payment_method;
 		}
 
 		if ( $payment_term ) {
+
 			$args['paymentTerms'] = $payment_term;
 		}
 
 		return $args;
-
 	}
-
 
 	/**
 	 * Get the customer contact number from Reviso or create it if necessary
@@ -667,7 +623,6 @@ class WCEFR_Users {
 				if ( $contact_name === $contact->name ) {
 
 					return $contact->customerContactNumber;
-
 				}
 			}
 
@@ -683,12 +638,9 @@ class WCEFR_Users {
 			if ( isset( $contact->customerContactNumber ) ) {
 
 				return $contact->customerContactNumber;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Update remote supplier in real time
@@ -704,11 +656,8 @@ class WCEFR_Users {
 		if ( is_array( $user_data->roles ) && in_array( $this->suppliers_role, $user_data->roles, true ) ) {
 
 			$this->export_single_user( $user_id, 'suppliers', null, false, null );
-
 		}
-
 	}
-
 
 	/**
 	 * Update remote customer in real time
@@ -726,12 +675,9 @@ class WCEFR_Users {
 			if ( is_array( $user_data->roles ) && in_array( $this->customers_role, $user_data->roles, true ) ) {
 
 				$this->export_single_user( $user_id, 'customers', null, false, null );
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Export single WP user to Reviso
@@ -758,7 +704,6 @@ class WCEFR_Users {
 
 			/* Check if the remote user exists if $new is not specified */
 			$remote_id = $remote_id ? $remote_id : $this->user_exists( $type, $args['email'] );
-
 		}
 
 		if ( $args ) {
@@ -771,7 +716,6 @@ class WCEFR_Users {
 				if ( isset( $output->customerNumber ) ) {
 
 					$remote_id = $output->customerNumber;
-
 				}
 			}
 
@@ -787,7 +731,6 @@ class WCEFR_Users {
 					$args['attention'] = array(
 						'customerContactNumber' => $contact_number,
 					);
-
 				}
 
 				/* Add the delivery location */
@@ -796,7 +739,6 @@ class WCEFR_Users {
 				);
 
 				$output = $this->wcefr_call->call( 'put', $type . '/' . $remote_id, $args );
-
 			}
 
 			/*Log the error*/
@@ -807,12 +749,9 @@ class WCEFR_Users {
 			} else {
 
 				return $output;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Update users role for suppliers and customers with Ajax
@@ -832,14 +771,11 @@ class WCEFR_Users {
 			if ( $output ) {
 
 				echo esc_html__( 'Saved!', 'wc-exporter-for-reviso' );
-
 			}
 		}
 
 		exit;
-
 	}
-
 
 	/**
 	 * Export WP users as customers/ suppliers in Reviso
@@ -877,7 +813,6 @@ class WCEFR_Users {
 						),
 						'wcefr_export_single_user'
 					);
-
 				}
 			}
 
@@ -889,12 +824,10 @@ class WCEFR_Users {
 			);
 
 			echo wp_json_encode( $response );
-
 		}
 
 		exit;
 	}
-
 
 	/**
 	 * Delete remote supplier in real time
@@ -914,12 +847,9 @@ class WCEFR_Users {
 			if ( $remote_id ) {
 
 				$this->delete_remote_single_user( $remote_id, 'suppliers' );
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Delete remote customer in real time
@@ -939,12 +869,9 @@ class WCEFR_Users {
 			if ( $remote_id ) {
 
 				$this->delete_remote_single_user( $remote_id, 'customers' );
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Delete a single customer/ supplier in Reviso
@@ -962,11 +889,8 @@ class WCEFR_Users {
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
 			error_log( 'WCEFR ERROR | Reviso user ' . $user_number . ' | ' . $output->message );
-
 		}
-
 	}
-
 
 	/**
 	 * Delete all customers/ suppliers in Reviso
@@ -1000,7 +924,6 @@ class WCEFR_Users {
 						),
 						'wcefr_delete_remote_single_user'
 					);
-
 				}
 
 				$message_type = substr( $type, 0, -1 );
@@ -1021,13 +944,12 @@ class WCEFR_Users {
 				);
 
 				echo wp_json_encode( $response );
-
 			}
 		}
 
 		exit;
-
 	}
 }
+
 new WCEFR_Users( true );
 

@@ -4,8 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.3.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Products
@@ -19,6 +22,12 @@ class WCEFR_Products {
 	 */
 	private $synchronize_products;
 
+	/**
+	 * WCEFR_Call
+	 *
+	 * @var WCEFR_Call
+	 */
+	private $wcefr_call;
 
 	/**
 	 * Class constructor
@@ -45,14 +54,11 @@ class WCEFR_Products {
 				add_action( 'woocommerce_update_product', array( $this, 'export_single_product' ), 10, 1 );
 				add_action( 'trashed_post', array( $this, 'export_single_product' ), 10, 1 );
 				add_action( 'untrashed_post', array( $this, 'export_single_product' ), 10, 1 );
-
 			}
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
 	}
-
 
 	/**
 	 * User synchronization options
@@ -67,11 +73,8 @@ class WCEFR_Products {
 
 			/*Save to the db*/
 			update_option( 'wcefr-synchronize-products', $synchronize_products );
-
 		}
-
 	}
-
 
 	/**
 	 * Check if the inventory module is active
@@ -102,20 +105,16 @@ class WCEFR_Products {
 							$output = 'yes';
 
 							continue;
-
 						}
 					}
 
 					set_transient( 'wcefr-inventory-module', $output, DAY_IN_SECONDS );
-
 				}
 			}
 		}
 
 		return 'yes' === $output ? true : false;
-
 	}
-
 
 	/**
 	 * Check if the dimension module is active
@@ -146,20 +145,16 @@ class WCEFR_Products {
 							$output = 'yes';
 
 							continue;
-
 						}
 					}
 
 					set_transient( 'wcefr-dimension-module', $output, DAY_IN_SECONDS );
-
 				}
 			}
 		}
 
 		return 'yes' === $output ? true : false;
-
 	}
-
 
 	/**
 	 * Get all the products from Reviso
@@ -187,20 +182,18 @@ class WCEFR_Products {
 				} else {
 
 					continue;
-
 				}
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Check if a specific product exists in Reviso
 	 *
 	 * @param  string $sku_ready the WC product sku already formatted for Reviso endpoint.
+	 *
 	 * @return bool
 	 */
 	private function product_exists( $sku_ready ) {
@@ -212,13 +205,10 @@ class WCEFR_Products {
 		if ( ( isset( $response->collection ) && empty( $response->collection ) ) || isset( $response->errorCode ) ) {
 
 			$output = false;
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get alle the remote departmental distributions
@@ -246,14 +236,11 @@ class WCEFR_Products {
 				set_transient( 'wcefr-departmental-distribution', $response->collection, DAY_IN_SECONDS );
 
 				$output = $response->collection;
-
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get WC tax class details
@@ -276,7 +263,6 @@ class WCEFR_Products {
 		} else {
 
 			$where = 'all' !== $tax_rate_class ? " WHERE tax_rate_class = '$tax_rate_class'" : '';
-
 		}
 
 		$query = 'SELECT * FROM ' . $wpdb->prefix . 'woocommerce_tax_rates' . $where;
@@ -284,11 +270,10 @@ class WCEFR_Products {
 		$results = $wpdb->get_results( $query );
 
 		if ( $results && isset( $results[0] ) ) {
+
 			return $results[0];
 		}
-
 	}
-
 
 	/**
 	 * Get the standard tax rate
@@ -306,11 +291,8 @@ class WCEFR_Products {
 		} else {
 
 			return 99;
-
 		}
-
 	}
-
 
 	/**
 	 * Get details for the new vat account
@@ -332,17 +314,15 @@ class WCEFR_Products {
 			} elseif ( 'vatReportSetup' === $data && isset( $response->collection[0]->vatReportSetup->vatReportSetupNumber ) ) {
 
 				return $response->collection[0]->vatReportSetup->vatReportSetupNumber;
-
 			}
 		}
-
 	}
-
 
 	/**
 	 * Add a new vat account to Reviso
 	 *
 	 * @param  int $vat_rate the vat rate.
+	 *
 	 * @return int the vatCode
 	 */
 	public function add_remote_vat_account( $vat_rate ) {
@@ -369,11 +349,8 @@ class WCEFR_Products {
 		if ( isset( $vat_account->vatCode ) ) {
 
 			return $vat_account->vatCode;
-
 		}
-
 	}
-
 
 	/**
 	 * Get a specific vat account from Reviso or create it if necessary
@@ -409,7 +386,6 @@ class WCEFR_Products {
 		} else {
 
 			$response = $this->wcefr_call->call( 'get', 'vat-accounts' . $end );
-
 		}
 
 		if ( isset( $response->collection ) && ! empty( $response->collection ) ) {
@@ -418,7 +394,6 @@ class WCEFR_Products {
 
 				/* Set the transient */
 				set_transient( $transient_name, $response, DAY_IN_SECONDS );
-
 			}
 
 			$output = $response->collection[0]->vatCode;
@@ -429,13 +404,10 @@ class WCEFR_Products {
 			delete_transient( $transient_name );
 
 			$output = $this->add_remote_vat_account( $vat_rate );
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Add an account in Reviso
@@ -472,16 +444,14 @@ class WCEFR_Products {
 		if ( isset( $account->accountNumber ) && $account_number === $account->accountNumber ) {
 
 			return $account->accountNumber;
-
 		}
-
 	}
-
 
 	/**
 	 * Get a specific account in Reviso and create it if it does not exist
 	 *
 	 * @param  int $vat_rate used for create the account number.
+	 *
 	 * @return bool
 	 */
 	private function get_remote_account_number( $vat_rate ) {
@@ -493,13 +463,10 @@ class WCEFR_Products {
 		if ( ! isset( $account->accountNumber ) || intval( $account->accountNumber ) !== $account_number ) {
 
 			$this->add_remote_account( $vat_rate );
-
 		}
 
 		return $account_number;
-
 	}
-
 
 	/**
 	 * Add a product group in Reviso
@@ -530,9 +497,7 @@ class WCEFR_Products {
 						'vatZoneNumber' => 1,
 					),
 				),
-
 			),
-
 		);
 
 		/* Only with inventory module enabled */
@@ -543,21 +508,19 @@ class WCEFR_Products {
 					'accountNumber' => 6625005,
 				),
 			);
-
 		}
 
 		$output = $this->wcefr_call->call( 'post', 'product-groups/', $args );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Get the number of a specific product group from Reviso
 	 *
 	 * @param  int  $vat_rate the product group number to search.
 	 * @param  bool $standard true for standard VAT rate product group.
+	 *
 	 * @return int
 	 */
 	private function get_remote_product_group( $vat_rate, $standard = false ) {
@@ -581,7 +544,6 @@ class WCEFR_Products {
 
 				$wc_tax        = $standard ? $this->get_wc_tax_class( 'standard' ) : $this->get_wc_tax_class( null, $vat_rate );
 				$tax_rate_name = isset( $wc_tax->tax_rate_name ) ? $wc_tax->tax_rate_name : '';
-
 			}
 
 			$remote_product_group = $this->add_remote_product_group( $vat_rate, $tax_rate_name );
@@ -589,14 +551,11 @@ class WCEFR_Products {
 			if ( isset( $remote_product_group->productGroupNumber ) ) {
 
 				$output = $remote_product_group->productGroupNumber;
-
 			}
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * The Reviso product group is based on the vat class applied to the product
@@ -605,6 +564,7 @@ class WCEFR_Products {
 	 *
 	 * @param  bool   $taxable   if not the Reviso product group 99 will be used.
 	 * @param  string $tax_class the WC tax class assigned to the product.
+	 *
 	 * @return int             the product group number
 	 */
 	private function get_product_group( $taxable, $tax_class = null ) {
@@ -615,7 +575,6 @@ class WCEFR_Products {
 		if ( ! $taxable ) {
 
 			$tax_class = 99; // 5;
-
 		}
 
 		if ( null === $tax_class ) {
@@ -634,16 +593,13 @@ class WCEFR_Products {
 			} else {
 
 				$tax_class = 99;
-
 			}
 		}
 
 		$output = $this->get_remote_product_group( $tax_class, $standard );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Prepare the sku to get the right product endpoint
@@ -669,14 +625,13 @@ class WCEFR_Products {
 		$output = str_replace( '+', '_13_', $output );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Prepare the single product data for Reviso
 	 *
 	 * @param  object $product the WC product.
+	 *
 	 * @return array
 	 */
 	private function prepare_product_data( $product ) {
@@ -704,7 +659,6 @@ class WCEFR_Products {
 			if ( $width && $height && $length ) {
 
 				$volume = $width * $height * $length;
-
 			}
 		}
 
@@ -728,7 +682,6 @@ class WCEFR_Products {
 			$output['departmentalDistribution'] = array(
 				'departmentalDistributionNumber' => $dist,
 			);
-
 		}
 
 		/* Only with inventory module enabled */
@@ -737,25 +690,23 @@ class WCEFR_Products {
 			$output['inventory'] = array(
 				'packageVolume' => $volume,
 			);
-
 		}
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Export single product to Reviso
 	 *
 	 * @param  int $post_id the post ID.
+	 *
+	 * @return void
 	 */
 	public function export_single_product( $post_id ) {
 
 		if ( wp_is_post_autosave( $post_id ) ) {
 
 			return;
-
 		}
 
 		$product = wc_get_product( $post_id );
@@ -788,24 +739,22 @@ class WCEFR_Products {
 					} else {
 
 						$output = $this->wcefr_call->call( 'post', 'products', $args );
-
 					}
 
 					/*Log the error*/
 					if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
 						error_log( 'WCEFR ERROR | Reviso product ' . $post_id . ' | ' . $output->message );
-
 					}
 				}
 			}
 		}
-
 	}
-
 
 	/**
 	 * Export WC product to Reviso
+	 *
+	 * @return void
 	 */
 	public function export_products() {
 
@@ -834,7 +783,6 @@ class WCEFR_Products {
 						'terms'    => $terms,
 					),
 				);
-
 			}
 
 			/*Update the db*/
@@ -870,7 +818,6 @@ class WCEFR_Products {
 									),
 									'wcefr_export_single_product'
 								);
-
 							}
 						}
 					} else {
@@ -883,7 +830,6 @@ class WCEFR_Products {
 							),
 							'wcefr_export_single_product'
 						);
-
 					}
 				}
 
@@ -899,22 +845,20 @@ class WCEFR_Products {
 					'error',
 					esc_html( __( 'ERROR! There are not products to export', 'wc-exporter-for-reviso' ) ),
 				);
-
 			}
 
 			echo wp_json_encode( $response );
-
 		}
 
 		exit;
-
 	}
-
 
 	/**
 	 * Delete a single product on Reviso
 	 *
 	 * @param  int $product_number the product to delete in Reviso.
+	 *
+	 * @return void
 	 */
 	public function delete_remote_single_product( $product_number ) {
 
@@ -925,14 +869,13 @@ class WCEFR_Products {
 		if ( ( isset( $output->errorCode ) || isset( $output->developerHint ) ) && isset( $output->message ) ) {
 
 			error_log( 'WCEFR ERROR | Reviso delete product ' . $product_number . ' | ' . $output->message );
-
 		}
-
 	}
-
 
 	/**
 	 * Delete all the products in Reviso
+	 *
+	 * @return void
 	 */
 	public function delete_remote_products() {
 
@@ -955,7 +898,6 @@ class WCEFR_Products {
 					),
 					'wcefr_delete_remote_single_product'
 				);
-
 			}
 
 			$response[] = array(
@@ -970,15 +912,13 @@ class WCEFR_Products {
 				'error',
 				esc_html( __( 'ERROR! There are not products to delete', 'wc-exporter-for-reviso' ) ),
 			);
-
 		}
 
 		echo wp_json_encode( $response );
 
 		exit;
-
 	}
-
 }
+
 new WCEFR_Products( true );
 

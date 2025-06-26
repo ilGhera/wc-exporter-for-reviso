@@ -4,14 +4,16 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.3.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Single_Product
  */
 class WCEFR_Single_Product {
-
 
 	/**
 	 * The constructor
@@ -27,11 +29,8 @@ class WCEFR_Single_Product {
 
 			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 			add_action( 'save_post', array( $this, 'save' ) );
-
 		}
-
 	}
-
 
 	/**
 	 * Add the new metabox to the product page
@@ -52,9 +51,7 @@ class WCEFR_Single_Product {
 				'side',
 				'low'
 			);
-
 		}
-
 	}
 
 	/**
@@ -100,7 +97,6 @@ class WCEFR_Single_Product {
 		<?php
 	}
 
-
 	/**
 	 * Save the meta when the post is saved.
 	 *
@@ -111,6 +107,7 @@ class WCEFR_Single_Product {
 	public function save( $post_id ) {
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+
 			return $post_id;
 		}
 
@@ -123,9 +120,8 @@ class WCEFR_Single_Product {
 		}
 
 		return $post_id;
-
 	}
-
 }
+
 new WCEFR_Single_Product();
 

@@ -4,6 +4,7 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
+ *
  * @since 1.3.0
  */
 
@@ -49,7 +50,6 @@ $synchronize_customers = get_option( 'wcefr-synchronize-customers' ) ? get_optio
 
 </form>
 
-
 <!-- Delete form -->
 <form name="wcefr-delete-customers" class="wcefr-form one-of"  method="post" action="">
 
@@ -89,4 +89,3 @@ $synchronize_customers = get_option( 'wcefr-synchronize-customers' ) ? get_optio
 	</p>
 
 </form>
-

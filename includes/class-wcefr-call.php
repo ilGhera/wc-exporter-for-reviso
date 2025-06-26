@@ -4,8 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.3.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Call
@@ -19,7 +22,6 @@ class WCEFR_Call {
 	 */
 	private $base_url = 'https://rest.reviso.com/';
 
-
 	/**
 	 * Get the Agreement Token from the db
 	 *
@@ -30,9 +32,7 @@ class WCEFR_Call {
 		$output = get_option( 'wcefr-agt' );
 
 		return $output;
-
 	}
-
 
 	/**
 	 * Define the headers to use in every API call
@@ -50,7 +50,6 @@ class WCEFR_Call {
 		return $output;
 	}
 
-
 	/**
 	 * The call
 	 *
@@ -58,6 +57,7 @@ class WCEFR_Call {
 	 * @param  string $endpoint the endpoint's name.
 	 * @param  array  $args     the data.
 	 * @param  bool   $decode   json_dedcode if true.
+	 *
 	 * @return mixed  the response
 	 */
 	public function call( $method, $endpoint = '', $args = null, $decode = true ) {
@@ -86,10 +86,7 @@ class WCEFR_Call {
 
 			/*Print the error to the log*/
 			error_log( 'WCEFR | WP ERROR: ' . print_r( $response, true ) );
-
 		}
-
 	}
-
 }
 

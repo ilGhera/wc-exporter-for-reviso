@@ -4,8 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
+ *
  * @since 1.3.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Admin
@@ -14,14 +17,14 @@ class WCEFR_Admin {
 
 	/**
 	 * Construct
+	 *
+	 * @return void
 	 */
 	public function __construct() {
 
 		add_action( 'admin_menu', array( $this, 'wcefr_add_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'wcefr_register_scripts' ) );
-
 	}
-
 
 	/**
 	 * Scripts and style sheets
@@ -31,6 +34,7 @@ class WCEFR_Admin {
 	public function wcefr_register_scripts() {
 
 		$screen = get_current_screen();
+
 		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
 
 			/*js*/
@@ -42,13 +46,10 @@ class WCEFR_Admin {
 		} elseif ( 'edit-shop_order' === $screen->id ) {
 
 			wp_enqueue_script( 'wcefr-js', WCEFR_URI . 'js/wcefr-shop-orders.js', array( 'jquery' ), WCEFR_VERSION, true );
-
 		}
 
 		wp_enqueue_style( 'wcefr-style', WCEFR_URI . 'css/wc-exporter-for-reviso.css', array(), WCEFR_VERSION );
-
 	}
-
 
 	/**
 	 * Menu page
@@ -60,9 +61,7 @@ class WCEFR_Admin {
 		$wcefr_page = add_submenu_page( 'woocommerce', 'WCEFR Options', 'WC Exporter for Reviso', 'manage_woocommerce', 'wc-exporter-for-reviso', array( $this, 'wcefr_options' ) );
 
 		return $wcefr_page;
-
 	}
-
 
 	/**
 	 * Options page
@@ -75,7 +74,6 @@ class WCEFR_Admin {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 
 			wp_die( esc_html( __( 'It seems like you don\'t have permission to see this page', 'wc-exporter-for-reviso' ) ) );
-
 		}
 
 		/*Page template start*/
@@ -89,6 +87,7 @@ class WCEFR_Admin {
 					echo '<strong>' . esc_html( __( 'ATTENTION! It seems like Woocommerce is not installed', 'wc-exporter-for-reviso' ) ) . '</strong>';
 				echo '</p>';
 			echo '</div>';
+
 			exit;
 		}
 
@@ -105,7 +104,6 @@ class WCEFR_Admin {
 			$key = sanitize_text_field( wp_unslash( $_POST['wcefr-premium-key'] ) );
 
 			update_option( 'wcefr-premium-key', $key );
-
 		}
 
 					/*Premium Key Form*/
@@ -187,8 +185,8 @@ class WCEFR_Admin {
 			echo '<div class="clear"></div>';
 
 		echo '</div>';
-
 	}
-
 }
+
 new WCEFR_Admin();
+

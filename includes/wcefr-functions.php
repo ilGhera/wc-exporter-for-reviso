@@ -4,14 +4,18 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.3.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns the string passed less long than the limit specified
  *
  * @param  string $text  the full text.
  * @param  int    $limit the string length limit.
+ *
  * @return string
  */
 function avoid_length_exceed( $text, $limit ) {
@@ -29,12 +33,10 @@ function avoid_length_exceed( $text, $limit ) {
 
 			/*Product name and description*/
 			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
-
 		}
 	}
 
 	return $output;
-
 }
 
 
@@ -55,6 +57,7 @@ $wcefr_update_checker = PucFactory::buildUpdateChecker(
  * Secure update check with the Premium Key
  *
  * @param  array $query_args the default args.
+ *
  * @return array            the updated args
  */
 function wcefr_secure_update_check( $query_args ) {
@@ -64,11 +67,9 @@ function wcefr_secure_update_check( $query_args ) {
 	if ( $key ) {
 
 		$query_args['premium-key'] = $key;
-
 	}
 
 	return $query_args;
-
 }
 $wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
 
@@ -78,6 +79,8 @@ $wcefr_update_checker->addQueryArgFilter( 'wcefr_secure_update_check' );
  *
  * @param  array $plugin_data plugin information.
  * @param  array $response    available plugin update information.
+ *
+ * @return void
  */
 function wcefr_update_message( $plugin_data, $response ) {
 
@@ -103,7 +106,6 @@ function wcefr_update_message( $plugin_data, $response ) {
 		} elseif ( '7082' !== $decoded_key[2] ) {
 
 			$message = 'It seems like your <strong>Premium Key</strong> is not valid. Please, click <a href="https://www.ilghera.com/product/wc-exporter-for-reviso-premium/" target="_blank">here</a> for prices and details.';
-
 		}
 	}
 

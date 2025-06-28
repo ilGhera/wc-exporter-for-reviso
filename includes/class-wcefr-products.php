@@ -773,15 +773,14 @@ class WCEFR_Products {
 			/*Modify the query based on the admin categories selection */
 			if ( is_array( $terms ) && ! empty( $terms ) ) {
 
-                $args['category'] = $terms; 
+                $args['product_cat_id'] = $terms;
 			}
+
+            $products = wc_get_products( $args );
 
 			/*Update the db*/
 			update_option( 'wcefr-products-categories', $terms );
 			update_option( 'wcefr-departmental-distribution', $dist );
-
-			$response = array();
-			$products = wc_get_products( $args );
 
 			if ( $products ) {
 
@@ -809,6 +808,7 @@ class WCEFR_Products {
 								);
 							}
 						}
+
 					} else {
 
 						/*Schedule single event*/

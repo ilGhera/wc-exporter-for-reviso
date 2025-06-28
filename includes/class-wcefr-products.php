@@ -639,7 +639,7 @@ class WCEFR_Products {
 		$sku = $product->get_sku() ? $product->get_sku() : ( 'wc-' . $product->get_id() );
 
 		/*Departmental distribution*/
-		$specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
+        $specific_dist = $product->get_meta( 'wcefr-departmental-distribution', true );
 		$generic_dist  = get_option( 'wcefr-departmental-distribution' );
 		$dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
 
@@ -766,23 +766,14 @@ class WCEFR_Products {
 			$response = array();
 
 			$args = array(
-				'post_type'      => array(
-					'product',
-				),
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
+				'status' => 'publish',
+				'limit'  => -1,
 			);
 
 			/*Modify the query based on the admin categories selection */
 			if ( is_array( $terms ) && ! empty( $terms ) ) {
 
-				$args['tax_query'] = array(
-					array(
-						'taxonomy' => 'product_cat',
-						'field'    => 'term_id',
-						'terms'    => $terms,
-					),
-				);
+                $args['category'] = $terms; 
 			}
 
 			/*Update the db*/
@@ -790,17 +781,15 @@ class WCEFR_Products {
 			update_option( 'wcefr-departmental-distribution', $dist );
 
 			$response = array();
-			$posts    = get_posts( $args );
+			$products = wc_get_products( $args );
 
-			if ( $posts ) {
+			if ( $products ) {
 
 				$n = 0;
 
-				foreach ( $posts as $post ) {
+				foreach ( $products as $product ) {
 
 					$n++;
-
-					$product = wc_get_product( $post->ID );
 
 					if ( $product->is_type( 'variable' ) ) {
 
@@ -826,7 +815,7 @@ class WCEFR_Products {
 						as_enqueue_async_action(
 							'wcefr_export_single_product_event',
 							array(
-								'product_id' => $post->ID,
+								'product_id' => $product->get_id(),
 							),
 							'wcefr_export_single_product'
 						);

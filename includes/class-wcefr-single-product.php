@@ -64,7 +64,7 @@ class WCEFR_Single_Product {
 	public function render_meta_box_content( $post ) {
 
 		wp_nonce_field( 'wcefr-meta-box', 'wcefr-meta-box-nonce' );
-
+        $product = wc_get_product( $post->ID );
 		?>
 		<p>
 			<label for="wcefr-departmental-distribution">
@@ -79,7 +79,7 @@ class WCEFR_Single_Product {
 
 			/*Get the value from the db*/
 			$general_dist = get_option( 'wcefr-departmental-distribution' );
-			$dist         = get_post_meta( $post->ID, 'wcefr-departmental-distribution', true );
+            $dist         = $product->get_meta( 'wcefr-departmental-distribution' );
 			$saved_dist   = '' !== $dist ? $dist : $general_dist;
 
 			if ( is_array( $distributions ) ) {

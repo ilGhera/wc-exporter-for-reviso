@@ -645,7 +645,7 @@ class WCEFR_Products {
 
 		/*Sale price*/
 		$sale_price  = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
-		$description = utf8_encode( $product->get_description() );
+        $description = mb_convert_encoding( $product->get_description(), 'UTF-8', 'ISO-8859-1' );
 
 		/*Get the product volume if available*/
 		$volume = 0;

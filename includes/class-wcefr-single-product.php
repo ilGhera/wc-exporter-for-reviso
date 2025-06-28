@@ -113,10 +113,11 @@ class WCEFR_Single_Product {
 
 		if ( isset( $_POST['wcefr-departmental-distribution'], $_POST['wcefr-meta-box-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-meta-box-nonce'] ) ), 'wcefr-meta-box' ) ) {
 
+            $product = wc_get_product( $post_id );
 			$dist = sanitize_text_field( wp_unslash( $_POST['wcefr-departmental-distribution'] ) );
 
-			update_post_meta( $post_id, 'wcefr-departmental-distribution', $dist );
-
+            $product->update_meta_data( 'wcefr-departmental-distribution', $dist );
+            $product->save();
 		}
 
 		return $post_id;

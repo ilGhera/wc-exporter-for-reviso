@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -94,11 +96,9 @@ class WCEFR_Orders {
 			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			add_action( 'manage_shop_order_posts_custom_column', array( $this, 'wc_columns_content' ), 10, 2 );
 			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
 
 			/* Filters */
-			add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
 			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
 		}
 
@@ -112,11 +112,27 @@ class WCEFR_Orders {
 	 */
 	public function init() {
 
+         /**
+         * Check if the OrderUtil class exists for compatibility with older WC versions.
+         * If OrderUtil does not exist, HPOS is not supported or very old, so legacy hooks are used.
+         */
+        if ( class_exists( OrderUtil::class ) && OrderUtil::custom_orders_table_usage_is_enabled() ) {
+
+            /* HPOS is active */
+            add_filter( 'manage_woocommerce_page_wc-orders_columns', array( $this, 'wc_columns_head' ) );
+            add_action( 'manage_woocommerce_page_wc-orders_custom_column', array( $this, 'wc_columns_content' ), 10, 2 );
+
+        } else {
+
+            /* HPOS is not active */
+            add_filter( 'manage_edit-shop_order_columns', array( $this, 'wc_columns_head' ) );
+            add_action( 'manage_shop_order_posts_custom_column', array( $this, 'wc_columns_content_legacy' ), 10, 2 );
+        }
+        
 		/*Export orders automatically to Reviso*/
 		if ( $this->export_orders ) {
 
 			add_action( 'woocommerce_thankyou', array( $this, 'single_order_async_action' ) );
-
 		}
 
 		/*Create invoices in Reviso with WC completed orders */
@@ -165,11 +181,51 @@ class WCEFR_Orders {
 	 * Set the preview invoice button
 	 *
 	 * @param  string $column   the WC order index column.
+	 * @param  int    $order_id the WC order.
+	 *
+	 * @return mixed
+	 */
+	public function wc_columns_content( $column, $order ) {
+
+		if ( 'order_invoice' === $column ) {
+
+			/* $invoice_number = get_post_meta( $order_id, 'wcefr-invoice', true ); */
+            $invoice_number = $order->get_meta( 'wcefr-invoice' );
+
+			if ( $invoice_number ) {
+
+				$icon = WCEFR_URI . 'images/pdf.png';
+
+				echo '<a href="?wcefr-preview=true&order-id=' . esc_attr( $order->get_id() ) . '" target="_blank" title="' . esc_attr( $invoice_number ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+
+			} else {
+
+				$icon      = WCEFR_URI . 'images/pdf-black.png';
+				$scheduled = as_has_scheduled_action(
+					'wcefr_export_single_order_event',
+					array(
+						'order_id' => $order->get_id(),
+					),
+					'wcefr_export_single_order',
+				);
+
+				if ( 'completed' === $order->get_status() && $scheduled ) {
+
+					echo '<a class="not-available" title="' . esc_attr__( 'Not available yet', 'wc-exporter-for-reviso' ) . '"><img src="' . esc_url( $icon ) . '"></a>';
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set the preview invoice button in legacy mode
+	 *
+	 * @param  string $column   the WC order index column.
 	 * @param  int    $order_id the WC order id.
 	 *
 	 * @return mixed
 	 */
-	public function wc_columns_content( $column, $order_id ) {
+	public function wc_columns_content_legacy( $column, $order_id ) {
 
 		if ( 'order_invoice' === $column ) {
 

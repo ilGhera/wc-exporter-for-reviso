@@ -56,3 +56,15 @@ function load_wc_exporter_for_reviso() {
 }
 add_action( 'after_setup_theme', 'load_wc_exporter_for_reviso', 1 );
 
+/**
+ * HPOS compatibility
+ */
+add_action(
+	'before_woocommerce_init',
+	function() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+

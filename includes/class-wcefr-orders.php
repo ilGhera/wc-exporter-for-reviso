@@ -96,7 +96,8 @@ class WCEFR_Orders {
 			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
-			add_action( 'admin_print_styles', array( $this, 'invoice_column_style' ) );
+            add_action( 'admin_enqueue_scripts', array( $this, 'invoice_column_style' ) );
+
 
 			/* Filters */
 			add_filter( 'woocommerce_email_attachments', array( $this, 'email_attachments' ), 10, 3 );
@@ -154,14 +155,41 @@ class WCEFR_Orders {
 		}
 	}
 
-	/**
-	 * Add style to the Invoice column in the orders index
-	 */
-	public function invoice_column_style() {
+    /**
+     * Add style to the Invoice column in the orders index.
+     * Adapts CSS selector for HPOS compatibility.
+     *
+     * @return void
+     */
+    public function invoice_column_style() {
 
-		$css = '.post-type-shop_order .wp-list-table .column-order_invoice { width: 5%; text-align: center; }';
-		wp_add_inline_style( 'woocommerce_admin_styles', $css );
-	}
+        /* Initialize CSS variable. */
+        $css = '';
+
+        /* Check if OrderUtil class exists and HPOS is enabled. */
+        if ( class_exists( OrderUtil::class ) && OrderUtil::custom_orders_table_usage_is_enabled() ) {
+
+            error_log( 'STYLE' );
+            /* CSS for HPOS enabled environment. */
+            $css  = '.wc-orders-list-table-shop_order #order_invoice.column-order_invoice, '; /* Header cell */
+            $css .= '.wc-orders-list-table-shop_order .type-shop_order .column-order_invoice {'; /* Body cell */
+            $css .= 'width: 5%;';
+            $css .= 'text-align: center;';
+            $css .= '}';
+
+        } else {
+
+            /* CSS for legacy (non-HPOS) environment. */
+            $css = '.post-type-shop_order .wp-list-table .column-order_invoice { width: 5%; text-align: center; }';
+        }
+
+        /* Enqueue the inline style. */
+        if ( ! empty( $css ) ) {
+
+            /* wp_add_inline_style( 'woocommerce_admin_styles', $css ); */
+            wp_add_inline_style( 'wcefr-style', $css );
+        }
+    }
 
 	/**
 	 * Add the title to the Invoice column

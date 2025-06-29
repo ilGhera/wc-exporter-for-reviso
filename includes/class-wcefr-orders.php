@@ -169,7 +169,6 @@ class WCEFR_Orders {
         /* Check if OrderUtil class exists and HPOS is enabled. */
         if ( class_exists( OrderUtil::class ) && OrderUtil::custom_orders_table_usage_is_enabled() ) {
 
-            error_log( 'STYLE' );
             /* CSS for HPOS enabled environment. */
             $css  = '.wc-orders-list-table-shop_order #order_invoice.column-order_invoice, '; /* Header cell */
             $css .= '.wc-orders-list-table-shop_order .type-shop_order .column-order_invoice {'; /* Body cell */
@@ -217,8 +216,7 @@ class WCEFR_Orders {
 
 		if ( 'order_invoice' === $column ) {
 
-			/* $invoice_number = get_post_meta( $order_id, 'wcefr-invoice', true ); */
-            $invoice_number = $order->get_meta( 'wcefr-invoice' );
+            $invoice_number = $order->get_meta( 'wcefr-invoice', true );
 
 			if ( $invoice_number ) {
 
@@ -255,9 +253,11 @@ class WCEFR_Orders {
 	 */
 	public function wc_columns_content_legacy( $column, $order_id ) {
 
+        $order = wc_get_order( $order_id );
+
 		if ( 'order_invoice' === $column ) {
 
-			$invoice_number = get_post_meta( $order_id, 'wcefr-invoice', true );
+            $invoice_number = $order->get_meta( 'wcefr-invoice', true );
 
 			if ( $invoice_number ) {
 
@@ -268,7 +268,6 @@ class WCEFR_Orders {
 			} else {
 
 				$icon      = WCEFR_URI . 'images/pdf-black.png';
-				$order     = wc_get_order( $order_id );
 				$scheduled = as_has_scheduled_action(
 					'wcefr_export_single_order_event',
 					array(
@@ -587,6 +586,7 @@ class WCEFR_Orders {
 				$n++;
 				$item_data = $item->get_data();
 				$product   = $item->get_product();
+                $vat_rate  = 0.0;
 
 				if ( $product ) {
 
@@ -621,7 +621,7 @@ class WCEFR_Orders {
 					/*Departmental distribution*/
 					if ( $class->dimension_module() ) {
 
-						$specific_dist = get_post_meta( $product->get_id(), 'wcefr-departmental-distribution', true );
+                        $specific_dist = $order->get_meta( 'wcefr-departmental-distribution', true );
 						$generic_dist  = get_option( 'wcefr-departmental-distribution' );
 						$dist          = 0 !== intval( $specific_dist ) ? $specific_dist : $generic_dist;
 						$dist          = apply_filters( 'wcefr-product-dep-distribution', $dist, $order->get_id() );
@@ -1095,7 +1095,7 @@ class WCEFR_Orders {
 		$company_name           = $order->get_billing_company();
 		$customer_name          = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
 		$client_name            = $company_name ? $company_name : $customer_name;
-		$pa_code                = get_post_meta( $order->get_id(), '_billing_wcefr_pa_code', true );
+		$pa_code                = $order->get_meta( '_billing_wcefr_pa_code', true ); 
 		$transport_amount       = floatval( wc_format_decimal( $order->get_total_shipping(), 10 ) );
 		$transport_vat_amount   = floatval( wc_format_decimal( $order->get_shipping_tax(), 10 ) );
 		$transport_vat_rate     = $this->get_percentage( $transport_vat_amount, $transport_amount );
@@ -1220,7 +1220,7 @@ class WCEFR_Orders {
 				/*An invoice for this order is ready on Reviso*/
 				if ( $invoice && isset( $output->id ) ) {
 
-					update_post_meta( $order_id, 'wcefr-invoice', $output->id );
+                    $order->update_meta_data( 'wcefr-invoice', $output->id );
 
 					if ( $this->issue_invoices ) {
 
@@ -1257,7 +1257,7 @@ class WCEFR_Orders {
 			/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
 			if ( isset( $invoice_exists['number'] ) ) {
 
-				update_post_meta( $order_id, 'wcefr-invoice', $invoice_exists['number'] );
+                $order->update_meta_data( 'wcefr-invoice', $invoice_exists['number'] );
 			}
 		}
 	}
@@ -1302,55 +1302,98 @@ class WCEFR_Orders {
 		);
 	}
 
-	/**
-	 * Export WC orders to Reviso
-	 */
-	public function export_orders() {
+    /**
+     * Export WC orders to Reviso
+     *
+     * @return void
+     */
+    public function export_orders() {
 
-		if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-export-orders-nonce'] ) ), 'wcefr-export-orders' ) ) {
+        if ( isset( $_POST['wcefr-export-orders-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wcefr-export-orders-nonce'] ) ), 'wcefr-export-orders' ) ) {
 
-			$statuses = isset( $_POST['statuses'] ) ? $this->sanitize_array( $_POST['statuses'] ) : array( 'any' );
-			$response = array();
-			$args     = array(
-				'post_type'      => 'shop_order',
-				'posts_per_page' => -1,
-			);
+            $statuses = isset( $_POST['statuses'] ) ? $this->sanitize_array( $_POST['statuses'] ) : array( 'any' );
+            $response = array();
+            $order_ids = array(); /* Initialize an array to store order IDs. */
 
-			/*Modify the query with the orders statuses choosed by the admin*/
-			if ( is_array( $statuses ) && ! empty( $statuses ) ) {
+            /* Update the database option. */
+            update_option( 'wcefr-orders-statuses', $statuses );
 
-				$args['post_status'] = $statuses;
+            /* Conditionally retrieve orders based on HPOS status. */
+            if ( class_exists( OrderUtil::class ) && OrderUtil::custom_orders_table_usage_is_enabled() ) {
 
-				/*Update the db*/
-				update_option( 'wcefr-orders-statuses', $statuses );
-			}
+                /* HPOS is enabled. Use wc_get_orders(). */
+                $args = array(
+                    'limit'   => -1, /* Retrieve all matching orders. */
+                    'orderby' => 'id',
+                    'order'   => 'ASC',
+                );
 
-			$posts = get_posts( $args );
+                /* Filter orders by status. */
+                if ( ! empty( $statuses ) && ! in_array( 'any', $statuses, true ) ) {
 
-			$n = 0;
+                    $args['status'] = $statuses;
+                }
 
-			if ( $posts ) {
+                $orders_query = new WC_Order_Query( $args ); /* Use WC_Order_Query for better control. */
+                $orders = $orders_query->get_orders();
 
-				foreach ( $posts as $post ) {
+                foreach ( $orders as $order ) {
 
-					$n++;
+                    if ( $order instanceof WC_Order ) {
 
-					/*Cron event*/
-					$this->single_order_async_action( $post->ID );
-				}
-			}
+                        $order_ids[] = $order->get_id(); /* Store the order ID. */
+                    }
+                }
 
-			$response[] = array(
-				'ok',
-				/* translators: users count */
-				esc_html( sprintf( __( '%d order(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
-			);
+            } else {
 
-			echo wp_json_encode( $response );
-		}
+                /* HPOS is not enabled or not available. Fallback to get_posts(). */
+                $args = array(
+                    'post_type'      => 'shop_order',
+                    'posts_per_page' => -1,
+                );
 
-		exit;
-	}
+                /* Filter orders by status. */
+                if ( empty( $statuses ) || in_array( 'any', $statuses, true ) ) {
+
+                    $args['post_status'] = 'any'; /* 'any' for get_posts() means all statuses. */
+
+                } else {
+
+                    $args['post_status'] = $statuses; /* Specific statuses for get_posts(). */
+                }
+
+                $posts = get_posts( $args );
+
+                foreach ( $posts as $post ) {
+
+                    $order_ids[] = $post->ID; /* Store the post ID (which is the order ID in legacy mode). */
+                }
+            }
+
+            $n = 0; /* Counter for processed orders. */
+
+            if ( ! empty( $order_ids ) ) {
+
+                foreach ( $order_ids as $order_id ) {
+
+                    $n++;
+                    /* Cron event for single order export. */
+                    $this->single_order_async_action( $order_id );
+                }
+            }
+
+            $response[] = array(
+                'ok',
+                /* translators: %d: number of orders */
+                esc_html( sprintf( __( '%d order(s) export process has begun', 'wc-exporter-for-reviso' ), $n ) ),
+            );
+
+            echo wp_json_encode( $response );
+        }
+
+        exit;
+    }
 
 	/**
 	 * Delete the single order from Reviso

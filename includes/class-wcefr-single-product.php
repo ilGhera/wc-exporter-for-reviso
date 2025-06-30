@@ -4,14 +4,16 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.2.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Single_Product
  */
 class WCEFR_Single_Product {
-
 
 	/**
 	 * The constructor
@@ -26,11 +28,8 @@ class WCEFR_Single_Product {
 		if ( $class->dimension_module() ) {
 
 			add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-
 		}
-
 	}
-
 
 	/**
 	 * Add the new metabox to the product page
@@ -51,11 +50,8 @@ class WCEFR_Single_Product {
 				'side',
 				'low'
 			);
-
 		}
-
 	}
-
 
 	/**
 	 * Render Meta Box content.
@@ -67,7 +63,7 @@ class WCEFR_Single_Product {
 	public function render_meta_box_content( $post ) {
 
 		wp_nonce_field( 'wcefr-meta-box', 'wcefr-meta-box-nonce' );
-
+        $product = wc_get_product( $post->ID );
 		?>
 		<p>
 			<label for="wcefr-departmental-distribution">
@@ -82,7 +78,7 @@ class WCEFR_Single_Product {
 
 			/*Get the value from the db*/
 			$general_dist = get_option( 'wcefr-departmental-distribution' );
-			$dist         = get_post_meta( $post->ID, 'wcefr-departmental-distribution', true );
+            $dist         = $product->get_meta( 'wcefr-departmental-distribution' );
 			$saved_dist   = '' !== $dist ? $dist : $general_dist;
 
 			if ( is_array( $distributions ) ) {
@@ -100,8 +96,7 @@ class WCEFR_Single_Product {
 		<?php
 		wcefr_go_premium();
 	}
-
-
 }
+
 new WCEFR_Single_Product();
 

@@ -4,9 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
+ *
  * @since 1.2.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <!-- Export form -->
@@ -48,7 +50,6 @@
 
 </form>
 
-
 <!-- Delete form -->
 <form name="wcefr-delete-customers" class="wcefr-form one-of"  method="post" action="">
 
@@ -88,4 +89,3 @@
 	</p>
 
 </form>
-

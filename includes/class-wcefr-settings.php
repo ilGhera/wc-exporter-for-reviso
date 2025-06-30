@@ -4,13 +4,23 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.2.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WCEFR_Settings
  */
 class WCEFR_Settings {
+
+	/**
+	 * WCEFR_Call
+	 *
+	 * @var WCEFR_Call
+	 */
+	public $wcefr_call;
 
 	/**
 	 * Class constructor
@@ -26,11 +36,9 @@ class WCEFR_Settings {
 			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
 			add_action( 'wp_ajax_wcefr-clear-cache', array( $this, 'clear_cache' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
-
 		}
 
 		$this->wcefr_call = new WCEFR_Call();
-
 	}
 
 	/**
@@ -43,6 +51,7 @@ class WCEFR_Settings {
 		$screen = get_current_screen();
 
 		if ( 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
+
 			wp_enqueue_script( 'chosen', WCEFR_URI . '/vendor/harvesthq/chosen/chosen.jquery.min.js', array( 'jquery' ), WCEFR_VERSION, false );
 			wp_enqueue_script( 'tzcheckbox', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.js', array( 'jquery' ), WCEFR_VERSION, false );
 
@@ -50,9 +59,7 @@ class WCEFR_Settings {
 			wp_enqueue_style( 'font-awesome', '//use.fontawesome.com/releases/v5.8.1/css/all.css', array(), WCEFR_VERSION );
 			wp_enqueue_style( 'tzcheckbox-style', WCEFR_URI . 'js/tzCheckbox/jquery.tzCheckbox/jquery.tzCheckbox.css', array(), WCEFR_VERSION );
 		}
-
 	}
-
 
 	/**
 	 * Check if the current page is the plugin options page
@@ -64,11 +71,10 @@ class WCEFR_Settings {
 		$screen = get_current_screen();
 
 		if ( isset( $screen->id ) && 'woocommerce_page_wc-exporter-for-reviso' === $screen->id ) {
+
 			return true;
 		}
-
 	}
-
 
 	/**
 	 * Save the Agreement Grant Token in the db
@@ -78,13 +84,12 @@ class WCEFR_Settings {
 	public function save_agt() {
 
 		if ( $this->is_wcefr_admin() && isset( $_GET['token'] ) ) {
+
 			$token = sanitize_text_field( wp_unslash( $_GET['token'] ) );
 
 			update_option( 'wcefr-agt', $token );
 		}
-
 	}
-
 
 	/**
 	 * Deletes the Agreement Grant Token from the db
@@ -96,14 +101,13 @@ class WCEFR_Settings {
 		delete_option( 'wcefr-agt' );
 
 		exit;
-
 	}
-
 
 	/**
 	 * Display the status of the connection to Reviso
 	 *
 	 * @param bool $return if true the method returns only if the connection is set.
+	 *
 	 * @return mixed
 	 */
 	public function check_connection_callback( $return = false ) {
@@ -123,12 +127,10 @@ class WCEFR_Settings {
 			} else {
 
 				echo '<h4 class="wcefr-connection-status"><span class="label label-success">' . esc_html( __( 'Connected', 'wc-exporter-for-reviso' ) ) . '</span></h4>';
-
 			}
 		}
 
 		exit;
-
 	}
 
 	/**
@@ -156,7 +158,6 @@ class WCEFR_Settings {
 		foreach ( $transients as $transient ) {
 
 			delete_transient( $transient );
-
 		}
 
 		/* Response message */
@@ -170,7 +171,7 @@ class WCEFR_Settings {
 
 		exit;
 	}
-
 }
+
 new WCEFR_Settings( true );
 

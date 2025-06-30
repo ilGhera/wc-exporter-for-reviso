@@ -4,9 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
+ *
  * @since 1.2.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <!-- Reviso connection -->
@@ -32,7 +34,6 @@
 			</td>
 		</tr>
 	</table>
-
 
 </form>
 

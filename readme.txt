@@ -1,9 +1,10 @@
 === WooCommerce Exporter for Reviso ===
 Contributors: ghera74
-Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione, Invoice
-Version: 1.2.0
-Requires at least: 4.0
-Tested up to: 6.2
+Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
+Version: 1.2.1
+Requires at least: 5.0
+Tested up to: 6.8
+WC tested up to: 9
 License: GPLv2
 
 Export suppliers, products, customers and orders from your Woocommerce store to Reviso. Export new orders and create invoices in real time.
@@ -75,97 +76,114 @@ This plugin sends data to an external service, like the products bought by the u
 
 == Changelog ==
 
+= 1.2.1
+Release Date: 30 June 2025
+
+    * New Feature: Full HPOS (High-Performance Order Storage) Support
+    * New Feature: Advanced Order Export Management with HPOS/Legacy support for meta handling
+    * New Feature: Added a filter hook to modify the departmental distribution for individual orders
+    * Enhancement: WordPress 6.8 support
+    * Enhancement: WooCommerce 9.9 support
+    * Improvement: Optimized HPOS/Legacy support for invoice column styling
+    * Refactoring: Implemented direct access prevention in all template files and core plugin classes
+    * Refactoring: Applied coding standards and improved code spacing
+    * Refactoring: Enhanced class variable declarations
+    * Update: Plugin Update Checker
+    * Update: Action Scheduler
+    * Update: ilGhera Notice
+
+
 = 1.2.0
 Release Date: 23 May 2023
 
-* Enhancement: (Premium) Performance improvement on exporting new orders in real time
-* Enhancement: Performance improvement on compliting orders in back-end
-* Enhancement: WP Coding Standards 
-* Update: (Premium) Plugin Update Checker
-* Update: (Premium) Action Scheduler 
-* Bug Fix: Continuous calls to the endpoint self in some cases 
+    * Enhancement: (Premium) Performance improvement on exporting new orders in real time
+    * Enhancement: Performance improvement on compliting orders in back-end
+    * Enhancement: WP Coding Standards 
+    * Update: (Premium) Plugin Update Checker
+    * Update: (Premium) Action Scheduler 
+    * Bug Fix: Continuous calls to the endpoint self in some cases 
 
 
 = 1.1.0
 Release Date: 18 October 2022
 
-* Enhancement: Export WC orders to Reviso 
-* Enhancement: Export WC products to Reviso 
-* Enhancement: Save users role for clients and suppliers with Ajax 
-* Enhancement: Export and update products in real time (Premium)
-* Enhancement: Export and update suppliers in real time (Premium)
-* Enhancement: Export and update clients in real time (Premium)
-* Update: Action Scheduler
-* Update: Plugin Update Checker (Premium)
-* Bug fix: Departmental distribution missed in new orders exported
+    * Enhancement: Export WC orders to Reviso 
+    * Enhancement: Export WC products to Reviso 
+    * Enhancement: Save users role for clients and suppliers with Ajax 
+    * Enhancement: Export and update products in real time (Premium)
+    * Enhancement: Export and update suppliers in real time (Premium)
+    * Enhancement: Export and update clients in real time (Premium)
+    * Update: Action Scheduler
+    * Update: Plugin Update Checker (Premium)
+    * Bug fix: Departmental distribution missed in new orders exported
 
 
 = 1.0.0
 Release Date: 25 April 2022
 
-* Bug fix: Impossible delete Number Series transient
-* Bug fix: Possible error getting the remote VAT code
-* Bug fix: Departmental distribution options available even with Dimension module disabled
-* Bug fix: Bad discount percentage because decimal numbers were missed
-* Bug fix: VatIncluded value not dynamic
-* Bug fix: Product volume not exported to Reviso
+    * Bug fix: Impossible delete Number Series transient
+    * Bug fix: Possible error getting the remote VAT code
+    * Bug fix: Departmental distribution options available even with Dimension module disabled
+    * Bug fix: Bad discount percentage because decimal numbers were missed
+    * Bug fix: VatIncluded value not dynamic
+    * Bug fix: Product volume not exported to Reviso
 
 
 = 0.9.6
 Release Date: 14 October 2021
 
-* Enhancement: Customer name is now used as contact in Reviso when the company name is present
-* Bug fix: Product variations not exported while using category filter tool
+    * Enhancement: Customer name is now used as contact in Reviso when the company name is present
+    * Bug fix: Product variations not exported while using category filter tool
 
 
 = 0.9.5
 Release Date: 28 April 2021 
 
-* Enhancement: (Premium) PDF icon displayed even for draft invoices
-* Enhancement: Default receiver code added automatically when necessary
-* Bug fix: (Premium) Customer data already present in revision not modified while exporting orders
-* Bug fix: Bad email address allowed in PEC field
+    * Enhancement: (Premium) PDF icon displayed even for draft invoices
+    * Enhancement: Default receiver code added automatically when necessary
+    * Bug fix: (Premium) Customer data already present in revision not modified while exporting orders
+    * Bug fix: Bad email address allowed in PEC field
 
 
 = 0.9.4 =
 Release Date: 15 April 2021 
 
-* Enhancement: (Premium) Choose the Reviso user group to use for auto exported WooCommerce orders 
-* Bug fix: Backend scripts loaded even where not necessary
-* Bug fix: Customer phone number not exported 
-* Bug Fix: Shop Country statically set to Italy
+    * Enhancement: (Premium) Choose the Reviso user group to use for auto exported WooCommerce orders 
+    * Bug fix: Backend scripts loaded even where not necessary
+    * Bug fix: Customer phone number not exported 
+    * Bug Fix: Shop Country statically set to Italy
 
 
 = 0.9.3 =
 Release Date: 16 February 2021 
 
-* Bug fix: Billing data entered not recognized 
+    * Bug fix: Billing data entered not recognized 
 
 
 = 0.9.2 =
 Release Date: 8 February 2021 
 
-* Enhancement: (Premium) Choose a specific number series for receipts
-* Bug fix: VIES check not working in some cases with italian VAT number
-* Bug fix: Billing information not required by the selected document type
+    * Enhancement: (Premium) Choose a specific number series for receipts
+    * Bug fix: VIES check not working in some cases with italian VAT number
+    * Bug fix: Billing information not required by the selected document type
 
 
 = 0.9.1 = 
 Release Date: 20 June 2020
 
-* Enhancement: Now working even if Inventory module is not activated in Reviso
-* Enhancement: VIES VAT number validation
-* Enhancement: New option for mandatory fiscal code
-* Enhancement: New option for mandatory VAT code only in European Union countries
-* Bug fix: Company name field hidden with private invoice 
-* Bug fix: Impossible exporting payment methods with name longer than 50 
-* Bug fix: Wrong customers group assigned to foreign users
-* Bug fix: Wrong IVA Zone assigned to foreign users
-* Bug fix: Get province called even if country is not Italy
-* Bug fix: Product without sku non exporterd 
+    * Enhancement: Now working even if Inventory module is not activated in Reviso
+    * Enhancement: VIES VAT number validation
+    * Enhancement: New option for mandatory fiscal code
+    * Enhancement: New option for mandatory VAT code only in European Union countries
+    * Bug fix: Company name field hidden with private invoice 
+    * Bug fix: Impossible exporting payment methods with name longer than 50 
+    * Bug fix: Wrong customers group assigned to foreign users
+    * Bug fix: Wrong IVA Zone assigned to foreign users
+    * Bug fix: Get province called even if country is not Italy
+    * Bug fix: Product without sku non exporterd 
 
 
 = 0.9.0 = 
 Release Date: 21 May 2020
 
-* First release
+    * First release

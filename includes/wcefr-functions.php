@@ -4,14 +4,18 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/includes
+ *
  * @since 1.2.0
  */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns the string passed less long than the limit specified
  *
  * @param  string $text  the full text.
  * @param  int    $limit the string length limit.
+ *
  * @return string
  */
 function avoid_length_exceed( $text, $limit ) {
@@ -29,14 +33,11 @@ function avoid_length_exceed( $text, $limit ) {
 
 			/*Product name and description*/
 			$output = substr( $text, 0, ( $limit - 4 ) ) . ' ...';
-
 		}
 	}
 
 	return $output;
-
 }
-
 
 /**
  * Go Premium button
@@ -62,6 +63,5 @@ function wcefr_go_premium() {
 	);
 
 	echo wp_kses( $output, $allowed );
-
 }
 

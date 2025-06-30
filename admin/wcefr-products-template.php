@@ -4,9 +4,11 @@
  *
  * @author ilGhera
  * @package wc-exporter-for-reviso/admin
+ *
  * @since 1.2.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <!-- Export form -->
@@ -46,7 +48,7 @@
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Departmental distribution', 'wc-exporter-for-reviso' ); ?></th>
 				<td>
-					<select class="wcefr-departmental-distribution" name="wcefr-departmental-distribution">
+					<select class="wcefr-departmental-distribution wcefr-select" name="wcefr-departmental-distribution">
 					<option value=""><?php esc_html_e( 'Select', 'wc-exporter-for-reviso' ); ?></option>
 						<?php
 						$distributions = $class->get_remote_departmental_distributions();

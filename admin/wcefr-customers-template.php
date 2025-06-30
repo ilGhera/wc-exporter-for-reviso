@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $synchronize_customers = get_option( 'wcefr-synchronize-customers' ) ? get_option( 'wcefr-synchronize-customers' ) : 0;
 ?>
 

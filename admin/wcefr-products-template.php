@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 /*Get value from the db*/
 $synchronize_products = get_option( 'wcefr-synchronize-products' );
 ?>

@@ -8,6 +8,8 @@
  * @since 1.3.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $synchronize_suppliers = get_option( 'wcefr-synchronize-suppliers' ) ? get_option( 'wcefr-synchronize-suppliers' ) : 0;
 ?>
 

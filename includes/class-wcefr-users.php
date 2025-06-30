@@ -30,6 +30,13 @@ class WCEFR_Users {
 	private $customers_role;
 
 	/**
+	 * WCEFR_Call
+	 *
+	 * @var WCEFR_Call
+	 */
+	private $wcefr_call;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param boolean $init fire hooks if true.

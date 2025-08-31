@@ -1,4 +1,4 @@
-=== WooCommerce Exporter for Reviso ===
+=== ilGhera WooCommerce Exporter for Reviso ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
 Version: 1.2.1
@@ -50,28 +50,30 @@ This plugin sends data to an external service, like the products bought by the u
 
 == Installation ==
 
-* Upload the *wc-exporter-for-reviso* directory to your */wp-content/plugins/* directory, using your favorite method (ftp, sftp, scp, etc...)
-* Activate Reviso for WooCommerce from your Plugins page.
-* Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
+**Manual Installation (via FTP/SFTP)**
+
+    * Upload the *wc-exporter-for-reviso* directory to your */wp-content/plugins/* directory, using your favorite method (ftp, sftp, scp, etc...)
+    * Activate ilGhera WooCommerce Exporter for Reviso from your Plugins page.
+    * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
 
 **From your WordPress dashboard**
 
-* Visit *Plugins > Add New*
-* Search for *WC Exporter for Reviso* and download it.
-* Activate Reviso from your Plugins page.
-* Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
+    * Visit *Plugins > Add New*
+    * Search for *ilGhera WooCommerce Exporter for Reviso* and download it.
+    * Activate ilGhera WooCommerce Exporter for Reviso from your Plugins page.
+    * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
 
 
 == Screenshots ==
-1. WordPress users as clients in TeamSystem Reviso
-2. WordPress users as suppliers in Reviso
-3. Export all your WooCommerce products to Reviso
-4. Select one or more WooCommerce orders statuses and export them
-5. Create invoices in real time (1) 
-6. Create invoices in real time (2)
-7. View PDF Invoices directly in WordPress
-8. Check the activities in progress
-9. Invoice checkout fields
+    1. WordPress users as clients in TeamSystem Reviso
+    2. WordPress users as suppliers in Reviso
+    3. Export all your WooCommerce products to Reviso
+    4. Select one or more WooCommerce orders statuses and export them
+    5. Create invoices in real time (1) 
+    6. Create invoices in real time (2)
+    7. View PDF Invoices directly in WordPress
+    8. Check the activities in progress
+    9. Invoice checkout fields
 
 
 == Changelog ==

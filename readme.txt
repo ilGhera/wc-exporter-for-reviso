@@ -1,4 +1,4 @@
-=== WooCommerce Exporter for Reviso - Premium ===
+=== ilGhera WooCommerce Exporter for Reviso - Premium ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
 Version: 1.3.1
@@ -46,7 +46,7 @@ This plugin sends data to an external service, like the products bought by the u
 == Installation ==
 
 * Upload the 'wc-exporter-for-reviso-premium’ directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
-* Activate Reviso for WooCommerce from your Plugins page.
+* Activate ilGhera WooCommerce Exporter for Reviso from your Plugins page.
 * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
 
 

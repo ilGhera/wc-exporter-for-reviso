@@ -1,4 +1,4 @@
-=== ilGhera WooCommerce Exporter for Reviso ===
+=== ilGhera Reviso Exporter for WooCommerce ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
 Version: 1.2.1
@@ -53,15 +53,15 @@ This plugin sends data to an external service, like the products bought by the u
 **Manual Installation (via FTP/SFTP)**
 
     * Upload the *wc-exporter-for-reviso* directory to your */wp-content/plugins/* directory, using your favorite method (ftp, sftp, scp, etc...)
-    * Activate ilGhera WooCommerce Exporter for Reviso from your Plugins page.
-    * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
+    * Activate ilGhera Reviso Exporter for WooCommerce from your Plugins page.
+    * Once Activated, go to WooComerce/ Reviso Exporter for WC menu and set you preferences.
 
 **From your WordPress dashboard**
 
     * Visit *Plugins > Add New*
-    * Search for *ilGhera WooCommerce Exporter for Reviso* and download it.
-    * Activate ilGhera WooCommerce Exporter for Reviso from your Plugins page.
-    * Once Activated, go to WooComerce/ WC Exporter for Reviso menu and set you preferences.
+    * Search for *ilGhera Reviso Exporter for WooCommerce* and download it.
+    * Activate ilGhera Reviso Exporter for WooCommerce from your Plugins page.
+    * Once Activated, go to WooComerce/ Reviso Exporter for WC menu and set you preferences.
 
 
 == Screenshots ==
@@ -78,21 +78,28 @@ This plugin sends data to an external service, like the products bought by the u
 
 == Changelog ==
 
+= 1.2.2
+Release Date: 15 September 2025
+
+    * Enhancement: Plugin name changed
+    * Enhancement: New images
+
+
 = 1.2.1
 Release Date: 30 June 2025
 
     * New Feature: Full HPOS (High-Performance Order Storage) Support
-    * New Feature: Advanced Order Export Management with HPOS/Legacy support for meta handling
-    * New Feature: Added a filter hook to modify the departmental distribution for individual orders
+    * New Feature: (Premium) Advanced Order Export Management with HPOS/Legacy support for meta handling
+    * New Feature: (Premium) Added a filter hook to modify the departmental distribution for individual orders
     * Enhancement: WordPress 6.8 support
     * Enhancement: WooCommerce 9.9 support
-    * Improvement: Optimized HPOS/Legacy support for invoice column styling
+    * Improvement: (Premium) Optimized HPOS/Legacy support for invoice column styling
     * Refactoring: Implemented direct access prevention in all template files and core plugin classes
     * Refactoring: Applied coding standards and improved code spacing
     * Refactoring: Enhanced class variable declarations
-    * Update: Plugin Update Checker
+    * Update: (Premium) Plugin Update Checker
     * Update: Action Scheduler
-    * Update: ilGhera Notice
+    * Update: (Premium) ilGhera Notice
 
 
 = 1.2.0

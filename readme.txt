@@ -1,10 +1,10 @@
 === ilGhera Reviso Exporter for WooCommerce ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
-Version: 1.2.1
+Version: 1.2.2
 Requires at least: 5.0
 Tested up to: 6.8
-WC tested up to: 9
+WC tested up to: 10
 License: GPLv2
 
 Export suppliers, products, customers and orders from your Woocommerce store to Reviso. Export new orders and create invoices in real time.
@@ -79,10 +79,11 @@ This plugin sends data to an external service, like the products bought by the u
 == Changelog ==
 
 = 1.2.2
-Release Date: 15 September 2025
+Release Date: 16 September 2025
 
     * Enhancement: Plugin name changed
     * Enhancement: New images
+    * Enhancement: WooCommerce 10 support
 
 
 = 1.2.1

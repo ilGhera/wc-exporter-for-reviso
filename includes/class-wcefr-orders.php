@@ -1116,7 +1116,8 @@ class WCEFR_Orders {
 				/*An invoice for this order is ready on Reviso*/
 				if ( $invoice && isset( $output->id ) ) {
 
-                    $order->update_meta_data( 'wcefr-invoice', $output->id );
+					$order->update_meta_data( 'wcefr-invoice', $output->id );
+					$order->save();
 				}
 
 				/*Log the error*/
@@ -1131,7 +1132,8 @@ class WCEFR_Orders {
 			/*If the invoice is on Reviso, update the db (useful for bulk orders export)*/
 			if ( isset( $invoice_exists['number'] ) ) {
 
-                $order->update_meta_data( 'wcefr-invoice', $invoice_exists['number'] );
+				$order->update_meta_data( 'wcefr-invoice', $invoice_exists['number'] );
+				$order->save();
 			}
 		}
 	}

@@ -1,9 +1,9 @@
 === ilGhera Reviso Exporter for WooCommerce ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
-Version: 1.2.3
+Version: 1.2.4
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.0
 WC tested up to: 10
 License: GPLv2
 
@@ -77,6 +77,11 @@ This plugin sends data to an external service, like the products bought by the u
 
 
 == Changelog ==
+
+= 1.2.4
+Release Date: 28 May 2026
+
+    * Security Fix: Added capability check and nonce verification to the disconnect AJAX action to prevent unauthorized token deletion
 
 = 1.2.3
 Release Date: 19 February 2026

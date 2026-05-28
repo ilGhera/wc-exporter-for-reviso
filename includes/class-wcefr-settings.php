@@ -98,6 +98,12 @@ class WCEFR_Settings {
 	 */
 	public function disconnect_callback() {
 
+		check_ajax_referer( 'wcefr-disconnect', 'nonce' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( -1, 403 );
+		}
+
 		delete_option( 'wcefr-agt' );
 
 		exit;

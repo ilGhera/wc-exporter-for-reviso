@@ -188,7 +188,8 @@ var wcefrController = function() {
 			$(document).on('click', '.wcefr-disconnect', function(){
 
 				var data = {
-					'action': 'wcefr-disconnect'
+					'action': 'wcefr-disconnect',
+					'nonce': wcefrSettings.disconnectNonce
 				}
 
 				$.post(ajaxurl, data, function(response){

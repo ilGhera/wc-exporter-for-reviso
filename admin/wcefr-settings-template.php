@@ -54,13 +54,15 @@ defined( 'ABSPATH' ) || exit;
 <?php
 /*Nonce*/
 $clear_cache_nonce = wp_create_nonce( 'wcefr-clear-cache' );
+$disconnect_nonce  = wp_create_nonce( 'wcefr-disconnect' );
 
 /*Pass data to the script file*/
 wp_localize_script(
 	'wcefr-js',
 	'wcefrSettings',
 	array(
-		'responseLoading' => WCEFR_URI . 'images/loader.gif',
-		'clearCacheNonce' => $clear_cache_nonce,
+		'responseLoading'  => WCEFR_URI . 'images/loader.gif',
+		'clearCacheNonce'  => $clear_cache_nonce,
+		'disconnectNonce'  => $disconnect_nonce,
 	)
 );

@@ -82,6 +82,9 @@ This plugin sends data to an external service, like the products bought by the u
 Release Date: 28 May 2026
 
     * Security Fix: Added capability check and nonce verification to the disconnect AJAX action to prevent unauthorized token deletion
+    * Enhancement: WordPress 7.0 support
+    * Enhancement: WooCommerce 10 support
+    * Enhancement: Action Scheduler updated to 3.9.3
 
 = 1.2.3
 Release Date: 19 February 2026

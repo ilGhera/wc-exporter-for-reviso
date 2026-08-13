@@ -6,7 +6,7 @@
  * Version: 1.2.4
  * Requires at least: 5.0
  * Tested up to: 7.0
- * WC tested up to: 10
+ * WC tested up to: 11.0.1
  * Author: ilGhera
  * Author URI: https://ilghera.com
  * Text Domain: wc-exporter-for-reviso

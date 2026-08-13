@@ -4,7 +4,7 @@ Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
 Version: 1.2.4
 Requires at least: 5.0
 Tested up to: 7.0
-WC tested up to: 10
+WC tested up to: 11.0.1
 License: GPLv2
 
 Export suppliers, products, customers and orders from your Woocommerce store to Reviso. Export new orders and create invoices in real time.

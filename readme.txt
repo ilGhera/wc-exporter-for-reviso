@@ -1,8 +1,8 @@
 === ilGhera Reviso Exporter for WooCommerce ===
 Contributors: ghera74
 Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
-Version: 1.2.5
-Stable tag: 1.2.5
+Version: 1.2.6
+Stable tag: 1.2.6
 Requires at least: 5.0
 Tested up to: 7.1
 WC tested up to: 11.0.1
@@ -169,6 +169,12 @@ Release Date: 28 April 2021
     * Enhancement: Default receiver code added automatically when necessary
     * Bug fix: (Premium) Customer data already present in revision not modified while exporting orders
     * Bug fix: Bad email address allowed in PEC field
+
+
+= 1.2.6 =
+Release Date: 20 August 2026
+
+    * Compatibility: WordPress 7.1
 
 
 = 1.2.5 =

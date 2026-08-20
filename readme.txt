@@ -4,7 +4,7 @@ Tags: Reviso, Contabilità in Cloud, Team System, Danea Easyfatt, Fatturazione
 Version: 1.2.5
 Stable tag: 1.2.5
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 WC tested up to: 11.0.1
 License: GPLv2
 

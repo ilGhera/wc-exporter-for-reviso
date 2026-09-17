@@ -114,9 +114,77 @@ Multiple plugins, all embedding different versions of Action Scheduler, may be a
 
 Plugins can also load Action Scheduler in atypical ways, occasionally leaving an older-than-expected version initialized. We cannot control this, but should keep it in mind when introducing new APIs.
 
+## Backward Compatibility
+
+Any change to a **public or externally exposed** class, interface, function, or method signature is **high-risk** and **must state its backward-compatibility impact in the PR description**. Note that the parameters added to the published functions over time (`$unique`, `$priority`) are all optional and trailing: that is considered to be a safe change, but should be supported by an update to `as_supports()` (and its list of supported features), as detailed elsewhere in the document.
+
+Parameter names should never be changed for public methods or functions, as this will cause errors if consumers take advantage of named argument syntax.
+
+Treat a symbol as **externally exposed** when it is implemented or consumed outside this repository. When in doubt, assume it is exposed and state the BC impact — this is a library embedded in other people's plugins, so every consumer is code we cannot see, and a fatal introduced here fatals whatever host plugin bundled us.
+
+**As a producer of public API.** The surface third parties consume:
+- The top-level `as_*()` functions in ./functions.php — the declared public API.
+- The `ActionScheduler_*` base classes third parties extend (`ActionScheduler_Store`, `ActionScheduler_Logger`, `ActionScheduler_Lock`, `ActionScheduler_Abstract_QueueRunner`) and the `ActionScheduler_Schedule` interface.
+- The `action_scheduler_*_class` filters, which let a site swap any of those implementations for its own — so code that assumes the concrete class is one of ours breaks those sites.
+- The stored data: the custom tables (`{$wpdb->prefix}actionscheduler_actions`, `_claims`, `_groups`, `_logs`), the `ActionScheduler_Store::STATUS_*` values, the `serialize()`d schedule objects, and the legacy `scheduled-action` post type unmigrated sites still hold rows in.
+- WP CLI commands and parameters. Individual sites may have shell scripts or similar which depend on the existence of these commands, or on the existence of various parameters. Such commands are not always invoked interactively but may run via the system scheduler or similar.
+
+**Multiple versions coexist and the newest one wins.** Per the Bootstrapping section above, the general expectation is that whichever embedded copy is most recent is the one that loads, so a change ships to host plugins that never adopted it and calls arrive from callers written against much older versions. In exceptional and unusual cases, an older version of Action Scheduler may unexpectedly be loaded at runtime and so what you add is not always guaranteed to exist: `as_supports()` is the escape hatch for that. What you remove can still be called by an older host plugin, and there is no escape hatch for that at all, which makes removal effectively permanent.
+
+Adding a required method to a contract external code implements is backward-incompatible — a new `abstract public function` on one of those base classes fatals every third-party subclass on load. Prefer a non-breaking alternative: add a concrete default implementation on the base class rather than an abstract declaration, or introduce a separate new interface. 
+
+Removing a required method from an interface is potentially safe, but should be done with care as it may leave implementations carrying a now-dead method (and those implementations may rely on it being invoked in order to function in a satisfactory manner). .
+
+**Deprecate, don't rename.** Never rename or remove an existing public symbol (class, method, constant, hook, option key) in place. Mark the old one `@deprecated`, add the replacement alongside it, and keep both working through a deprecation window. Deprecated code can be relocated to ./deprecated/ (taking steps to ensure it is still loaded), and `_deprecated_function()` or appropriate equivalent such as `_deprecated_hook()` should be used.
+
+> This rule exists because WooCommerce 10.9.0 was reverted on WP Cloud: a required method added to a published interface fataled every older WooCommerce Stripe Gateway version that implemented it. The same failure mode applies to every contract this library publishes, with a wider blast radius — we do not know which plugins extend us.
+
+### The compatibility surface is wider than PHP signatures
+
+WordPress exposes more contracts than class and function signatures. The following are equally binding: a change to any of them is **high-risk** and requires the same backward-compatibility impact statement in the PR description.
+
+**Hooks and filters are public contracts.** Every `do_action` and `apply_filters` call is an interface that third-party callbacks depend on, including the whole `action_scheduler_*` family and the `pre_as_*` short-circuit filters. Site operators use these in production to keep queues healthy on sites that have never touched our code otherwise. Removing a hook, renaming it, or removing/reordering its arguments breaks every attached callback. Changing *when* or *whether* a hook fires can break consumers that depend on its timing, and here that can mean queued work silently stops running. Additive is the safe path: append new arguments at the end, never remove or reorder existing ones. To retire a hook, fire it through `do_action_deprecated()` / `apply_filters_deprecated()` for a deprecation window instead of deleting it.
+
+**Never trust data that flows through hooks.** Keep hook callback parameters untyped and validate or coerce the value before passing it to strictly typed code, since any callback can receive a value another one produced. And when firing a filter, validate the final return value before using it, since any callback in the chain can return the wrong thing.
+
+**Overridable classes are contracts too, including which of their own methods they call.** The base classes listed above exist to be subclassed, and the `action_scheduler_*_class` filters mean a third-party subclass can be the live implementation on any site. Every public or protected method on them is a contract: changing its signature or removing it breaks those subclasses. Adding a fast path or skip that avoids calling an overridable method silently disables those overrides even though no signature changed: the subclass's code simply stops running. When optimizing such a class, ensure overridable methods are still invoked on every code path, or treat the change as breaking. Adding a *new* method is lower-risk but not free: a third-party subclass may already declare the same name, which fatals when the signatures or visibilities are incompatible - and when they are compatible, that unrelated pre-existing method silently becomes the override. Widening a `private` method to `protected` or `public` is the same event (a name that was invisible joins the contract), so treat it as adding a new method, and prefer distinctive names for both.
+
+**Registered script and style handles are public contracts.** This library registers none today, so the first one to ship opens a new compatibility surface - a deliberate decision, not a side effect of some other change. The moment a handle ships, third-party code can enqueue it or list it as a dependency, and its name is frozen: prefix any handle distinctively (`action-scheduler-`) to keep it clear of third-party names, since a collision is exactly what would force a rename later. To rename one anyway, register the legacy handle as an alias that depends on the new one (the same pattern WordPress core uses for `jquery` → `jquery-core`) rather than removing it; do not register the same file under both handles, or pages with mixed consumers will load it twice.
+
+**Schema updates are one-shot, and older code must survive newer tables.** Table changes ship by incrementing `$schema_version` in the schema classes; each version's update runs once and is marked complete, so never amend a shipped schema version - increment it again. Because this library is embedded, the live copy is whichever registered version wins at load time: a host plugin downgraded or deactivated can leave a copy that is years behind running against tables a newer copy already upgraded, so there is no bounded compatibility window to design against. Every schema change must stay readable by any older shipped code, which in practice means additive columns and keys only; dropping or repurposing a column fatals or corrupts under code that still expects it.
+
+**Do not assume global state.** Actions execute from WP Cron, from the async loopback request, and from WP CLI, and none of those set the globals a front-end request does (`$post`, `$wp_query`, an initialized session or cart) — nor is the host plugin that bundled us necessarily booted. Nothing here may assume WooCommerce is present at all; it is integrated with when detected, never depended on. A newly introduced read of a global in a path reachable from the runner is a fatal or a silent misbehavior in the contexts that do not set it. Guard the exact dependency explicitly: use `function_exists`/`class_exists` for symbols, `isset` for variables, `did_action` for lifecycle state.
+
+**Do not assume single-site.** Multisite changes where data lives: site-scoped vs network-scoped options (`get_option` vs `get_site_option`), per-site tables, user roles and capabilities, and upload paths all differ. Our tables are built from `$wpdb->prefix`, so each site on a network carries its own and each needs creating and upgrading independently. A change that reads or writes site state must state in its PR whether it behaves correctly under multisite — and if it was not tested there, say so explicitly.
+
+**Do not assume install layout.** WordPress could be configured to run in a subdirectory, with relocated `wp-content`, and behind reverse proxies, and this library is rarely installed as a plugin in its own right — it usually sits inside another plugin's directory, and can be loaded from a theme or an mu-plugin. Never build paths or URLs by concatenation from the domain root, and never hardcode a location relative to the plugins directory; derive them via `ActionScheduler::plugin_path()` and `ActionScheduler::plugin_url()`, which resolve against the file that actually loaded us. A path that works standalone and breaks when embedded is a compatibility bug, not an edge case.
+
+### Before changing any public or externally exposed surface (agent checklist)
+
+1. Identify the contract you are touching: signature, hook, stored data, global/scope expectation, site topology, or install layout.
+2. Assume unseen consumers. You cannot enumerate the plugins that embed this library; if the surface is reachable from outside it, someone consumes it.
+3. Prefer the additive path (new optional trailing parameter, concrete method rather than abstract, appended hook argument, new symbol plus deprecation) over changing what exists.
+4. State the impact in the PR description: what changed, who could consume it, and why it is safe or what the deprecation path is.
+5. If you cannot establish the impact, stop and flag it to the user as needing review.
+
+> Core's [AGENTS.md Backward Compatibility](https://github.com/woocommerce/woocommerce/blob/trunk/AGENTS.md#backward-compatibility) section carries the same guardrail.
+
 ## Best practices and recommendations
 
 - The minimum supported PHP version is a hard constraint on the syntax we can use, not just a metadata field. Code must run on the version noted by `Requires PHP:` in ./action-scheduler.php (7.2 at time of writing), which rules out arrow functions, typed properties, `??=`, constructor property promotion, and other later additions. This is the most common way otherwise-sound code fails the test matrix. Note that phpcs is configured to check against this floor (see the `testVersion` config in ./phpcs.xml), but its `minimum_supported_wp_version` setting is *not* currently kept in step with the `Requires at least:` field, so it should not be treated as a guide to the WordPress floor.
+- Never use the `%i` identifier placeholder in `$wpdb->prepare()`. WordPress core supports it, but the database layer of a key deployment target does not, and a query that uses it fails outright there. Note that phpcs does not flag `%i`, so this is a review-time check. Use `%s`, `%d` and `%f` for values as usual, and handle identifiers (table and column names) as follows:
+  - Our custom tables are exposed as `$wpdb->actionscheduler_actions`, `$wpdb->actionscheduler_claims`, `$wpdb->actionscheduler_groups` and `$wpdb->actionscheduler_logs` (registered by `ActionScheduler_Abstract_Schema::register_tables()`), and the legacy store uses `$wpdb->posts` and friends. Interpolate these directly into the query string. The `WordPress.DB.PreparedSQL` sniff recognizes `$wpdb` properties as trusted, so no `phpcs:ignore` is needed for them; when the SQL is assembled in a variable before being passed to `prepare()`, the existing `// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared` convention applies.
+  - Any other table name should be built in a variable from a trusted source (`$wpdb->prefix . 'actionscheduler_actions'` is the established fallback) and interpolated, with `// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared` on that line. The sniff cannot tell a trusted table name from user input, so the ignore records that a human has made that evaluation.
+  - Column names, sort keys and other identifiers derived from input must be checked against an allowlist of known names before interpolation, as `ActionScheduler_DBStore::get_query_actions_sql()` does for `orderby`. Use `sanitize_sql_orderby()` for `ORDER BY` clauses where applicable.
+  - `esc_sql()` is a fallback for dynamic identifiers or lists where an allowlist is impractical. It escapes quotes and backslashes only, so it does not make an input-derived identifier safe on its own.
+
+```php
+$sql = "SELECT COUNT(*) FROM {$wpdb->actionscheduler_actions} WHERE status = %s";
+$sql = $wpdb->prepare( $sql, $status ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+$count = (int) $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+```
+
 - `as_supports()` lets library consumers check whether the loaded version supports a given feature. Use it whenever a new feature might not be available at runtime, per the older-than-expected version problem noted above. Its feature list is a short, hardcoded `$supported_features` array inside the function itself (./functions.php), derived from nothing: a feature not explicitly added to that array reports itself as unsupported, so extending it is part of shipping the feature, not a follow-up.
 - If a new feature is added and the public API surface is changed, we should always make appropriate changes to our docs/.
 - It is normally expected for each feature or fix to result in a changelog entry. Changelogs are contained in ./changelog.txt.

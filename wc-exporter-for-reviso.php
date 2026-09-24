@@ -3,7 +3,7 @@
  * Plugin Name: ilGhera Reviso Exporter for WooCommerce
  * Plugin URI: https://www.ilghera.com/product/woocommerce-exporter-for-reviso-premium
  * Description: Connect your store to Reviso and export orders, products, customers and suppliers.
- * Version: 1.2.8
+ * Version: 1.2.9
  * Requires at least: 5.0
  * Tested up to: 7.1
  * WC tested up to: 11.1.2
@@ -38,7 +38,7 @@ function load_wc_exporter_for_reviso() {
 	define( 'WCEFR_DIR_NAME', basename( dirname( __FILE__ ) ) );
 	define( 'WCEFR_INCLUDES', WCEFR_DIR . 'includes/' );
 	define( 'WCEFR_SETTINGS', admin_url( 'admin.php?page=wc-exporter-for-reviso' ) );
-	define( 'WCEFR_VERSION', '1.2.8' );
+	define( 'WCEFR_VERSION', '1.2.9' );
 
 	/*Files required*/
 	require_once WCEFR_DIR . 'libraries/action-scheduler/action-scheduler.php';

@@ -5,7 +5,7 @@ Version: 1.2.11
 Stable tag: 1.2.11
 Requires at least: 5.0
 Tested up to: 7.1
-WC tested up to: 11.2.1
+WC tested up to: 11.2.2
 License: GPLv2
 
 Export suppliers, products, customers and orders from your Woocommerce store to Reviso. Export new orders and create invoices in real time.

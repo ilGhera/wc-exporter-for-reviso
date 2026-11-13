@@ -147,7 +147,8 @@ var wcefrController = function() {
 		jQuery(function($){
 
 			var data = {
-				'action': 'wcefr-check-connection'
+				'action': 'wcefr-check-connection',
+				'nonce': wcefrSettings.checkConnectionNonce
 			}
 
 			$.post(ajaxurl, data, function(response){
@@ -533,6 +534,7 @@ var wcefrController = function() {
 
 			var data = {
 				'action': 'wcefr-get-' + type + '-groups',
+				'nonce': 'customers' === type ? wcefrSettings.customersGroupsNonce : wcefrSettings.suppliersGroupsNonce,
 				'confirm': 'yes' 
 			}
 

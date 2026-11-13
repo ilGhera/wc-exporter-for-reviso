@@ -49,11 +49,11 @@ class WCEFR_Users {
 			$this->suppliers_role = get_option( 'wcefr-suppliers-role' );
 			$this->customers_role = get_option( 'wcefr-customers-role' );
 
-			add_action( 'wp_ajax_wcefr-update-users-role', array( $this, 'update_users_role' ) );
-			add_action( 'wp_ajax_wcefr-export-users', array( $this, 'export_users' ) );
-			add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'delete_remote_users' ) );
-			add_action( 'wp_ajax_wcefr-get-customers-groups', array( $this, 'get_customers_groups' ) );
-			add_action( 'wp_ajax_wcefr-get-suppliers-groups', array( $this, 'get_suppliers_groups' ) );
+			add_action( 'wp_ajax_wcefr-update-users-role', array( $this, 'ajax_update_users_role' ) );
+			add_action( 'wp_ajax_wcefr-export-users', array( $this, 'ajax_export_users' ) );
+			add_action( 'wp_ajax_wcefr-delete-remote-users', array( $this, 'ajax_delete_remote_users' ) );
+			add_action( 'wp_ajax_wcefr-get-customers-groups', array( $this, 'ajax_get_customers_groups' ) );
+			add_action( 'wp_ajax_wcefr-get-suppliers-groups', array( $this, 'ajax_get_suppliers_groups' ) );
 			add_action( 'wcefr_export_single_user_event', array( $this, 'export_single_user' ), 10, 3 );
 			add_action( 'wcefr_delete_remote_single_user_event', array( $this, 'delete_remote_single_user' ), 10, 4 );
 		}
@@ -812,6 +812,84 @@ class WCEFR_Users {
 		}
 
 		exit;
+	}
+
+	/**
+	 * Ajax entry point for update_users_role(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_update_users_role() {
+
+		$this->verify_ajax_request( 'wcefr-users-role', 'wcefr-users-role-nonce' );
+
+		$this->update_users_role();
+	}
+
+	/**
+	 * Ajax entry point for export_users(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_export_users() {
+
+		$this->verify_ajax_request( 'wcefr-export-users', 'wcefr-export-users-nonce' );
+
+		$this->export_users();
+	}
+
+	/**
+	 * Ajax entry point for delete_remote_users(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_delete_remote_users() {
+
+		$this->verify_ajax_request( 'wcefr-delete-users', 'wcefr-delete-users-nonce' );
+
+		$this->delete_remote_users();
+	}
+
+	/**
+	 * Ajax entry point for get_customers_groups(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_get_customers_groups() {
+
+		$this->verify_ajax_request( 'wcefr-get-customers-groups', 'nonce' );
+
+		$this->get_customers_groups();
+	}
+
+	/**
+	 * Ajax entry point for get_suppliers_groups(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_get_suppliers_groups() {
+
+		$this->verify_ajax_request( 'wcefr-get-suppliers-groups', 'nonce' );
+
+		$this->get_suppliers_groups();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

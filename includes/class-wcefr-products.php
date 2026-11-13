@@ -32,8 +32,8 @@ class WCEFR_Products {
 		if ( $init ) {
 
 			/* Hooks */
-			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'export_products' ) );
-			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'delete_remote_products' ) );
+			add_action( 'wp_ajax_wcefr-export-products', array( $this, 'ajax_export_products' ) );
+			add_action( 'wp_ajax_wcefr-delete-remote-products', array( $this, 'ajax_delete_remote_products' ) );
 			add_action( 'wcefr_export_single_product_event', array( $this, 'export_single_product' ) );
 			add_action( 'wcefr_delete_remote_single_product_event', array( $this, 'delete_remote_single_product' ) );
 		}
@@ -871,6 +871,48 @@ class WCEFR_Products {
 		echo wp_json_encode( $response );
 
 		exit;
+	}
+
+	/**
+	 * Ajax entry point for export_products(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_export_products() {
+
+		$this->verify_ajax_request( 'wcefr-export-products', 'wcefr-export-products-nonce' );
+
+		$this->export_products();
+	}
+
+	/**
+	 * Ajax entry point for delete_remote_products(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_delete_remote_products() {
+
+		$this->verify_ajax_request( 'wcefr-delete-products', 'wcefr-delete-products-nonce' );
+
+		$this->delete_remote_products();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

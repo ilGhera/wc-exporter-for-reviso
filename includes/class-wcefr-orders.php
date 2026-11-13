@@ -87,8 +87,8 @@ class WCEFR_Orders {
             $this->init();
 
 			/* Actions */
-			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'export_orders' ) );
-			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'delete_remote_orders' ) );
+			add_action( 'wp_ajax_wcefr-export-orders', array( $this, 'ajax_export_orders' ) );
+			add_action( 'wp_ajax_wcefr-delete-remote-orders', array( $this, 'ajax_delete_remote_orders' ) );
 			add_action( 'wcefr_export_single_order_event', array( $this, 'export_single_order' ), 10, 1 );
 			add_action( 'wcefr_delete_remote_single_order_event', array( $this, 'delete_remote_single_order' ), 10, 2 );
             add_action( 'admin_enqueue_scripts', array( $this, 'invoice_column_style' ) );
@@ -1358,6 +1358,48 @@ class WCEFR_Orders {
 
 		/*Create invoice*/
 		$this->export_single_order( $order_id, true );
+	}
+
+	/**
+	 * Ajax entry point for export_orders(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_export_orders() {
+
+		$this->verify_ajax_request( 'wcefr-export-orders', 'wcefr-export-orders-nonce' );
+
+		$this->export_orders();
+	}
+
+	/**
+	 * Ajax entry point for delete_remote_orders(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_delete_remote_orders() {
+
+		$this->verify_ajax_request( 'wcefr-delete-orders', 'wcefr-delete-orders-nonce' );
+
+		$this->delete_remote_orders();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

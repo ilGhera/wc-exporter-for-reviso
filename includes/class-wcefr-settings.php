@@ -32,9 +32,9 @@ class WCEFR_Settings {
 		if ( $init ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
-			add_action( 'wp_ajax_wcefr-check-connection', array( $this, 'check_connection_callback' ) );
+			add_action( 'wp_ajax_wcefr-check-connection', array( $this, 'ajax_check_connection_callback' ) );
 			add_action( 'wp_ajax_wcefr-disconnect', array( $this, 'disconnect_callback' ) );
-			add_action( 'wp_ajax_wcefr-clear-cache', array( $this, 'clear_cache' ) );
+			add_action( 'wp_ajax_wcefr-clear-cache', array( $this, 'ajax_clear_cache' ) );
 			add_action( 'admin_footer', array( $this, 'save_agt' ) );
 		}
 
@@ -176,6 +176,48 @@ class WCEFR_Settings {
 		echo wp_json_encode( $response );
 
 		exit;
+	}
+
+	/**
+	 * Ajax entry point for check_connection_callback(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_check_connection_callback() {
+
+		$this->verify_ajax_request( 'wcefr-check-connection', 'nonce' );
+
+		$this->check_connection_callback();
+	}
+
+	/**
+	 * Ajax entry point for clear_cache(): capability and nonce checks
+	 *
+	 * @return void
+	 */
+	public function ajax_clear_cache() {
+
+		$this->verify_ajax_request( 'wcefr-clear-cache', 'wcefr-clear-cache-nonce' );
+
+		$this->clear_cache();
+	}
+
+	/**
+	 * Check the user capability and the nonce of an Ajax request
+	 *
+	 * @param string $nonce_action the nonce action.
+	 * @param string $nonce_field  the name of the POST field with the nonce.
+	 *
+	 * @return void
+	 */
+	private function verify_ajax_request( $nonce_action, $nonce_field ) {
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+
+			wp_send_json_error( null, 403 );
+		}
+
+		check_ajax_referer( $nonce_action, $nonce_field );
 	}
 }
 

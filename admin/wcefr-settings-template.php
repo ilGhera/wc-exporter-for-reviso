@@ -55,6 +55,9 @@ defined( 'ABSPATH' ) || exit;
 /*Nonce*/
 $clear_cache_nonce = wp_create_nonce( 'wcefr-clear-cache' );
 $disconnect_nonce  = wp_create_nonce( 'wcefr-disconnect' );
+$check_connection_nonce = wp_create_nonce( 'wcefr-check-connection' );
+$customers_groups_nonce = wp_create_nonce( 'wcefr-get-customers-groups' );
+$suppliers_groups_nonce = wp_create_nonce( 'wcefr-get-suppliers-groups' );
 
 /*Pass data to the script file*/
 wp_localize_script(
@@ -64,5 +67,8 @@ wp_localize_script(
 		'responseLoading'  => WCEFR_URI . 'images/loader.gif',
 		'clearCacheNonce'  => $clear_cache_nonce,
 		'disconnectNonce'  => $disconnect_nonce,
+		'checkConnectionNonce' => $check_connection_nonce,
+		'customersGroupsNonce' => $customers_groups_nonce,
+		'suppliersGroupsNonce' => $suppliers_groups_nonce,
 	)
 );

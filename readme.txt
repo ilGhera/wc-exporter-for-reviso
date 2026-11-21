@@ -17,7 +17,7 @@ Export suppliers, products, customers and orders from your Woocommerce store to 
 **AVAILABLE FEATURES**
 
 * Export WordPress users to Reviso.
-* Select one or more WordPress user level to export.
+* Choose the WordPress user role to export as customers and the one to export as suppliers.
 * Update customers and suppliers in Reviso in real time (Premium).
 * Export products to Reviso.
 * Select one or more product categories to export.
